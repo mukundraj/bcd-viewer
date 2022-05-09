@@ -1,25 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
+import Loader from './components/LoaderComponent';
+import Scatterplot from './components/ScatterplotComponent';
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Loader/>
     </div>
   );
 }
 
 export default App;
+
+// References
+//
+// https://stackoverflow.com/questions/60881824/how-to-prevent-deck-gl-layers-from-occupying-entire-viewport
+// https://stackoverflow.com/questions/224602/how-do-you-make-div-elements-display-inline
+// https://deck.gl/docs/api-reference/core/orthographic-view
