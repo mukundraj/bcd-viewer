@@ -25,10 +25,12 @@ function Scatterplot({data}) {
     radiusMinPixels: 1,
     radiusMaxPixels: 100,
     lineWidthMinPixels: 1,
-    getPosition: d => d.coordinates,
-    getRadius: d => Math.sqrt(d.exits),
+    // getPosition: d => d.coordinates,
+    getPosition: d => [d.y,d.z],
+    getRadius: d => 0.2,
     getFillColor: d => [255, 140, 0],
-    getLineColor: d => [0, 0, 0]
+    getLineColor: d => [0, 0, 0],
+    lineWidthScale : 0.001
   });
 
 
@@ -44,7 +46,7 @@ function Scatterplot({data}) {
     ],
     pointSize:10,
     sizeUnits: 'pixels'
-  })
+  });
 
   const ortho_view = new OrthographicView({
     id:"ortho_view",
@@ -65,7 +67,7 @@ function Scatterplot({data}) {
 
   return <DeckGL initialViewState={viewState}
     views={ortho_view}
-    layers={[pc_layer]}
+    layers={[layer]}
     controller={true}
     onViewStateChange={onViewStateChange}
   />;

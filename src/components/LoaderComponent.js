@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Scatterplot from './ScatterplotComponent';
+import {load} from '@loaders.gl/core';
+import {CSVLoader} from '@loaders.gl/csv';
 
 function Loader(props) {
 
@@ -23,10 +25,11 @@ function Loader(props) {
         .then(response => response.text())
         .then(data_str => JSON.parse(data_str));
 
-    console.log("in loader", data);
-
+      console.log("in loader", data);
+      let data2 = await load('https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/coords.csv', [CSVLoader]);
+      console.log(data2);
       // set state here - not outside the {}
-      setData(data);
+      setData(data2);
 
     }
 
