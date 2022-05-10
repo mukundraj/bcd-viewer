@@ -41,11 +41,11 @@ function Loader(props) {
   return(
     <div>
       <h4>Loader Component</h4>
-      <div className="App add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
-        <Scatterplot data={data}  />
+      <div className="add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
+        <Scatterplot data={data} id={'left_splot'} />
       </div>
-      <div className="App add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
-        <Scatterplot data={data}  />
+      <div className="add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
+        <Scatterplot data={data} id={'right_splot'} />
       </div>
     </div>
   );
