@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({data, id}) {
+function Scatterplot({data, id, unidata}) {
   /**
    * Data format:
    * [
@@ -15,14 +15,15 @@ function Scatterplot({data, id}) {
    *   ...
    * ]
    */
-
+  
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
   console.log(interpolateViridis(0.5));
   console.log(hexToRGBArray(interpolateViridis(0.5)));
+  // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
-    data,
+    data: unidata,
     pickable: true,
     opacity: 0.8,
     stroked: true,
@@ -34,7 +35,7 @@ function Scatterplot({data, id}) {
     // getPosition: d => d.coordinates,
     getPosition: d => [d.y,d.z],
     getRadius: d => 0.2,
-    getFillColor: d => hexToRGBArray(interpolateViridis(1.0)),
+    getFillColor: (d,i) => hexToRGBArray(interpolateViridis(d.count/5)),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001
   });
@@ -63,6 +64,7 @@ function Scatterplot({data, id}) {
     target: [100, 100, 0],
     zoom: 0
   });
+
 
   const onViewStateChange = useCallback(({viewState}) => {
     // Manipulate view state
@@ -107,7 +109,6 @@ function Scatterplot({data, id}) {
 
       svg.selectAll(".cell .label").attr("font-size", "10");
 
-
     }
     drawColorbar();
 
@@ -133,3 +134,4 @@ export default Scatterplot;
 // https://d3-legend.susielu.com/#color-linear
 // https://github.com/d3/d3-scale-chromatic
 // https://css-tricks.com/how-to-stack-elements-in-css/
+// https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
