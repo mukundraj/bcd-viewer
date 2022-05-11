@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import 'bootstrap/dist/css/bootstrap.css'; // for slider
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css'; // for slider
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
  //<React.StrictMode>

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Scatterplot from './ScatterplotComponent';
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
+import RangeSlider from 'react-bootstrap-range-slider';
+import {Form, FormGroup, Col, Row} from 'react-bootstrap'
 
 function Loader(props) {
 
@@ -15,7 +17,9 @@ function Loader(props) {
 
   const [data, setData] = useState(init_data);
   const [gene_data, setGenedata] = useState(init_data);
-  const [uni_data, setUnidata] = useState(0);
+  const [uni_data, setUnidata] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+
+  const [ value, setValue ] = useState(0);
 
   useEffect(() => {
 
@@ -51,11 +55,27 @@ function Loader(props) {
   return(
     <div>
       <h4>Loader Component</h4>
-      <div className="add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
-        <Scatterplot data={data} id={'left_splot'} unidata={uni_data}/>
+      <Form>
+        <FormGroup as={Row}>
+        <Form.Label column sm="3">
+          UMI Count Threshold
+        </Form.Label>
+          <Col xs="2">
+            <RangeSlider
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </Col>
+          <Col xs="1">
+            <Form.Control value={value} readOnly/>
+          </Col>
+        </FormGroup>
+      </Form>
+      <div className="add-border floater" >
+        <Scatterplot id={'left_splot'} unidata={uni_data} threshold={value}/>
       </div>
-      <div className="add-border" style={{ height: '60vh', width: '48vw', position: 'relative', float:'left' }}>
-        <Scatterplot data={data} id={'right_splot'} unidata={uni_data}/>
+      <div className="add-border floater">
+        <Scatterplot id={'right_splot'} unidata={uni_data} threshold={value}/>
       </div>
     </div>
   );

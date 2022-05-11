@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({data, id, unidata}) {
+function Scatterplot({id, unidata, threshold}) {
   /**
    * Data format:
    * [
@@ -15,7 +15,7 @@ function Scatterplot({data, id, unidata}) {
    *   ...
    * ]
    */
-  
+
 
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
@@ -23,12 +23,13 @@ function Scatterplot({data, id, unidata}) {
   console.log(hexToRGBArray(interpolateViridis(0.5)));
 
   const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
+  const [data, setData] = useState(() => unidata);
   // console.log("heref ",currentColorMap(0.5));
 
   // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
-    data: unidata,
+    data: data,
     pickable: true,
     opacity: 0.8,
     stroked: true,
@@ -40,24 +41,9 @@ function Scatterplot({data, id, unidata}) {
     // getPosition: d => d.coordinates,
     getPosition: d => [d.y,d.z],
     getRadius: d => 0.2,
-    getFillColor: (d,i) => toRGBArray(currentColorMap(d.count/5)),
+    getFillColor: (d,i) => toRGBArray(currentColorMap(d.count)),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001
-  });
-
-
-  const pc_layer = new PointCloudLayer({
-    id: 'pc-layer',
-    coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-    coordinateOrigin : [0, 0, 0],
-    data:[
-      {position: [0,0,0]},
-      {position: [50,50,0]},
-      {position: [100,100,0]},
-      {position: [150,150,0]},
-    ],
-    pointSize:10,
-    sizeUnits: 'pixels'
   });
 
   const ortho_view = new OrthographicView({
@@ -65,7 +51,7 @@ function Scatterplot({data, id, unidata}) {
     controller:true
   });
 
-   const [viewState, setViewState] = useState({
+  const [viewState, setViewState] = useState({
     target: [100, 100, 0],
     zoom: 0
   });
@@ -78,18 +64,26 @@ function Scatterplot({data, id, unidata}) {
     setViewState(viewState);
   }, []);
 
+  useEffect(()=>{
+
+    // console.log(unidata);
+    let data = unidata.filter(bead => bead['count']>threshold)
+    console.log(data);
+    setData(data);
+
+  }, [threshold, unidata]);
 
   useEffect(()=>{
     async function drawColorbar(){
       const d3 = await import("d3");
       let svg = d3.select(`#${id}`).append("svg");
 
-                
+
       // // var linear = d3.scaleLinear()
       // //   .domain([0,10])
       // //   .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
       let linear = d3.scaleLinear()
-        .domain([0, 0.01, 1])
+        .domain([0, 0.01, 100])
         .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
 
       setCurrentColorMap(() => linear);
@@ -97,15 +91,15 @@ function Scatterplot({data, id, unidata}) {
       // // var svg = d3.select("svg");
 
       svg
-      .style("position", "absolute")
+        .style("position", "absolute")
         .style("left", "2%")
         .style("top", "2%");
       svg.append("g")
         .attr("class", "legendLinear")
-        // .attr("transform", "translate(90,20)");
+      // .attr("transform", "translate(90,20)");
 
       var legendLinear = legendColor()
-        .shapeWidth(20)
+        .shapeWidth(25)
         .cells(10)
         .orient('horizontal')
         .scale(linear);

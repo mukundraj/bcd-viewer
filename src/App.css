@@ -41,3 +41,10 @@
   border: 1px solid black;
   margin: 0.5vw;
 }
+
+.floater {
+  height: 60vh;
+  width: 48vw;
+  position: relative;
+  float: left;
+}
