@@ -16,10 +16,15 @@ function Scatterplot({data, id, unidata}) {
    * ]
    */
   
+
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
   console.log(interpolateViridis(0.5));
   console.log(hexToRGBArray(interpolateViridis(0.5)));
+
+  const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
+  // console.log("heref ",currentColorMap(0.5));
+
   // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -35,7 +40,7 @@ function Scatterplot({data, id, unidata}) {
     // getPosition: d => d.coordinates,
     getPosition: d => [d.y,d.z],
     getRadius: d => 0.2,
-    getFillColor: (d,i) => hexToRGBArray(interpolateViridis(d.count/5)),
+    getFillColor: (d,i) => toRGBArray(currentColorMap(d.count/5)),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001
   });
@@ -84,9 +89,10 @@ function Scatterplot({data, id, unidata}) {
       // //   .domain([0,10])
       // //   .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
       let linear = d3.scaleLinear()
-        .domain([0,0.01, 1])
+        .domain([0, 0.01, 1])
         .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
 
+      setCurrentColorMap(() => linear);
 
       // // var svg = d3.select("svg");
 
