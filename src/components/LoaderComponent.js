@@ -5,6 +5,8 @@ import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import RangeSlider from 'react-bootstrap-range-slider';
 import {Form, FormGroup, Col, Row} from 'react-bootstrap'
+import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
+
 
 function Loader(props) {
 
@@ -17,9 +19,14 @@ function Loader(props) {
 
   const [data, setData] = useState(init_data);
   const [gene_data, setGenedata] = useState(init_data);
+  const [chosenGene, setChosenGene] = useState([])
+  const [chosenPuckid, setChosenPuckid] = useState(1)
   const [uni_data, setUnidata] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+  
+  const [ umiThreshold, setUmiThreshold ] = useState(0);
+  const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
 
-  const [ value, setValue ] = useState(0);
+  let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6']
 
   useEffect(() => {
 
@@ -44,38 +51,85 @@ function Loader(props) {
       }));
 
       setUnidata(uni_data2);
+      console.log("chosenGene ", chosenGene);
 
     }
 
     fetchData();
 
     console.log("inside");
+  }, [filename, chosenGene]);
+
+  useEffect(()=>{
+    console.log("new chosen gene ", chosenGene, React.version);
+
+    // create filename string using gene name and puckid
+
+    // update filename state
+  },[chosenGene, chosenPuckid]);
+
+
+  useEffect(()=>{
+
+    // loads data based on filename
+    //
+    // update state of threshold(to 1) and maxThreshold(computed from data)
+
   }, [filename]);
 
   return(
     <div>
-      <h4>Loader Component</h4>
+      <h4>Brain Cell Data Viewer</h4>
       <Form>
         <FormGroup as={Row}>
-        <Form.Label column sm="3">
-          UMI Count Threshold
-        </Form.Label>
+          <Form.Label column sm="3">
+            Puck ID
+          </Form.Label>
           <Col xs="2">
             <RangeSlider
-              value={value}
-              onChange={e => setValue(e.target.value)}
+              value={chosenPuckid}
+              onChange={e => setChosenPuckid(e.target.value)}
+              min={1}
+              max={207}
+              step={2}
             />
           </Col>
           <Col xs="1">
-            <Form.Control value={value} readOnly/>
+            <Form.Control value={chosenPuckid} readOnly/>
+          </Col>
+        </FormGroup>
+        <FormGroup as={Row}>
+          <Form.Label column sm="3">Select Gene</Form.Label>
+          <Col xs="3">
+          <Typeahead
+            id="basic-typeahead-single"
+            labelKey="name"
+            onChange={setChosenGene}
+            options={geneOptions}
+            placeholder="Choose a gene..."
+          />
+          </Col>
+        </FormGroup>
+        <FormGroup as={Row}>
+          <Form.Label column sm="3">
+            UMI Count Threshold
+          </Form.Label>
+          <Col xs="2">
+            <RangeSlider
+              value={umiThreshold}
+              onChange={e => setUmiThreshold(e.target.value)}
+            />
+          </Col>
+          <Col xs="1">
+            <Form.Control value={umiThreshold} readOnly/>
           </Col>
         </FormGroup>
       </Form>
       <div className="add-border floater" >
-        <Scatterplot id={'left_splot'} unidata={uni_data} threshold={value}/>
+        <Scatterplot id={'left_splot'} unidata={uni_data} threshold={umiThreshold}/>
       </div>
       <div className="add-border floater">
-        <Scatterplot id={'right_splot'} unidata={uni_data} threshold={value}/>
+        <Scatterplot id={'right_splot'} unidata={uni_data} threshold={umiThreshold}/>
       </div>
     </div>
   );
