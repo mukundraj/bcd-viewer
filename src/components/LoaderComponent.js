@@ -10,72 +10,72 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 
 function Loader(props) {
 
-  const [filename, setFilename] = useState('https://storage.googleapis.com/ml_portal/test_data/test.json')
+  // const [filename, setFilename] = useState('https://storage.googleapis.com/ml_portal/test_data/test.json')
 
   let init_data = [
     {"name":"Lafayette (LAFY)","code":"LF","address":"3601 Deer Hill Road, Lafayette CA 94549","entries":"3481","exits":"3616","coordinates":[-122.123801,37.893394]},
     {"name":"12th St. Oakland City Center (12TH)","code":"12","address":"1245 Broadway, Oakland CA 94612","entries":"13418","exits":"13547","coordinates":[-122.271604,37.803664]}, 
     {"name": "abc", "code":"12", "address":"test", "entries":"2345",  "exits": "43239", "coordinates":[-122.3,37.9]}]
 
-  const [data, setData] = useState(init_data);
-  const [gene_data, setGenedata] = useState(init_data);
-  const [chosenGene, setChosenGene] = useState([])
+  const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+
+  const [chosenGene, setChosenGene] = useState("Pcp4")
   const [chosenPuckid, setChosenPuckid] = useState(1)
-  const [uni_data, setUnidata] = useState([{"x":0, "y":0, "z":0, "count":0}]);
-  
-  const [ umiThreshold, setUmiThreshold ] = useState(0);
+  const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+
+  const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
+  const [chosenPuckFolder, setChosenPuckFolder] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1');
 
   let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6']
+  let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
 
-  useEffect(() => {
+  useEffect(()=>{
+    console.log("new  puckid ", chosenPuckid);
 
-    // console.log("in loaderr component", count);
-    // setCount(0)
-    // declare the data fetching function
+    // create full coords path
+    let coordsPath = `${basePath}/puck${chosenPuckid}/coords.csv`
+    console.log("coordsPath ", coordsPath);
+
+    // read coords data
     const fetchData = async () => {
-      const data = await fetch(filename)
-        .then(response => response.text())
-        .then(data_str => JSON.parse(data_str));
+      const readData = await load(coordsPath, [CSVLoader]);
 
-      console.log("in loader", data);
-      let data2 = await load('https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/coords.csv', [CSVLoader]);
-      let gene_data2 = await load('https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/gene_Pcp4.csv', [CSVLoader]);
-      // set state here - not outside the {}
-      setData(data2);
-      setGenedata(gene_data2);
-
-      let uni_data2 = data2.map((obj, index) => ({
-        ...obj,
-        ...gene_data2[index]
-      }));
-
-      setUnidata(uni_data2);
-      console.log("chosenGene ", chosenGene);
+      setCoordsData(readData);
 
     }
-
     fetchData();
 
-    console.log("inside");
-  }, [filename, chosenGene]);
+    // update coordsData state
+
+  },[basePath, chosenPuckid]);
 
   useEffect(()=>{
-    console.log("new chosen gene ", chosenGene, React.version);
+    console.log("new chosen gene ", chosenGene);
 
     // create filename string using gene name and puckid
+    let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene}.csv`
+    console.log("geneDataPath ", geneDataPath);
 
-    // update filename state
-  },[chosenGene, chosenPuckid]);
+    // read gene data
+    const fetchData = async () => {
+      const geneData = await load(geneDataPath, [CSVLoader]);
 
 
-  useEffect(()=>{
+      // create unifiedData
+      let readData = coordsData.map((obj, index) => ({
+        ...obj,
+        ...geneData[index]
+      }));
 
-    // loads data based on filename
-    //
-    // update state of threshold(to 1) and maxThreshold(computed from data)
+      // update state of unifiedData
+      setUnifiedData(readData);
+      
 
-  }, [filename]);
+    }
+    fetchData();
+  },[basePath, chosenPuckid, coordsData, chosenGene]);
+
 
   return(
     <div>
@@ -90,7 +90,7 @@ function Loader(props) {
               value={chosenPuckid}
               onChange={e => setChosenPuckid(e.target.value)}
               min={1}
-              max={207}
+              max={3}
               step={2}
             />
           </Col>
@@ -101,13 +101,13 @@ function Loader(props) {
         <FormGroup as={Row}>
           <Form.Label column sm="3">Select Gene</Form.Label>
           <Col xs="3">
-          <Typeahead
-            id="basic-typeahead-single"
-            labelKey="name"
-            onChange={setChosenGene}
-            options={geneOptions}
-            placeholder="Choose a gene..."
-          />
+            <Typeahead
+              id="basic-typeahead-single"
+              labelKey="name"
+              onChange={setChosenGene}
+              options={geneOptions}
+              placeholder="Choose a gene..."
+            />
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
@@ -118,6 +118,8 @@ function Loader(props) {
             <RangeSlider
               value={umiThreshold}
               onChange={e => setUmiThreshold(e.target.value)}
+              min={-1}
+              max={100}
             />
           </Col>
           <Col xs="1">
@@ -126,10 +128,10 @@ function Loader(props) {
         </FormGroup>
       </Form>
       <div className="add-border floater" >
-        <Scatterplot id={'left_splot'} unidata={uni_data} threshold={umiThreshold}/>
+        <Scatterplot id={'left_splot'} unidata={unifiedData} threshold={umiThreshold}/>
       </div>
       <div className="add-border floater">
-        <Scatterplot id={'right_splot'} unidata={uni_data} threshold={umiThreshold}/>
+        <Scatterplot id={'right_splot'} unidata={unifiedData} threshold={umiThreshold}/>
       </div>
     </div>
   );

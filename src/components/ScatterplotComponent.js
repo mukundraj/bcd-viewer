@@ -26,7 +26,7 @@ function Scatterplot({id, unidata, threshold}) {
   const [data, setData] = useState(() => unidata);
   // console.log("heref ",currentColorMap(0.5));
 
-  // console.log(unidata);
+  console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: data,
