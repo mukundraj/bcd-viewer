@@ -10,28 +10,24 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 
 function Loader(props) {
 
-  // const [filename, setFilename] = useState('https://storage.googleapis.com/ml_portal/test_data/test.json')
-
-  let init_data = [
-    {"name":"Lafayette (LAFY)","code":"LF","address":"3601 Deer Hill Road, Lafayette CA 94549","entries":"3481","exits":"3616","coordinates":[-122.123801,37.893394]},
-    {"name":"12th St. Oakland City Center (12TH)","code":"12","address":"1245 Broadway, Oakland CA 94612","entries":"13418","exits":"13547","coordinates":[-122.271604,37.803664]}, 
-    {"name": "abc", "code":"12", "address":"test", "entries":"2345",  "exits": "43239", "coordinates":[-122.3,37.9]}]
-
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
-  const [chosenGene, setChosenGene] = useState("Pcp4")
+  const [chosenGene, setChosenGene] = useState(["Pcp4"])
   const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
-  const [chosenPuckFolder, setChosenPuckFolder] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1');
 
-  let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6']
+  let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
+    'Mbp', 'Plp1', 'Mag',
+    'Myoc', 'Agt', 'Gfap', 'Slc1a3', 'Aqp4',
+    'Dcn', 'Flt1',
+    'Rarres2', 'Foxj1'];
+
   let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
 
   useEffect(()=>{
-    console.log("new  puckid ", chosenPuckid);
 
     // create full coords path
     let coordsPath = `${basePath}/puck${chosenPuckid}/coords.csv`
@@ -39,9 +35,11 @@ function Loader(props) {
 
     // read coords data
     const fetchData = async () => {
-      const readData = await load(coordsPath, [CSVLoader]);
+      const readData = await load(coordsPath, [CSVLoader], {csv:{delimiter:":"}});
 
       setCoordsData(readData);
+    console.log("new  puckid ", chosenPuckid);
+      // console.log(readData);
 
     }
     fetchData();
@@ -51,30 +49,60 @@ function Loader(props) {
   },[basePath, chosenPuckid]);
 
   useEffect(()=>{
-    console.log("new chosen gene ", chosenGene);
+    // console.log("new chosen gene ", chosenGene);
 
-    // create filename string using gene name and puckid
-    let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene}.csv`
-    console.log("geneDataPath ", geneDataPath);
+    if (geneOptions.includes(chosenGene[0])){
+      // create filename string using gene name and puckid
+      let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene[0]}.csv`
+      console.log("geneDataPath ", geneDataPath);
 
-    // read gene data
+      // read gene data
+      const fetchData = async () => {
+        const geneData = await load(geneDataPath, [CSVLoader]);
+
+
+        // create unifiedData
+        let readData = coordsData.map((obj, index) => ({
+          ...obj,
+          ...geneData[index]
+        }));
+
+        // update state of unifiedData
+        setUnifiedData(readData);
+
+        // let maxVal = Math.max(...unifiedData.map(o => o.count));
+        console.log("new puck loaded")
+
+      }
+      fetchData();
+    }else{
+      console.log("chosen gene not included", chosenGene);
+    }
+      
+  },[coordsData, chosenGene]);
+  
+
+  useEffect(()=>{
+
+    // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
     const fetchData = async () => {
-      const geneData = await load(geneDataPath, [CSVLoader]);
+      let meta_data_path = `${basePath}/puck${chosenPuckid}/metadata_gene_${chosenGene}.json`
+      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
+      console.log('meta_data_path ', meta_data_path);
+      // console.log('meta_data_path ', meta_data_path2);
+      const readData = await fetch(meta_data_path)
+       .then(response => response.json());
+        // .then(data_str => JSON.parse(data_str));
 
 
-      // create unifiedData
-      let readData = coordsData.map((obj, index) => ({
-        ...obj,
-        ...geneData[index]
-      }));
-
-      // update state of unifiedData
-      setUnifiedData(readData);
+      // setCoordsData(readData);
+      setMaxUmiThreshold(parseInt(readData['maxCount']));
       
 
     }
     fetchData();
-  },[basePath, chosenPuckid, coordsData, chosenGene]);
+
+  }, [basePath, chosenPuckid, chosenGene]);
 
 
   return(
@@ -83,19 +111,19 @@ function Loader(props) {
       <Form>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
-            Puck ID
+            Puck Depth
           </Form.Label>
           <Col xs="2">
             <RangeSlider
               value={chosenPuckid}
               onChange={e => setChosenPuckid(e.target.value)}
               min={1}
-              max={3}
+              max={41}
               step={2}
             />
           </Col>
           <Col xs="1">
-            <Form.Control value={chosenPuckid} readOnly/>
+            Max: {41}
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
@@ -106,7 +134,8 @@ function Loader(props) {
               labelKey="name"
               onChange={setChosenGene}
               options={geneOptions}
-              placeholder="Choose a gene..."
+              placeholder="Choose another gene..."
+              defaultInputValue="Pcp4"
             />
           </Col>
         </FormGroup>
@@ -118,20 +147,20 @@ function Loader(props) {
             <RangeSlider
               value={umiThreshold}
               onChange={e => setUmiThreshold(e.target.value)}
-              min={-1}
-              max={100}
+              min={0}
+              max={maxUmiThreshold}
             />
           </Col>
           <Col xs="1">
-            <Form.Control value={umiThreshold} readOnly/>
+            Max: {maxUmiThreshold}
           </Col>
         </FormGroup>
       </Form>
       <div className="add-border floater" >
-        <Scatterplot id={'left_splot'} unidata={unifiedData} threshold={umiThreshold}/>
+        <Scatterplot id={'left_splot'} unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}/>
       </div>
       <div className="add-border floater">
-        <Scatterplot id={'right_splot'} unidata={unifiedData} threshold={umiThreshold}/>
+        <Scatterplot id={'right_splot'} unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}/>
       </div>
     </div>
   );
