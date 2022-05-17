@@ -1,5 +1,5 @@
 import DeckGL from '@deck.gl/react';
-import {ScatterplotLayer} from '@deck.gl/layers';
+import {ScatterplotLayer, BitmapLayer} from '@deck.gl/layers';
 import {COORDINATE_SYSTEM} from '@deck.gl/core'
 import {PointCloudLayer} from '@deck.gl/layers'
 import {OrthographicView} from '@deck.gl/core';
@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({id, unidata, threshold}) {
+function Scatterplot({id, unidata, threshold, maxUmiThreshold}) {
   /**
    * Data format:
    * [
@@ -19,31 +19,33 @@ function Scatterplot({id, unidata, threshold}) {
 
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
-  console.log(interpolateViridis(0.5));
-  console.log(hexToRGBArray(interpolateViridis(0.5)));
+  // console.log(interpolateViridis(0.5));
+  // console.log(hexToRGBArray(interpolateViridis(0.5)));
 
   const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
   const [data, setData] = useState(() => unidata);
   // console.log("heref ",currentColorMap(0.5));
+  const [hoverInfo, setHoverInfo] = useState(0);
 
-  console.log(unidata);
+  // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: data,
     pickable: true,
     opacity: 0.8,
-    stroked: true,
+    stroked: false,
     filled: true,
     radiusScale: 6,
     radiusMinPixels: 1,
     radiusMaxPixels: 100,
     lineWidthMinPixels: 1,
     // getPosition: d => d.coordinates,
-    getPosition: d => [d.y,d.z],
-    getRadius: d => 0.2,
+    getPosition: d => [d.z,d.y],
+    getRadius: d => 0.1,
     getFillColor: (d,i) => toRGBArray(currentColorMap(d.count)),
     getLineColor: d => [0, 0, 0],
-    lineWidthScale : 0.001
+    lineWidthScale : 0.001,
+    onHover: info => setHoverInfo(info)
   });
 
   const ortho_view = new OrthographicView({
@@ -52,7 +54,7 @@ function Scatterplot({id, unidata, threshold}) {
   });
 
   const [viewState, setViewState] = useState({
-    target: [100, 100, 0],
+    target: [228, 160, 0],
     zoom: 0
   });
 
@@ -67,8 +69,8 @@ function Scatterplot({id, unidata, threshold}) {
   useEffect(()=>{
 
     // console.log(unidata);
-    let data = unidata.filter(bead => bead['count']>threshold)
-    console.log(data);
+    let data = unidata.filter(bead => bead['count']>=threshold)
+    // console.log(data);
     setData(data);
 
   }, [threshold, unidata]);
@@ -76,14 +78,16 @@ function Scatterplot({id, unidata, threshold}) {
   useEffect(()=>{
     async function drawColorbar(){
       const d3 = await import("d3");
+      d3.selectAll("svg > *").remove();
       let svg = d3.select(`#${id}`).append("svg");
 
 
+      console.log("maxUmiThreshold ", maxUmiThreshold, {maxUmiThreshold});
       // // var linear = d3.scaleLinear()
       // //   .domain([0,10])
       // //   .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
       let linear = d3.scaleLinear()
-        .domain([0, 0.01, 100])
+        .domain([0, 0.01, maxUmiThreshold])
         .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
 
       setCurrentColorMap(() => linear);
@@ -112,16 +116,30 @@ function Scatterplot({id, unidata, threshold}) {
     }
     drawColorbar();
 
-  }, []);
+  }, [maxUmiThreshold]);
+
+  const bitmaplayer = new BitmapLayer({
+    id: 'bitmap-layer',
+    bounds: [0, 320, 456, 0],
+    image: 'https://storage.googleapis.com/ml_portal/test_data/nis_001.png',
+    // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
+    opacity: 0.2
+  });
+
 
   return (
     <div className="splot" id={id}>
       <DeckGL initialViewState={viewState}
         views={ortho_view}
-        layers={[layer]}
         controller={true}
         onViewStateChange={onViewStateChange}
-      />
+        layers={[layer, bitmaplayer]} >
+        {hoverInfo.object && (
+        <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
+          { hoverInfo.object.count }
+        </div>
+      )}
+      </DeckGL>
     </div>)
 }
 
