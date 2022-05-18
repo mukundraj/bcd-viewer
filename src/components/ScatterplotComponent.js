@@ -46,10 +46,13 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
     // getPosition: d => d.coordinates,
     getPosition: d => [d.z,d.y],
     getRadius: d => 0.1,
-    getFillColor: (d,i) => toRGBArray(currentColorMap(d.count)),
+    getFillColor: d => toRGBArray(currentColorMap(d.count)),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001,
-    onHover: info => setHoverInfo(info)
+    onHover: info => setHoverInfo(info),
+    // autoHighlight: true,
+    highlightColor: [0, 255, 0],
+    highlightedObjectIndex: hoverInfo.index
   });
 
   const ortho_view = new OrthographicView({
@@ -141,7 +144,6 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
   }, [maxUmiThreshold]);
 
   let bitmap_layer=null;
-  console.log(id==='left_spot')
 
   if (id==='left_splot'){
     bitmap_layer = new BitmapLayer({
@@ -169,10 +171,10 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
         onViewStateChange={onViewStateChange}
         layers={[layer, bitmap_layer]} >
         {hoverInfo.object && (
-        <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
-          { hoverInfo.object.count }
-        </div>
-      )}
+          <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
+            count:{hoverInfo.object.count}, region:{hoverInfo.object.rname}
+          </div>
+        )}
       </DeckGL>
     </div>)
 }
@@ -187,3 +189,4 @@ export default Scatterplot;
 // https://github.com/d3/d3-scale-chromatic
 // https://css-tricks.com/how-to-stack-elements-in-css/
 // https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
+// deck gl autohighlight - https://github.com/visgl/deck.gl/discussions/5634
