@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, myView}) {
+function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange}) {
   /**
    * Data format:
    * [
@@ -57,18 +57,18 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, myVie
     controller:true
   });
 
-  const [viewState, setViewState] = useState({
-    target: [228, 160, 0],
-    zoom: 0
-  });
+  // const [viewState, setViewState] = useState({
+  //   target: [228, 160, 0],
+  //   zoom: 0
+  // });
 
 
-  const onViewStateChange = useCallback(({viewState}) => {
-    // Manipulate view state
-    // viewState.target[0] = Math.min(viewState.target[0], 10);
-    // Save the view state and trigger rerender
-    setViewState(viewState);
-  }, []);
+  // const onViewStateChange = useCallback(({viewState}) => {
+  //   // Manipulate view state
+  //   // viewState.target[0] = Math.min(viewState.target[0], 10);
+  //   // Save the view state and trigger rerender
+  //   setViewState(viewState);
+  // }, []);
 
   // useEffect(()=>{
 
@@ -164,7 +164,7 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, myVie
   return (
     <div className="splot" id={id}>
       <DeckGL initialViewState={viewState}
-        views={myView}
+        views={ortho_view}
         controller={true}
         onViewStateChange={onViewStateChange}
         layers={[layer, bitmap_layer]} >

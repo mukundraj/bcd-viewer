@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Scatterplot from './ScatterplotComponent';
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
@@ -106,10 +106,18 @@ function Loader(props) {
 
   }, [basePath, chosenPuckid, chosenGene]);
 
-  const ortho_view = new OrthographicView({
-    id:"ortho_view",
-    controller:true
+  
+  const [viewState, setViewState] = useState({
+    target: [228, 160, 0],
+    zoom: 0
   });
+
+  const onViewStateChange = useCallback(({viewState}) => {
+    // Manipulate view state
+    // viewState.target[0] = Math.min(viewState.target[0], 10);
+    // Save the view state and trigger rerender
+    setViewState(viewState);
+  }, []);
 
   return(
     <div>
@@ -181,15 +189,17 @@ function Loader(props) {
       </Form>
       <div className="add-border floater" >
         <Scatterplot id={'left_splot'} 
-        unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold} 
-        opacityVal={opacityVal}
-        myView={ortho_view}/>
+          unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold} 
+          opacityVal={opacityVal}
+          viewState={viewState}
+          onViewStateChange={onViewStateChange}/>
       </div>
       <div className="add-border floater">
         <Scatterplot id={'right_splot'} 
-        unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}
-        opacityVal={opacityVal}
-        myView={ortho_view}/>
+          unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}
+          opacityVal={opacityVal}
+          viewState = {viewState}
+          onViewStateChange={onViewStateChange}/>
       </div>
     </div>
   );
