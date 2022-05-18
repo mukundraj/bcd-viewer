@@ -118,6 +118,7 @@ function Loader(props) {
     // Save the view state and trigger rerender
     setViewState(viewState);
   }, []);
+  const [hoverInfo, setHoverInfo] = useState(0);
 
   return(
     <div>
@@ -192,14 +193,20 @@ function Loader(props) {
           unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold} 
           opacityVal={opacityVal}
           viewState={viewState}
-          onViewStateChange={onViewStateChange}/>
+          onViewStateChange={onViewStateChange}
+          hoverInfo = {hoverInfo}
+          setHoverInfo = {setHoverInfo}
+        />
       </div>
       <div className="add-border floater">
         <Scatterplot id={'right_splot'} 
           unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}
           opacityVal={opacityVal}
           viewState = {viewState}
-          onViewStateChange={onViewStateChange}/>
+          onViewStateChange={onViewStateChange}
+          hoverInfo = {hoverInfo}
+          setHoverInfo = {setHoverInfo}
+        />
       </div>
     </div>
   );

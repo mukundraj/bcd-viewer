@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange}) {
+function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange, hoverInfo, setHoverInfo}) {
   /**
    * Data format:
    * [
@@ -25,7 +25,7 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
   const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
   const [data, setData] = useState(() => unidata);
   // console.log("heref ",currentColorMap(0.5));
-  const [hoverInfo, setHoverInfo] = useState(0);
+  // const [hoverInfo, setHoverInfo] = useState(0);
   // const [opacityNissl, setOpacityNissl] = useState(0);
   // const [opacitySS, setOpacitySS] = useState(1);
   // const [opacityAtlas, setOpacityAtlas] = useState(0);
