@@ -6,6 +6,7 @@ import {CSVLoader} from '@loaders.gl/csv';
 import RangeSlider from 'react-bootstrap-range-slider';
 import {Form, FormGroup, Col, Row} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
+import {OrthographicView} from '@deck.gl/core';
 
 
 function Loader(props) {
@@ -18,6 +19,7 @@ function Loader(props) {
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
+  const [opacityVal, setOpacityVal] = useState(0.5);
 
   let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
     'Mbp', 'Plp1', 'Mag',
@@ -104,6 +106,10 @@ function Loader(props) {
 
   }, [basePath, chosenPuckid, chosenGene]);
 
+  const ortho_view = new OrthographicView({
+    id:"ortho_view",
+    controller:true
+  });
 
   return(
     <div>
@@ -155,12 +161,35 @@ function Loader(props) {
             Max: {maxUmiThreshold}
           </Col>
         </FormGroup>
+        <FormGroup as={Row}>
+          <Form.Label column sm="3">
+            Opacity proportion
+          </Form.Label>
+          <Col xs="2">
+            <RangeSlider
+              value={opacityVal}
+              onChange={e => setOpacityVal(e.target.value)}
+              min={0}
+              max={1}
+              step={0.01}
+            />
+          </Col>
+          <Col xs="1">
+            Max: {1}
+          </Col>
+        </FormGroup>
       </Form>
       <div className="add-border floater" >
-        <Scatterplot id={'left_splot'} unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}/>
+        <Scatterplot id={'left_splot'} 
+        unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold} 
+        opacityVal={opacityVal}
+        myView={ortho_view}/>
       </div>
       <div className="add-border floater">
-        <Scatterplot id={'right_splot'} unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}/>
+        <Scatterplot id={'right_splot'} 
+        unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}
+        opacityVal={opacityVal}
+        myView={ortho_view}/>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
-function Scatterplot({id, unidata, threshold, maxUmiThreshold}) {
+function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, myView}) {
   /**
    * Data format:
    * [
@@ -26,13 +26,17 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold}) {
   const [data, setData] = useState(() => unidata);
   // console.log("heref ",currentColorMap(0.5));
   const [hoverInfo, setHoverInfo] = useState(0);
+  // const [opacityNissl, setOpacityNissl] = useState(0);
+  // const [opacitySS, setOpacitySS] = useState(1);
+  // const [opacityAtlas, setOpacityAtlas] = useState(0);
+
 
   // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: data,
     pickable: true,
-    opacity: 0.8,
+    opacity: opacityVal,
     stroked: false,
     filled: true,
     radiusScale: 6,
@@ -65,6 +69,24 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold}) {
     // Save the view state and trigger rerender
     setViewState(viewState);
   }, []);
+
+  // useEffect(()=>{
+
+  //   if (opacityVal>=0 && opacityVal<1){
+  //     setOpacityAtlas(0);
+  //     setOpacitySS(opacityVal);
+  //     setOpacityNissl(1-opacityVal);
+  //   }else if(opacityVal>=1 && opacityVal<2){
+  //     setOpacityNissl(0);
+  //     setOpacitySS(2-opacityVal);
+  //     setOpacityAtlas(opacityVal-1);
+  //   }else if(opacityVal>=2 && opacityVal<3){
+  //     setOpacityNissl(opacityVal-2);
+  //     setOpacitySS(0);
+  //     setOpacityAtlas(3-opacityVal);
+  //   }
+
+  // },[opacityVal]);
 
   useEffect(()=>{
 
@@ -118,22 +140,34 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold}) {
 
   }, [maxUmiThreshold]);
 
-  const bitmaplayer = new BitmapLayer({
-    id: 'bitmap-layer',
-    bounds: [0, 320, 456, 0],
-    image: 'https://storage.googleapis.com/ml_portal/test_data/nis_001.png',
-    // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
-    opacity: 0.2
-  });
+  let bitmap_layer=null;
+  console.log(id==='left_spot')
 
+  if (id==='left_splot'){
+    bitmap_layer = new BitmapLayer({
+      id: 'bitmap-layer',
+      bounds: [0, 320, 456, 0],
+      image: 'https://storage.googleapis.com/ml_portal/test_data/nis_001.png',
+      // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
+      opacity: 1-opacityVal
+    });
+  }else if (id==='right_splot'){
+    bitmap_layer = new BitmapLayer({
+      id: 'bitmap-layer',
+      bounds: [0, 320, 456, 0],
+      image: 'https://storage.googleapis.com/ml_portal/test_data/chuck_sp_labelmap_001.png',
+      // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
+      opacity: 1-opacityVal
+    });
+  }
 
   return (
     <div className="splot" id={id}>
       <DeckGL initialViewState={viewState}
-        views={ortho_view}
+        views={myView}
         controller={true}
         onViewStateChange={onViewStateChange}
-        layers={[layer, bitmaplayer]} >
+        layers={[layer, bitmap_layer]} >
         {hoverInfo.object && (
         <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
           { hoverInfo.object.count }
