@@ -1,12 +1,11 @@
 import './App.css';
-import Loader from './components/LoaderComponent';
-import Scatterplot from './components/ScatterplotComponent';
+import Main from './components/MainComponent';
 
 function App() {
 
   return (
     <div>
-      <Loader/>
+      <Main />
     </div>
   );
 }

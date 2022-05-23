@@ -9,12 +9,14 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 
 
-function Loader(props) {
+function Loader({basePath, geneOptions, prefix}) {
+
+  console.log(geneOptions);
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   // const [chosenGene, setChosenGene] = useState(["Pcp4"])
-  const [chosenGene, setChosenGene] = useState(["Gad1"])
+  const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -29,9 +31,10 @@ function Loader(props) {
   //   'Rarres2', 'Foxj1'];
 
   // let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
-  let geneOptions = ['Gad1', 'Gad2', 'Slc17a7'];
+  // let geneOptions = ['Gad1', 'Gad2', 'Slc17a7'];
 
-  let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_csvs'
+  // let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_csvs'
+  // let basePath = basePath;
 
   useEffect(()=>{
 
@@ -60,7 +63,7 @@ function Loader(props) {
     if (geneOptions.includes(chosenGene[0])){
       // create filename string using gene name and puckid
       // let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene[0]}.csv`
-      let geneDataPath = `${basePath}/puck${chosenPuckid}/rc_${chosenGene[0]}.csv`
+      let geneDataPath = `${basePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
       console.log("geneDataPath ", geneDataPath);
 
       // read gene data
@@ -155,7 +158,7 @@ function Loader(props) {
               onChange={setChosenGene}
               options={geneOptions}
               placeholder="Choose another gene..."
-              defaultInputValue="Gad1"
+              defaultInputValue={geneOptions[0]}
             />
           </Col>
         </FormGroup>
