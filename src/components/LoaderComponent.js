@@ -13,7 +13,8 @@ function Loader(props) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
-  const [chosenGene, setChosenGene] = useState(["Pcp4"])
+  // const [chosenGene, setChosenGene] = useState(["Pcp4"])
+  const [chosenGene, setChosenGene] = useState(["Gad1"])
   const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -21,13 +22,16 @@ function Loader(props) {
   const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
   const [opacityVal, setOpacityVal] = useState(0.5);
 
-  let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
-    'Mbp', 'Plp1', 'Mag',
-    'Myoc', 'Agt', 'Gfap', 'Slc1a3', 'Aqp4',
-    'Dcn', 'Flt1',
-    'Rarres2', 'Foxj1'];
+  // let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
+  //   'Mbp', 'Plp1', 'Mag',
+  //   'Myoc', 'Agt', 'Gfap', 'Slc1a3', 'Aqp4',
+  //   'Dcn', 'Flt1',
+  //   'Rarres2', 'Foxj1'];
 
-  let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
+  // let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
+  let geneOptions = ['Gad1', 'Gad2', 'Slc17a7'];
+
+  let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_csvs'
 
   useEffect(()=>{
 
@@ -55,7 +59,8 @@ function Loader(props) {
 
     if (geneOptions.includes(chosenGene[0])){
       // create filename string using gene name and puckid
-      let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene[0]}.csv`
+      // let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene[0]}.csv`
+      let geneDataPath = `${basePath}/puck${chosenPuckid}/rc_${chosenGene[0]}.csv`
       console.log("geneDataPath ", geneDataPath);
 
       // read gene data
@@ -150,7 +155,7 @@ function Loader(props) {
               onChange={setChosenGene}
               options={geneOptions}
               placeholder="Choose another gene..."
-              defaultInputValue="Pcp4"
+              defaultInputValue="Gad1"
             />
           </Col>
         </FormGroup>
