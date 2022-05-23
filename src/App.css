@@ -44,7 +44,7 @@
 
 .floater {
   height: 60vh;
-  width: 48vw;
+  width: 48%;
   position: relative;
   float: left;
 }
