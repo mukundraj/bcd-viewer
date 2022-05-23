@@ -14,15 +14,18 @@
     "d3-scale-chromatic": "^3.0.0",
     "d3-svg-legend": "^2.25.6",
     "deck.gl": "^8.7.8",
+    "dom": "^0.0.3",
     "react": "^18.1.0",
     "react-bootstrap": "^2.3.1",
     "react-bootstrap-range-slider": "^3.0.4",
     "react-bootstrap-typeahead": "^6.0.0-alpha.11",
     "react-dom": "^18.1.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.2",
     "web-vitals": "^2.1.0",
     "zarr": "^0.5.1",
-    "zarr-js": "^2.2.1"
+    "zarr-js": "^2.2.1",
+    "zustand": "^4.0.0-rc.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -4,9 +4,10 @@ function MainViewer({dataConfig}) {
 
   return(
     <Loader 
-    basePath={dataConfig.basePath} 
-    geneOptions={dataConfig.geneOptions}
-    prefix={dataConfig.prefix}
+      basePath={dataConfig.basePath} 
+      geneOptions={dataConfig.geneOptions}
+      prefix={dataConfig.prefix}
+      title={dataConfig.title}
     />
   );
 }

@@ -6,8 +6,9 @@ import {OrthographicView} from '@deck.gl/core';
 import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
+import useStore from '../store/store'
 
-function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange, hoverInfo, setHoverInfo}) {
+function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange}) {
   /**
    * Data format:
    * [
@@ -16,7 +17,9 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
    * ]
    */
 
-
+  const hoverInfo = useStore(state => state.hoverInfo);
+  const setHoverInfo = useStore(state => state.setHoverInfo);
+  // seHoverInfo(5);
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
   // console.log(interpolateViridis(0.5));

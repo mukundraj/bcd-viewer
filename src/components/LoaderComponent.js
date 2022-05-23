@@ -9,7 +9,7 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 
 
-function Loader({basePath, geneOptions, prefix}) {
+function Loader({basePath, geneOptions, prefix, title}) {
 
   console.log(geneOptions);
 
@@ -126,11 +126,10 @@ function Loader({basePath, geneOptions, prefix}) {
     // Save the view state and trigger rerender
     setViewState(viewState);
   }, []);
-  const [hoverInfo, setHoverInfo] = useState(0);
 
   return(
     <div>
-      <h4>Brain Cell Data Viewer</h4>
+      <h4>{title}</h4>
       <Form>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
@@ -202,8 +201,6 @@ function Loader({basePath, geneOptions, prefix}) {
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
-          hoverInfo = {hoverInfo}
-          setHoverInfo = {setHoverInfo}
         />
       </div>
       <div className="add-border floater">
@@ -212,8 +209,6 @@ function Loader({basePath, geneOptions, prefix}) {
           opacityVal={opacityVal}
           viewState = {viewState}
           onViewStateChange={onViewStateChange}
-          hoverInfo = {hoverInfo}
-          setHoverInfo = {setHoverInfo}
         />
       </div>
     </div>
