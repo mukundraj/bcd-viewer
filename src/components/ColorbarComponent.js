@@ -19,7 +19,7 @@ function Colorbar(props){
       const d3 = await import("d3");
       // d3.selectAll("svg > *").remove();
 
-      console.log(currentColorMap)
+      console.log(maxUmiThreshold);
       let linear = d3.scaleLinear()
         .domain([0, 0.01, maxUmiThreshold])
         .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
@@ -42,7 +42,7 @@ function Colorbar(props){
       // .attr("transform", "translate(90,20)");
 
       var legendLinear = legendColor()
-        .shapeWidth(25)
+        .shapeWidth(35)
         .cells(10)
         .orient('horizontal')
         .scale(linear);
@@ -50,7 +50,7 @@ function Colorbar(props){
       svg.select(".legendLinear")
         .call(legendLinear);
 
-      svg.selectAll(".cell .label").attr("font-size", "10");
+      svg.selectAll(".cell .label").attr("font-size", "8");
 
     }
     drawColorbar();
@@ -59,7 +59,7 @@ function Colorbar(props){
 
   return(
     <>
-      <svg ref={svgRef} height="35px"/>
+      <svg ref={svgRef} width="90%" height="35px"/>
     </>
   );
 }

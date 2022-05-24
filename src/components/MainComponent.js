@@ -16,6 +16,7 @@ function Main(props){
             <Route path="/" element={<Test/>} />
             <Route path="/genex" element={<MainViewer dataConfig={DATACONFIGS[0]}/> } />
             <Route path="/regag" element={<MainViewer dataConfig={DATACONFIGS[1]}/> } />
+            <Route path="/normalized" element={<MainViewer dataConfig={DATACONFIGS[2]}/> } />
           </Routes>
         </Container>
       </BrowserRouter>

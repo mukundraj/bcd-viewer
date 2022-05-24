@@ -10,7 +10,7 @@ import {OrthographicView} from '@deck.gl/core';
 import useStore from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 
-function Loader({basePath, geneOptions, prefix, title}) {
+function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -107,7 +107,8 @@ function Loader({basePath, geneOptions, prefix, title}) {
 
 
       // setCoordsData(readData);
-      setMaxUmiThreshold(parseInt(readData['maxCount']));
+      // setMaxUmiThreshold(parseFloat(readData['maxCount']));
+      setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
       
 
     }
@@ -172,6 +173,7 @@ function Loader({basePath, geneOptions, prefix, title}) {
               onChange={e => setUmiThreshold(e.target.value)}
               min={0}
               max={maxUmiThreshold}
+              step={maxUmiThreshold/100}
             />
           </Col>
           <Col xs="1">

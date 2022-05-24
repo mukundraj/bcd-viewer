@@ -7,6 +7,7 @@ function MainViewer({dataConfig}) {
       basePath={dataConfig.basePath} 
       geneOptions={dataConfig.geneOptions}
       prefix={dataConfig.prefix}
+      maxCountMetadataKey={dataConfig.maxCountMetadataKey}
       title={dataConfig.title}
     />
   );

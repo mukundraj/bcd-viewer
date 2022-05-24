@@ -11,6 +11,7 @@ function Header(props){
           <Nav className="me-auto">
             <Nav.Link href="genex">GeneExp</Nav.Link>
             <Nav.Link href="regag">RegionAgg</Nav.Link>
+            <Nav.Link href="normalized">Normalized</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
