@@ -8,7 +8,7 @@ import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 import useStore from '../store/store'
 
-function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewState, onViewStateChange}) {
+function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange}) {
   /**
    * Data format:
    * [
@@ -19,15 +19,19 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
 
   const hoverInfo = useStore(state => state.hoverInfo);
   const setHoverInfo = useStore(state => state.setHoverInfo);
+  const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+
+  const currentColorMap = useStore(state => state.currentColorMap);
+  const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
+
   // seHoverInfo(5);
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
   // console.log(interpolateViridis(0.5));
   // console.log(hexToRGBArray(interpolateViridis(0.5)));
+  // const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
 
-  const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
   const [data, setData] = useState(() => unidata);
-  // console.log("heref ",currentColorMap(0.5));
   // const [hoverInfo, setHoverInfo] = useState(0);
   // const [opacityNissl, setOpacityNissl] = useState(0);
   // const [opacitySS, setOpacitySS] = useState(1);
@@ -63,37 +67,6 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
     controller:true
   });
 
-  // const [viewState, setViewState] = useState({
-  //   target: [228, 160, 0],
-  //   zoom: 0
-  // });
-
-
-  // const onViewStateChange = useCallback(({viewState}) => {
-  //   // Manipulate view state
-  //   // viewState.target[0] = Math.min(viewState.target[0], 10);
-  //   // Save the view state and trigger rerender
-  //   setViewState(viewState);
-  // }, []);
-
-  // useEffect(()=>{
-
-  //   if (opacityVal>=0 && opacityVal<1){
-  //     setOpacityAtlas(0);
-  //     setOpacitySS(opacityVal);
-  //     setOpacityNissl(1-opacityVal);
-  //   }else if(opacityVal>=1 && opacityVal<2){
-  //     setOpacityNissl(0);
-  //     setOpacitySS(2-opacityVal);
-  //     setOpacityAtlas(opacityVal-1);
-  //   }else if(opacityVal>=2 && opacityVal<3){
-  //     setOpacityNissl(opacityVal-2);
-  //     setOpacitySS(0);
-  //     setOpacityAtlas(3-opacityVal);
-  //   }
-
-  // },[opacityVal]);
-
   useEffect(()=>{
 
     // console.log(unidata);
@@ -102,49 +75,6 @@ function Scatterplot({id, unidata, threshold, maxUmiThreshold, opacityVal, viewS
     setData(data);
 
   }, [threshold, unidata]);
-
-  useEffect(()=>{
-    async function drawColorbar(){
-      const d3 = await import("d3");
-      d3.selectAll("svg > *").remove();
-      let svg = d3.select(`#${id}`).append("svg");
-
-
-      console.log("maxUmiThreshold ", maxUmiThreshold, {maxUmiThreshold});
-      // // var linear = d3.scaleLinear()
-      // //   .domain([0,10])
-      // //   .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
-      let linear = d3.scaleLinear()
-        .domain([0, 0.01, maxUmiThreshold])
-        .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
-
-      setCurrentColorMap(() => linear);
-
-      // // var svg = d3.select("svg");
-
-      svg
-        .style("position", "absolute")
-        .style("left", "2%")
-        .style("top", "2%");
-      svg.append("g")
-        .attr("class", "legendLinear")
-      // .attr("transform", "translate(90,20)");
-
-      var legendLinear = legendColor()
-        .shapeWidth(25)
-        .cells(10)
-        .orient('horizontal')
-        .scale(linear);
-
-      svg.select(".legendLinear")
-        .call(legendLinear);
-
-      svg.selectAll(".cell .label").attr("font-size", "10");
-
-    }
-    drawColorbar();
-
-  }, [maxUmiThreshold]);
 
   let bitmap_layer=null;
 

@@ -7,11 +7,10 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import {Form, FormGroup, Col, Row} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
-
+import useStore from '../store/store'
+import Colorbar from '../components/ColorbarComponent'
 
 function Loader({basePath, geneOptions, prefix, title}) {
-
-  console.log(geneOptions);
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -21,8 +20,10 @@ function Loader({basePath, geneOptions, prefix, title}) {
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
-  const [maxUmiThreshold, setMaxUmiThreshold] = useState(1);
   const [opacityVal, setOpacityVal] = useState(0.5);
+
+  const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+  const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
 
   // let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
   //   'Mbp', 'Plp1', 'Mag',
@@ -193,11 +194,14 @@ function Loader({basePath, geneOptions, prefix, title}) {
           <Col xs="1">
             Max: {1}
           </Col>
+          <Col xs="6">
+            <Colorbar/>
+          </Col>
         </FormGroup>
       </Form>
       <div className="add-border floater" >
         <Scatterplot id={'left_splot'} 
-          unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold} 
+          unidata={unifiedData} threshold={umiThreshold}  
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
@@ -205,7 +209,7 @@ function Loader({basePath, geneOptions, prefix, title}) {
       </div>
       <div className="add-border floater">
         <Scatterplot id={'right_splot'} 
-          unidata={unifiedData} threshold={umiThreshold} maxUmiThreshold={maxUmiThreshold}
+          unidata={unifiedData} threshold={umiThreshold} 
           opacityVal={opacityVal}
           viewState = {viewState}
           onViewStateChange={onViewStateChange}
