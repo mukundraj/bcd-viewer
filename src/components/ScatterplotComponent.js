@@ -8,7 +8,7 @@ import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 import useStore from '../store/store'
 
-function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange}) {
+function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
    * Data format:
    * [
@@ -46,12 +46,12 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
     opacity: opacityVal,
     stroked: false,
     filled: true,
-    radiusScale: 6,
+    radiusScale: 10,
     radiusMinPixels: 1,
     radiusMaxPixels: 100,
     lineWidthMinPixels: 1,
     // getPosition: d => d.coordinates,
-    getPosition: d => [d.z,d.y],
+    getPosition: d => [d.x,d.y],
     getRadius: d => 0.1,
     getFillColor: d => toRGBArray(currentColorMap(d.count)),
     getLineColor: d => [0, 0, 0],
@@ -81,16 +81,16 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   if (id==='left_splot'){
     bitmap_layer = new BitmapLayer({
       id: 'bitmap-layer',
-      bounds: [0, 320, 456, 0],
-      image: 'https://storage.googleapis.com/ml_portal/test_data/nis_001.png',
+      bounds: [0, 3605, 4096, 0],
+      image: curNisslUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
       opacity: 1-opacityVal
     });
   }else if (id==='right_splot'){
     bitmap_layer = new BitmapLayer({
       id: 'bitmap-layer',
-      bounds: [0, 320, 456, 0],
-      image: 'https://storage.googleapis.com/ml_portal/test_data/chuck_sp_labelmap_001.png',
+      bounds: [0, 3605, 4096, 0],
+      image: curAtlasUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
       opacity: 1-opacityVal
     });

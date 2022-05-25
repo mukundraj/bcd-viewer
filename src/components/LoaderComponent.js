@@ -10,6 +10,11 @@ import {OrthographicView} from '@deck.gl/core';
 import useStore from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
 function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
@@ -24,6 +29,10 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
+
+  const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
+
 
   // let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
   //   'Mbp', 'Plp1', 'Mag',
@@ -53,6 +62,8 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
     }
     fetchData();
+    setCurNisslUrl(`${basePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`);
+    setCurAtlasUrl(`${basePath}/puck${chosenPuckid}/chuck_sp_labelmap_${pad(chosenPuckid,3)}.png`);
 
     // update coordsData state
 
@@ -92,7 +103,6 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
       
   },[coordsData, chosenGene]);
   
-
   useEffect(()=>{
 
     // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
@@ -109,8 +119,6 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
       setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
-      
-
     }
     fetchData();
 
@@ -118,8 +126,9 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   
   const [viewState, setViewState] = useState({
-    target: [228, 160, 0],
-    zoom: 0
+    // target: [228, 160, 0],
+    target: [2048, 1802.5, 0],
+    zoom: -3
   });
 
   const onViewStateChange = useCallback(({viewState}) => {
@@ -207,6 +216,8 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
+          curNisslUrl={curNisslUrl}
+          curAtlasUral={curAtlasUrl}
         />
       </div>
       <div className="add-border floater">
@@ -215,6 +226,8 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
           opacityVal={opacityVal}
           viewState = {viewState}
           onViewStateChange={onViewStateChange}
+          curNisslUrl={curNisslUrl}
+          curAtlasUrl={curAtlasUrl}
         />
       </div>
     </div>
@@ -227,5 +240,6 @@ export default Loader;
 // https://devtrium.com/posts/async-functions-useeffect
 // https://stackoverflow.com/questions/64557638/how-to-polyfill-node-core-modules-in-webpack-5
 // https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
+// https://stackoverflow.com/questions/2998784/how-to-output-numbers-with-leading-zeros-in-javascript
 
 
