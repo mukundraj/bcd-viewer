@@ -1,7 +1,55 @@
-import {Navbar, Container, Nav} from 'react-bootstrap'
+import {Navbar, Container, Nav, Button} from 'react-bootstrap'
+import { app } from '../firebaseConfig';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useState, useEffect } from 'react'
+import useStore from '../store/store'
+
 
 function Header(props){
+  
+  const isLoggedIn = useStore(state => state.isLoggedIn);
+  const setIsLoggedIn = useStore(state => state.setIsLoggedIn);
+  const setAccessToken = useStore(state => state.setAccessToken);
+  const accessToken = useStore(state => state.accessToken);
 
+  const [loginButtonText, setLoginButtonText] = useState("Login");
+
+  useEffect(()=>{
+
+    if (isLoggedIn){
+      setLoginButtonText("Logged In")
+    }else{
+      setLoginButtonText("Login")
+    }
+
+  },[isLoggedIn]);
+
+  function login(){
+
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ...
+        setAccessToken(token);
+        setIsLoggedIn(true);
+
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
 
   return(
     <>
@@ -13,6 +61,9 @@ function Header(props){
             <Nav.Link href="regag">RegionAgg</Nav.Link>
             <Nav.Link href="normalized">Normalized</Nav.Link>
           </Nav>
+          <Nav>
+            <Button onClick={login}>{loginButtonText}</Button>
+          </Nav>
         </Container>
       </Navbar>
     </>
@@ -20,3 +71,7 @@ function Header(props){
 }
 
 export default Header;
+
+// References
+// - https://firebase.google.com/docs/auth/web/google-signin
+// https://firebase.google.com/docs/auth/web/google-signin#advanced-handle-the-sign-in-flow-manually

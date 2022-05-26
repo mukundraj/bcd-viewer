@@ -7,8 +7,11 @@ const useStore = create(set => ({
     maxUmiThreshold:0,
     setMaxUmiThreshold: (val) => set({maxUmiThreshold:val}),
     currentColorMap:interpolateViridis,
-    setCurrentColorMap: (val) => set({currentColorMap:val})
-
+    setCurrentColorMap: (val) => set({currentColorMap:val}),
+    isLoggedIn: false,
+    setIsLoggedIn: (val) => set({isLoggedIn:val}),
+    accessToken:null,
+    setAccessToken: (val) => set({accessToken:val}),
 }));
 
 export default useStore;
