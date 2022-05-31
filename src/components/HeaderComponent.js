@@ -1,6 +1,6 @@
 import {Navbar, Container, Nav, Button} from 'react-bootstrap'
 import { app } from '../firebaseConfig';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { useState, useEffect } from 'react'
 import useStore from '../store/store'
 
@@ -17,40 +17,52 @@ function Header(props){
   useEffect(()=>{
 
     if (isLoggedIn){
-      setLoginButtonText("Logged In")
+      setLoginButtonText("Logout")
     }else{
       setLoginButtonText("Login")
     }
 
   },[isLoggedIn]);
 
-  function login(){
+  function logInOut(){
 
-    const provider = new GoogleAuthProvider();
-    // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    provider.addScope('https://www.googleapis.com/auth/devstorage.read_only')
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // ...
-        setAccessToken(token);
-        setIsLoggedIn(true);
+    if(!isLoggedIn){
+      const provider = new GoogleAuthProvider();
+      // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+      provider.addScope('https://www.googleapis.com/auth/devstorage.read_only')
+      const auth = getAuth();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+          // ...
+          setAccessToken(token);
+          setIsLoggedIn(true);
 
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+        }).catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.customData.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          // ...
+        });
+    }else{
+      const auth = getAuth();
+      signOut(auth).then(()=>{
+
+        setIsLoggedIn(false);
+
+      }).catch((error)=>{
+
       });
+
+    }
   }
 
   return(
@@ -64,7 +76,7 @@ function Header(props){
             <Nav.Link href="normalized">Normalized</Nav.Link>
           </Nav>
           <Nav>
-            <Button onClick={login}>{loginButtonText}</Button>
+            <Button onClick={logInOut}>{loginButtonText}</Button>
           </Nav>
         </Container>
       </Navbar>
