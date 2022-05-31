@@ -27,6 +27,8 @@ function Header(props){
   function login(){
 
     const provider = new GoogleAuthProvider();
+    // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    provider.addScope('https://www.googleapis.com/auth/devstorage.read_only')
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then((result) => {

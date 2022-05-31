@@ -7,6 +7,7 @@ import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 import useStore from '../store/store'
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
@@ -32,6 +33,8 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   // const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
 
   const [data, setData] = useState(() => unidata);
+  const accessToken = useStore(state => state.accessToken);
+  const isLoggedIn = useStore(state => state.isLoggedIn);
   // const [hoverInfo, setHoverInfo] = useState(0);
   // const [opacityNissl, setOpacityNissl] = useState(0);
   // const [opacitySS, setOpacitySS] = useState(1);

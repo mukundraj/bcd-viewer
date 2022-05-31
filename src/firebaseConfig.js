@@ -8,7 +8,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyChGGPLIx-KEhoTNGoE0B-fYN-AHVlFBas",
   authDomain: "velina-208320.firebaseapp.com",
   projectId: "velina-208320",
-  storageBucket: "velina-208320.appspot.com",
+  storageBucket: "ml_portal2",
   messagingSenderId: "237653208032",
   appId: "1:237653208032:web:11721d3502de5f811b1985"
 };
