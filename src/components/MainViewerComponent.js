@@ -18,6 +18,7 @@ function MainViewer({dataConfig}) {
         prefix={dataConfig.prefix}
         maxCountMetadataKey={dataConfig.maxCountMetadataKey}
         title={dataConfig.title}
+        relativePath={dataConfig.relativePath}
       />
     )
   }

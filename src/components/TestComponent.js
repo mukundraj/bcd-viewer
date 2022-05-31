@@ -1,11 +1,11 @@
 
 import {useCallback, useState, useEffect} from 'react'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import useStore from '../store/store'
+import {useStore, useAuthStore} from '../store/store'
 
 function Test(props){
 
-  const isLoggedIn = useStore(state => state.isLoggedIn);
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn);
   useEffect(()=>{
     if (isLoggedIn){
       const storage = getStorage();

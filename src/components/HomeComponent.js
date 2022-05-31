@@ -1,6 +1,7 @@
 import { useEffect, useState} from 'react'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {useStore, useAuthStore} from '../store/store'
+import Test from './TestComponent'
 
 function Home(props){
 
@@ -31,6 +32,7 @@ function Home(props){
   return(
     <>
       {content}
+      <Test/>
     </>
   );
 }

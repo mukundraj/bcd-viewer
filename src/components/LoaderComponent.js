@@ -9,13 +9,16 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 import {useStore,useAuthStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 function pad(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
 }
 
-function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
+function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, relativePath}) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -32,25 +35,37 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn);
 
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      const uid = user.uid;
+      // ...
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
 
-  // let geneOptions = ['Pcp4', 'Calb1', 'Gng13', 'Gabra6',
-  //   'Mbp', 'Plp1', 'Mag',
-  //   'Myoc', 'Agt', 'Gfap', 'Slc1a3', 'Aqp4',
-  //   'Dcn', 'Flt1',
-  //   'Rarres2', 'Foxj1'];
+  async function getUrl(pathInBucket){
+    console.log(pathInBucket);
+      const storage = getStorage();
+      const gsReference = ref(storage, pathInBucket);
+      let url = await getDownloadURL(ref(storage, gsReference))
+        .then((url) => url);
+    console.log(url);
+    return url;
+  }
 
-  // let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons'
-  // let geneOptions = ['Gad1', 'Gad2', 'Slc17a7'];
-
-  // let basePath = 'https://storage.googleapis.com/ml_portal/test_data/gene_csvs'
-  // let basePath = basePath;
-
+  // loading background image data and coords on puck change
   useEffect(()=>{
 
     // create full coords path
     let coordsPath = `${basePath}/puck${chosenPuckid}/coords.csv`
-    console.log("coordsPath ", coordsPath);
+    // console.log("coordsPath ", coordsPath);
 
     // read coords data
     const fetchData = async () => {
@@ -62,6 +77,8 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
     }
     fetchData();
+    let url = getUrl(`${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`)
+    console.log(url);
     setCurNisslUrl(`${basePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`);
     setCurAtlasUrl(`${basePath}/puck${chosenPuckid}/chuck_sp_labelmap_${pad(chosenPuckid,3)}.png`);
 
@@ -69,12 +86,12 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
 
   },[basePath, chosenPuckid]);
 
+  // loading new counts on new gene selection
   useEffect(()=>{
     // console.log("new chosen gene ", chosenGene);
 
     if (geneOptions.includes(chosenGene[0])){
       // create filename string using gene name and puckid
-      // let geneDataPath = `${basePath}/puck${chosenPuckid}/gene_${chosenGene[0]}.csv`
       let geneDataPath = `${basePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
       console.log("geneDataPath ", geneDataPath);
 
@@ -93,6 +110,7 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
         setUnifiedData(readData);
 
         // let maxVal = Math.max(...unifiedData.map(o => o.count));
+        // console.log(unifiedData);
         console.log("new puck loaded")
 
       }
@@ -103,6 +121,7 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title}) {
       
   },[coordsData, chosenGene]);
   
+  // loading meta data on new puck or new gene selection
   useEffect(()=>{
 
     // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
@@ -241,5 +260,7 @@ export default Loader;
 // https://stackoverflow.com/questions/64557638/how-to-polyfill-node-core-modules-in-webpack-5
 // https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
 // https://stackoverflow.com/questions/2998784/how-to-output-numbers-with-leading-zeros-in-javascript
+// https://firebase.google.com/docs/auth/web/manage-users - check if signed in already
+
 
 
