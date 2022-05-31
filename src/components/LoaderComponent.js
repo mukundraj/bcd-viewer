@@ -7,7 +7,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import {Form, FormGroup, Col, Row} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
-import useStore from '../store/store'
+import {useStore,useAuthStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 
 function pad(num, size) {

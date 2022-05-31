@@ -2,15 +2,15 @@ import {Navbar, Container, Nav, Button} from 'react-bootstrap'
 import { app } from '../firebaseConfig';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { useState, useEffect } from 'react'
-import useStore from '../store/store'
+import {useStore, useAuthStore} from '../store/store'
 
 
 function Header(props){
   
-  const isLoggedIn = useStore(state => state.isLoggedIn);
-  const setIsLoggedIn = useStore(state => state.setIsLoggedIn);
-  const setAccessToken = useStore(state => state.setAccessToken);
-  const accessToken = useStore(state => state.accessToken);
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+  const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
+  const setAccessToken = useAuthStore(state => state.setAccessToken);
+  const accessToken = useAuthStore(state => state.accessToken);
 
   const [loginButtonText, setLoginButtonText] = useState("Login");
 
@@ -25,6 +25,7 @@ function Header(props){
   },[isLoggedIn]);
 
   function logInOut(){
+    console.log("logInOut called..");
 
     if(!isLoggedIn){
       const provider = new GoogleAuthProvider();
