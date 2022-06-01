@@ -1,0 +1,15 @@
+FROM node:16-buster as build
+WORKDIR /bcd-viewer
+
+COPY package.json .
+RUN yarn install --legacy-peer-deps
+COPY . .
+
+# Fix from https://stackoverflow.com/questions/62663167/dockerizing-react-in-production-mode-fatal-error-ineffective-mark-compacts-nea
+# ENV GENERATE_SOURCEMAP=false
+
+RUN yarn run build --legacy-peer-deps
+
+from nginx:1.21.4-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /bcd-viewer/build /usr/share/nginx/html
