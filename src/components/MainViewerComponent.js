@@ -3,10 +3,12 @@ import Home from './HomeComponent'
 import {useStore,useAuthStore} from '../store/store'
 
 
-function MainViewer({dataConfig}) {
+function MainViewer({dataConfig, route}) {
 
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+  const setCurRoute = useStore(state => state.setCurRoute);
 
+  setCurRoute(route);
 
   if (isLoggedIn)
   {

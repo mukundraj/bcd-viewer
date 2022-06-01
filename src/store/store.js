@@ -9,6 +9,8 @@ export const useStore = create(set => ({
     setMaxUmiThreshold: (val) => set({maxUmiThreshold:val}),
     currentColorMap:interpolateViridis,
     setCurrentColorMap: (val) => set({currentColorMap:val}),
+    curRoute: 'none',
+    setCurRoute: (val) => set({curRoute:val})
     }));
 
 export const useAuthStore = create(persist(set => ({

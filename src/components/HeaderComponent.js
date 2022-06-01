@@ -11,6 +11,7 @@ function Header(props){
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
   const setAccessToken = useAuthStore(state => state.setAccessToken);
   const accessToken = useAuthStore(state => state.accessToken);
+  const curRoute = useStore(state => state.curRoute)
 
   const [loginButtonText, setLoginButtonText] = useState("Login");
 
@@ -76,9 +77,9 @@ function Header(props){
         <Container>
           <Navbar.Brand href="/">Brain Cell Data Viewer</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="genex">GeneExp</Nav.Link>
-            <Nav.Link href="regag">RegionAgg</Nav.Link>
-            <Nav.Link href="normalized">Normalized</Nav.Link>
+            <Nav.Link active={curRoute==="genex"} href="genex">GeneExp</Nav.Link>
+            <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link>
+            <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link>
           </Nav>
           <Nav>
             <Button onClick={logInOut}>{loginButtonText}</Button>
@@ -95,3 +96,4 @@ export default Header;
 // - https://firebase.google.com/docs/auth/web/google-signin
 // https://firebase.google.com/docs/auth/web/google-signin#advanced-handle-the-sign-in-flow-manually
 // https://firebase.google.com/docs/auth/web/auth-state-persistence
+// https://stackoverflow.com/questions/37828543/how-to-pass-props-without-value-to-component
