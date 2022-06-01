@@ -13,7 +13,6 @@ function MainViewer({dataConfig}) {
     console.log(String(isLoggedIn));
     return(
       <Loader 
-        basePath={dataConfig.basePath} 
         geneOptions={dataConfig.geneOptions}
         prefix={dataConfig.prefix}
         maxCountMetadataKey={dataConfig.maxCountMetadataKey}

@@ -18,7 +18,7 @@ function pad(num, size) {
     return s.substr(s.length-size);
 }
 
-function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, relativePath}) {
+function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath}) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -64,12 +64,13 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
   useEffect(()=>{
 
     // create full coords path
-    let coordsPath = `${basePath}/puck${chosenPuckid}/coords.csv`
     // console.log("coordsPath ", coordsPath);
 
     // read coords data
     const fetchData = async () => {
-      const readData = await load(coordsPath, [CSVLoader], {csv:{delimiter:":"}});
+      let coordsPath = `${relativePath}/puck${chosenPuckid}/coords.csv`
+      let coordsUrl = await getUrl(coordsPath);
+      const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
       setCoordsData(readData);
     console.log("new  puckid ", chosenPuckid);
@@ -77,14 +78,25 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
 
     }
     fetchData();
-    let url = getUrl(`${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`)
-    console.log(url);
-    setCurNisslUrl(`${basePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`);
-    setCurAtlasUrl(`${basePath}/puck${chosenPuckid}/chuck_sp_labelmap_${pad(chosenPuckid,3)}.png`);
 
-    // update coordsData state
+    const fetchNissl = async () => {
+      let nis_url = await getUrl(`${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`)
 
-  },[basePath, chosenPuckid]);
+      setCurNisslUrl(nis_url);
+    }
+
+    const fetchAtlas = async () => {
+      let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_labelmap_${pad(chosenPuckid,3)}.png`)
+
+      setCurAtlasUrl(atlas_url);
+
+    }
+
+    fetchNissl();
+    fetchAtlas();
+
+
+  },[relativePath, chosenPuckid]);
 
   // loading new counts on new gene selection
   useEffect(()=>{
@@ -92,12 +104,13 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
 
     if (geneOptions.includes(chosenGene[0])){
       // create filename string using gene name and puckid
-      let geneDataPath = `${basePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
-      console.log("geneDataPath ", geneDataPath);
 
       // read gene data
       const fetchData = async () => {
-        const geneData = await load(geneDataPath, [CSVLoader]);
+      let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      let geneDataUrl = await getUrl(geneDataPath);
+      console.log("geneDataPath ", geneDataUrl);
+        const geneData = await load(geneDataUrl, [CSVLoader]);
 
 
         // create unifiedData
@@ -108,6 +121,7 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
 
         // update state of unifiedData
         setUnifiedData(readData);
+        // console.log(readData);
 
         // let maxVal = Math.max(...unifiedData.map(o => o.count));
         // console.log(unifiedData);
@@ -126,11 +140,12 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
 
     // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
     const fetchData = async () => {
-      let meta_data_path = `${basePath}/puck${chosenPuckid}/metadata_gene_${chosenGene}.json`
+      let meta_data_path = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene}.json`
+      let metaDataUrl = await getUrl(meta_data_path);
       // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
       console.log('meta_data_path ', meta_data_path);
       // console.log('meta_data_path ', meta_data_path2);
-      const readData = await fetch(meta_data_path)
+      const readData = await fetch(metaDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
 
@@ -141,7 +156,7 @@ function Loader({basePath, geneOptions, prefix, maxCountMetadataKey, title, rela
     }
     fetchData();
 
-  }, [basePath, chosenPuckid, chosenGene]);
+  }, [relativePath, chosenPuckid, chosenGene]);
 
   
   const [viewState, setViewState] = useState({

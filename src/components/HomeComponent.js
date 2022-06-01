@@ -28,11 +28,9 @@ function Home(props){
     }
   },[isLoggedIn]);
 
-
   return(
     <>
       {content}
-      <Test/>
     </>
   );
 }
