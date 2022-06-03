@@ -7,7 +7,7 @@ export const DATACONFIGS =
       geneOptions: ['Pcp4', 'Calb1', 'Gng13', 'Gabra6', 'Mbp', 'Plp1', 'Mag', 'Myoc', 'Agt', 'Gfap', 'Slc1a3', 'Aqp4', 'Dcn', 'Flt1', 'Rarres2', 'Foxj1'],
       maxCountMetadataKey: "maxCount",
       title: "Gene Expression",
-      relativePath: "test_data/gene_jsons"
+      relativePath: "test_data2/gene_jsons"
 
     },
     {
@@ -17,7 +17,7 @@ export const DATACONFIGS =
       geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
       maxCountMetadataKey: "maxCount",
       title: "Regionally Aggregated Expression",
-      relativePath: "test_data/gene_csvs"
+      relativePath: "test_data2/gene_csvs"
     },
     {
       id: 2,
@@ -26,6 +26,6 @@ export const DATACONFIGS =
       geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
       maxCountMetadataKey: "maxNormedCount",
       title: "Regionally Aggregated Normalized Expression",
-      relativePath: "test_data/gene_csvs"
+      relativePath: "test_data2/gene_csvs"
     },
   ]

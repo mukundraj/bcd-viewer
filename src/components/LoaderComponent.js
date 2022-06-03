@@ -185,12 +185,12 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
               value={chosenPuckid}
               onChange={e => setChosenPuckid(e.target.value)}
               min={1}
-              max={41}
+              max={207}
               step={2}
             />
           </Col>
           <Col xs="1">
-            Max: {41}
+            Max: {207}
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
