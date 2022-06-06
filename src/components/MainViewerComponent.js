@@ -1,5 +1,5 @@
 import Loader from './LoaderComponent';
-import Home from './HomeComponent'
+import Home from './HomeComponent';
 import {useStore,useAuthStore} from '../store/store'
 
 

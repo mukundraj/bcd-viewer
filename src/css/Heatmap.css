@@ -1,0 +1,35 @@
+body {
+  background-color: #f0f0f0;
+  margin: 0px;
+  overflow: hidden;
+}
+.heatmap {
+  height: 500px;
+  width: 500px;
+  position: relative;
+  display: inline-block;
+}
+.tooltip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 5px;
+  font-size: 12px;
+}
+
+.tooltip:after {
+  content: " ";
+  position: absolute;
+  left: -10px;
+  top: 10px;
+  border-top: 10px solid transparent;
+  border-right: 10px solid rgba(255, 255, 255, 0.7);
+  border-left: none;
+  border-bottom: 10px solid transparent;
+}
+
+.tooltip tr {
+  height: 1px;
+}
