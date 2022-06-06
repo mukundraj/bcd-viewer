@@ -80,6 +80,7 @@ function Header(props){
             <Nav.Link active={curRoute==="genex"} href="genex">GeneExp</Nav.Link>
             <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link>
             <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link>
+            <Nav.Link active={curRoute==="qcindex"} href="qcindex">QC</Nav.Link>
           </Nav>
           <Nav>
             <Button onClick={logInOut}>{loginButtonText}</Button>

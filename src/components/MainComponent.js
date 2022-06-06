@@ -1,5 +1,6 @@
 import {DATACONFIGS} from '../shared/dataConfigs'
 import MainViewer from './MainViewerComponent'
+import QCIndex from './QCIndexComponent'
 import {Container} from 'react-bootstrap'
 import Header from './HeaderComponent'
 import Home from './HomeComponent'
@@ -18,6 +19,7 @@ function Main(props){
             <Route path="/genex" element={<MainViewer dataConfig={DATACONFIGS[0]} route="genex"/> } />
             <Route path="/regag" element={<MainViewer dataConfig={DATACONFIGS[1]} route="regag"/> } />
             <Route path="/normalized" element={<MainViewer dataConfig={DATACONFIGS[2]} route="normalized"/> } />
+            <Route path="/qcindex" element={<QCIndex route="qcindex"/>} />
           </Routes>
         </Container>
       </BrowserRouter>
