@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 import '../css/Heatmap.css';
 // import ScriptTag from 'react-script-tag';
 
-function Heatmap(props){
+function Heatmap({data}){
 
   useEffect(() => {
 
@@ -18,19 +18,19 @@ function Heatmap(props){
       { color: "#CC0000", point: 0.857142857142857 },
       { color: "#800000", point: 1 },
     ];
-    var n = 20;
-    var m = 20;
-    var z = [];
-    for (var j = 1; j < m + 1; ++j) {
-      let zz = [];
-      for (var i = 1; i < n + 1; ++i) {
-        zz.push(i);
-      }
-      z.push(zz);
-    }
-    var x = [...Array(n).keys()];
-    var y = [...Array(m).keys()];
-    var data = { x, y, z };
+    // var n = 20;
+    // var m = 20;
+    // var z = [];
+    // for (var j = 1; j < m + 1; ++j) {
+    //   let zz = [];
+    //   for (var i = 1; i < n + 1; ++i) {
+    //     zz.push(i);
+    //   }
+    //   z.push(zz);
+    // }
+    // var x = [...Array(n).keys()];
+    // var y = [...Array(m).keys()];
+    // var data = { x, y, z };
     var options = {
       colors,
       thresholdStep: 19,
@@ -40,10 +40,11 @@ function Heatmap(props){
       fontSize: 15,
       zMin: 0,
     };
+    console.log(data);
+    if (data)
+      heatmap("heatmap", data, options);
 
-    heatmap("heatmap", data, options);
-
-  }, []);
+  }, [data]);
 
   return(
     <>
