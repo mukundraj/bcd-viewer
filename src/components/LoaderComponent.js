@@ -11,6 +11,7 @@ import {useStore,useAuthStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {getUrl} from "../shared/common"
 
 
 function pad(num, size) {
@@ -50,15 +51,15 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
     }
   });
 
-  async function getUrl(pathInBucket){
-    console.log(pathInBucket);
-      const storage = getStorage();
-      const gsReference = ref(storage, pathInBucket);
-      let url = await getDownloadURL(ref(storage, gsReference))
-        .then((url) => url);
-    console.log(url);
-    return url;
-  }
+  // async function getUrl(pathInBucket){
+  //   console.log(pathInBucket);
+  //     const storage = getStorage();
+  //     const gsReference = ref(storage, pathInBucket);
+  //     let url = await getDownloadURL(ref(storage, gsReference))
+  //       .then((url) => url);
+  //   console.log(url);
+  //   return url;
+  // }
 
   // loading background image data and coords on puck change
   useEffect(()=>{

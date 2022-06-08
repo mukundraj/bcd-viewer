@@ -5,6 +5,7 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {useEffect, useState} from 'react'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {getUrl} from "../shared/common"
 
 function QCIndex({route}){
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
@@ -25,15 +26,15 @@ function QCIndex({route}){
     }
   });
 
-  async function getUrl(pathInBucket){
-    console.log(pathInBucket);
-      const storage = getStorage();
-      const gsReference = ref(storage, pathInBucket);
-      let url = await getDownloadURL(ref(storage, gsReference))
-        .then((url) => url);
-    console.log(url);
-    return url;
-  }
+  // async function getUrl(pathInBucket){
+  //   console.log(pathInBucket);
+  //     const storage = getStorage();
+  //     const gsReference = ref(storage, pathInBucket);
+  //     let url = await getDownloadURL(ref(storage, gsReference))
+  //       .then((url) => url);
+  //   console.log(url);
+  //   return url;
+  // }
   
   useEffect(()=>{
 
