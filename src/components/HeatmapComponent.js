@@ -1,10 +1,42 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb'
 import heatmap from 'canvas-heatmap';
-import {useEffect} from 'react';
 import '../css/Heatmap.css';
 // import ScriptTag from 'react-script-tag';
+import {useLocation} from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {useEffect, useState} from 'react'
+import {getUrl, fetchJsonAuth} from "../shared/common"
 
-function Heatmap({data}){
+
+function Heatmap({location}){
+
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      const uid = user.uid;
+      // ...
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
+
+  const [data,setData]=useState(null);
+  const params = useLocation();
+  console.log(params);
+
+  // const {title} = location.state;
+  // const {desc} = location.state;
+  // const {data} = location.state;
+  // const { title = 'defaultValue' } = location.state || {}
+  useEffect(()=>{
+
+    let pathInBucket = params.state.filepath;
+    fetchJsonAuth(pathInBucket, setData);
+
+  }, [params]);
 
   useEffect(() => {
 
@@ -40,7 +72,8 @@ function Heatmap({data}){
       fontSize: 15,
       zMin: 0,
     };
-    console.log(data);
+    // console.log(data);
+    // console.log(title);
     if (data)
       heatmap("heatmap", data, options);
 
@@ -48,12 +81,18 @@ function Heatmap({data}){
 
   return(
     <>
-      <p>Heatmap here</p>
+      <Breadcrumb>
+        <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+        <Breadcrumb.Item href="/qcindex">QC Index</Breadcrumb.Item>
+        <Breadcrumb.Item active>{params.state.title}</Breadcrumb.Item>
+      </Breadcrumb>
+      <h3>{params.state.title}</h3>
+      <h5>{params.state.desc}</h5>
       <div id="heatmap" className="heatmap"></div>
     </>
   )
 
-
 }
 
 export default Heatmap;
+

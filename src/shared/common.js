@@ -11,3 +11,28 @@ export  async function getUrl(pathInBucket){
     return url;
   }
 
+
+// read json data after authentication and pass to setData
+ export const fetchJsonAuth = async (pathInBucket, setData) => {
+      let secretUrl = await getUrl(pathInBucket);
+      // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      console.log(secretUrl);
+
+      fetch(secretUrl
+        ,{
+          // headers : { 
+          //   'Content-Type': 'application/json',
+          //   'Accept': 'application/json'
+          // }
+        }
+      )
+        .then(function(response){
+          // console.log(response)
+          return response.json();
+        })
+        .then(function(myJson) {
+          console.log(myJson);
+          setData(myJson);
+        });
+    }
+

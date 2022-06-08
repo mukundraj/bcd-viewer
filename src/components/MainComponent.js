@@ -7,6 +7,7 @@ import Home from './HomeComponent'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Test from './TestComponent'
 import { useState, useEffect} from 'react'
+import Heatmap from './HeatmapComponent'
 
 function Main(props){
 
@@ -42,6 +43,7 @@ function Main(props){
             <Route path="/regag" element={<MainViewer dataConfig={DATACONFIGS[1]} route="regag"/> } />
             <Route path="/normalized" element={<MainViewer dataConfig={DATACONFIGS[2]} route="normalized"/> } />
             <Route path="/qcindex" element={<QCIndex route="qcindex"/>} />
+            <Route path="/heatmap" element={<Heatmap route="heatmap"/>} />
           </Routes>
         </Container>
       </BrowserRouter>
