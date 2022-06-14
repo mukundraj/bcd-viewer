@@ -66,8 +66,8 @@ function Heatmap({location}){
     var options = {
       colors,
       thresholdStep: 19,
-      xLabel: "x-axis",
-      yLabel: "y-axis",
+      xLabel: "puckid",
+      yLabel: "regions",
       zLabel: "z-axis",
       fontSize: 15,
       zMin: 0,

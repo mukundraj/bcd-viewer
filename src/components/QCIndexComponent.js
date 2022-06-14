@@ -33,10 +33,10 @@ function QCIndex({route}){
   
   useEffect(()=>{
 
-    let pathInBucket = `test_data2/qc_mats/sample1.json`
-    fetchJsonAuth(pathInBucket, setData);
+    // let pathInBucket = `test_data2/qc_mats/sample1.json`
+    // fetchJsonAuth(pathInBucket, setData);
 
-    let metadata_path = `test_data2/qc_mats/metadata.json`
+    let metadata_path = `test_data2/qc_mats/processed/metadata.json`
     fetchJsonAuth(metadata_path, setMetadata);
 
     console.log(metadata);
@@ -50,23 +50,55 @@ function QCIndex({route}){
   function handleClick(item){
     navigate("/heatmap", 
       {state:{title: item.name,
-        desc: item.filename,
+        desc: item.desc,
         filename: item.filename,
-        filepath: `test_data2/qc_mats/${item.filename}`}
+        filepath: `test_data2/qc_mats/processed/${item.filename}`}
       });
   }
   let rows = null;
+  let rows_nz = null;
     
-  if (metadata)
-    rows = metadata['analysis_metadata'].map((item, index)=>
+  if (metadata){
+    let init_rows =  metadata['analysis_metadata'];
+    init_rows.sort((a,b)=>{
+      if (a.name>b.name){
+        return 1;
+      }
+      if (a.name<b.name){
+        return -1;
+      }
+      return 0;
+    });
+    rows = init_rows.map((item, index)=>
       <tr key={index}>
         <td>{item.name}</td>
-        <td>{item.filename}</td>
+        <td>{item.desc}</td>
         <td>
           <button type="button" onClick={ () => {handleClick(item)}}>view</button>
         </td>
       </tr>
     );
+    let init_rows_nz = metadata['ana_metadata_nonzero'];
+    init_rows_nz.sort((a,b)=>{
+      if (a.name>b.name){
+        return 1;
+      }
+      if (a.name<b.name){
+        return -1;
+      }
+      return 0;
+    });
+
+    rows_nz = init_rows_nz.map((item, index)=>
+      <tr key={index}>
+        <td>{item.name}</td>
+        <td>{item.desc}</td>
+        <td>
+          <button type="button" onClick={ () => {handleClick(item)}}>view</button>
+        </td>
+      </tr>
+    ).sort();
+  }
     
 
   if(isLoggedIn){
@@ -77,7 +109,8 @@ function QCIndex({route}){
           <Breadcrumb.Item active>QC Index</Breadcrumb.Item>
         </Breadcrumb>
         <h3>QC Index</h3>
-        <Table striped border="true" hover size="sm">
+        <div id="scroller">
+        <Table striped border="true" hover size="sm" className="table-responsive">
           <thead>
             <tr>
               <td>Name</td>
@@ -87,8 +120,10 @@ function QCIndex({route}){
           </thead>
           <tbody>
             {rows}
+            {rows_nz}
           </tbody>
         </Table>
+        </div>
         {/*<Heatmap title="title" desc="desc" data={data}/> */}
       </>
     )

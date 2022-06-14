@@ -48,3 +48,8 @@
   position: relative;
   float: left;
 }
+
+#scroller {
+  overflow-y: auto;
+  height: 80vh;
+}
