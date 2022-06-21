@@ -35,7 +35,7 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
 
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
-  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_wireframe_001.png');
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
 
   const auth = getAuth();
@@ -87,7 +87,7 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
     }
 
     const fetchAtlas = async () => {
-      let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_labelmap_${pad(chosenPuckid,3)}.png`)
+      let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
 
       setCurAtlasUrl(atlas_url);
 
