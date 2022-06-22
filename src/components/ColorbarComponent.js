@@ -19,19 +19,38 @@ function Colorbar(props){
       const d3 = await import("d3");
       // d3.selectAll("svg > *").remove();
 
-      console.log(maxUmiThreshold);
-      let linear = d3.scaleLinear()
-        .domain([0, 0.01, maxUmiThreshold])
-        .range([d3.color("#aaaaaa40").formatRgb(), d3.color(interpolateViridis(1)).formatRgb(), d3.color(interpolateViridis(0.0)).formatRgb()]);
+      // console.log(maxUmiThreshold);
+      // let linear = d3.scaleLinear()
+      //   .domain([0, 0.01, maxUmiThreshold/2, maxUmiThreshold])
+      //   .range([d3.color("#aaaaaa40").formatRgb(), 
+      //   d3.color(interpolateViridis(1)).formatRgb(), 
+      //   d3.color(interpolateViridis(0.5)).formatRgb(),
+      //   d3.color(interpolateViridis(0.0)).formatRgb()]);
 
-      setCurrentColorMap(linear);
+      let logColorScale = d3.scaleLog()
+        .domain([0.0001, 0.01, 0.25*maxUmiThreshold, 0.5*maxUmiThreshold, 0.75*maxUmiThreshold, maxUmiThreshold])
+        .range([ 
+        d3.color("#aaaaaa").formatRgb(),   
+        d3.color(interpolateViridis(1)).formatRgb(),   
+        d3.color(interpolateViridis(0.75)).formatRgb(),   
+        d3.color(interpolateViridis(0.5)).formatRgb(),
+        d3.color(interpolateViridis(0.25)).formatRgb(),
+        d3.color(interpolateViridis(0.0)).formatRgb()]);
+
+      let currentColorMap = function(val){
+        if (val===0){
+          return d3.color("#aaaaaa").formatRgb();
+        }else{
+          return logColorScale(val);
+        }
+      }
+      // linear.domain = logColorScale.domain;
+
+      setCurrentColorMap(currentColorMap);
 
        const svgEl = d3.select(svgRef.current);
        svgEl.selectAll("*").remove(); // Clear svg content before adding new elements
       const svg = svgEl.append("g")
-      // let linear = currentColorMap;
-
-      // // var svg = d3.select("svg");
 
       svg
         .style("position", "absolute")
@@ -42,10 +61,10 @@ function Colorbar(props){
       // .attr("transform", "translate(90,20)");
 
       var legendLinear = legendColor()
-        .shapeWidth(35)
-        .cells(10)
+        .shapeWidth(17)
+        .cells(15)
         .orient('horizontal')
-        .scale(linear);
+        .scale(logColorScale);
 
       svg.select(".legendLinear")
         .call(legendLinear);
