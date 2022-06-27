@@ -19,12 +19,12 @@ function pad(num, size) {
     return s.substr(s.length-size);
 }
 
-function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath}) {
+function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
-  // const [chosenGene, setChosenGene] = useState(["Pcp4"])
-  const [chosenGene, setChosenGene] = useState([geneOptions[0]])
+  const [chosenGene, setChosenGene] = useState(["Pcp4"])
+  // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -34,8 +34,12 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
 
+
+  const geneOptions = useStore(state => state.geneOptions);
+  const setGeneOptions = useStore(state => state.setGeneOptions);
+
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
-  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_wireframe_001.png');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
 
   const auth = getAuth();
@@ -95,6 +99,32 @@ function Loader({geneOptions, prefix, maxCountMetadataKey, title, relativePath})
 
     fetchNissl();
     fetchAtlas();
+
+    const fetchGeneOptions = async () => {
+      let geneOptionsPath = `${relativePath}/puck${chosenPuckid}/geneOptions.json`
+      let geneOptionsUrl = await getUrl(geneOptionsPath);
+      // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      fetch(geneOptionsUrl
+      // ,{
+      //   headers : { 
+      //     'Content-Type': 'application/json',
+      //     'Accept': 'application/json'
+      //    }
+      // }
+      )
+        .then(function(response){
+          // console.log(response)
+          return response.json();
+        })
+        .then(function(myJson) {
+          console.log(myJson.geneOptions);
+          // setData(myJson)
+          setGeneOptions(myJson.geneOptions);
+        });
+    }
+
+
+    fetchGeneOptions();
 
 
   },[relativePath, chosenPuckid]);

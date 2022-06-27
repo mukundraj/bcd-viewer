@@ -10,7 +10,9 @@ export const useStore = create(set => ({
     currentColorMap:interpolateViridis,
     setCurrentColorMap: (val) => set({currentColorMap:val}),
     curRoute: 'none',
-    setCurRoute: (val) => set({curRoute:val})
+    setCurRoute: (val) => set({curRoute:val}),
+    geneOptions: ['Pcp4'],
+    setGeneOptions: (val) => set({geneOptions:val})
     }));
 
 export const useAuthStore = create(persist(set => ({

@@ -15,7 +15,6 @@ function MainViewer({dataConfig, route}) {
     console.log(String(isLoggedIn));
     return(
       <Loader 
-        geneOptions={dataConfig.geneOptions}
         prefix={dataConfig.prefix}
         maxCountMetadataKey={dataConfig.maxCountMetadataKey}
         title={dataConfig.title}
