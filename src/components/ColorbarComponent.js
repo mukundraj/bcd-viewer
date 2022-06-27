@@ -28,14 +28,16 @@ function Colorbar(props){
       //   d3.color(interpolateViridis(0.0)).formatRgb()]);
 
       let logColorScale = d3.scaleLog()
-        .domain([0.0001, 0.01, 0.25*maxUmiThreshold, 0.5*maxUmiThreshold, 0.75*maxUmiThreshold, maxUmiThreshold])
+        .domain([0.0001, 0.01, 0.2*maxUmiThreshold, 0.4*maxUmiThreshold, 0.6*maxUmiThreshold, 0.8*maxUmiThreshold, maxUmiThreshold])
         .range([ 
         d3.color("#aaaaaa").formatRgb(),   
         d3.color(interpolateViridis(1)).formatRgb(),   
-        d3.color(interpolateViridis(0.75)).formatRgb(),   
-        d3.color(interpolateViridis(0.5)).formatRgb(),
-        d3.color(interpolateViridis(0.25)).formatRgb(),
-        d3.color(interpolateViridis(0.0)).formatRgb()]);
+        d3.color(interpolateViridis(0.8)).formatRgb(),   
+        d3.color(interpolateViridis(0.6)).formatRgb(),   
+        d3.color(interpolateViridis(0.4)).formatRgb(),
+        d3.color(interpolateViridis(0.2)).formatRgb(),
+        d3.color(interpolateViridis(0.0)).formatRgb()
+        ]).interpolate(d3.interpolateRgb.gamma(2.2)); // https://observablehq.com/@d3/working-with-color
 
       let currentColorMap = function(val){
         if (val===0){

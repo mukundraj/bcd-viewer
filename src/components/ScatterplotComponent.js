@@ -40,7 +40,6 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   // const [opacitySS, setOpacitySS] = useState(1);
   // const [opacityAtlas, setOpacityAtlas] = useState(0);
 
-
   // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -50,12 +49,12 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
     stroked: false,
     filled: true,
     radiusScale: 10,
-    radiusMinPixels: 1,
+    radiusMinPixels: 2,
     radiusMaxPixels: 100,
     lineWidthMinPixels: 1,
     // getPosition: d => d.coordinates,
     getPosition: d => [d.x,d.y],
-    getRadius: d => 0.1,
+    getRadius: d => 0.15,
     getFillColor: d => toRGBArray(currentColorMap(d.count)),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001,
@@ -73,7 +72,8 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   useEffect(()=>{
 
     // console.log(unidata);
-    let data = unidata.filter(bead => bead['count']>=threshold)
+    let data_tmp = unidata.filter(bead => bead['count']>=threshold)
+    let data = data_tmp.sort((a,b) => (a.count > b.count)?1:-1);
     // console.log(data);
     setData(data);
 
@@ -105,10 +105,12 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
         views={ortho_view}
         controller={true}
         onViewStateChange={onViewStateChange}
-        layers={[layer, bitmap_layer]} >
+        layers={[layer, bitmap_layer]} 
+        getCursor={() => "crosshair"}
+      >
         {hoverInfo.object && (
           <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
-            count:{hoverInfo.object.count}, region:{hoverInfo.object.rname}
+            count:{hoverInfo.object.count}, region:{hoverInfo.object.rname}, {hoverInfo.object.x}, {hoverInfo.object.y}
           </div>
         )}
       </DeckGL>
@@ -126,3 +128,4 @@ export default Scatterplot;
 // https://css-tricks.com/how-to-stack-elements-in-css/
 // https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
 // deck gl autohighlight - https://github.com/visgl/deck.gl/discussions/5634
+// changing cursor style - https://github.com/visgl/deck.gl/issues/2220
