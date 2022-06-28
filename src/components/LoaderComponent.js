@@ -29,7 +29,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
-  const [opacityVal, setOpacityVal] = useState(0.5);
+  const [opacityVal, setOpacityVal] = useState(0.8);
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);

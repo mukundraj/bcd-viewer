@@ -1,12 +1,12 @@
 import useStore from '../store/store'
 import {useEffect,useState, useRef} from 'react'
-import {interpolateViridis} from 'd3-scale-chromatic'
+import {interpolatePlasma} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 
 function Colorbar(props){
 
 
-  // const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
+  // const [currentColorMap, setCurrentColorMap] = useState(() => interpolatePlasma); 
   // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const currentColorMap = useStore(state => state.currentColorMap);
   const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
@@ -23,20 +23,20 @@ function Colorbar(props){
       // let linear = d3.scaleLinear()
       //   .domain([0, 0.01, maxUmiThreshold/2, maxUmiThreshold])
       //   .range([d3.color("#aaaaaa40").formatRgb(), 
-      //   d3.color(interpolateViridis(1)).formatRgb(), 
-      //   d3.color(interpolateViridis(0.5)).formatRgb(),
-      //   d3.color(interpolateViridis(0.0)).formatRgb()]);
+      //   d3.color(interpolatePlasma(1)).formatRgb(), 
+      //   d3.color(interpolatePlasma(0.5)).formatRgb(),
+      //   d3.color(interpolatePlasma(0.0)).formatRgb()]);
 
       let logColorScale = d3.scaleLog()
         .domain([0.0001, 0.01, 0.2*maxUmiThreshold, 0.4*maxUmiThreshold, 0.6*maxUmiThreshold, 0.8*maxUmiThreshold, maxUmiThreshold])
         .range([ 
         d3.color("#aaaaaa").formatRgb(),   
-        d3.color(interpolateViridis(1)).formatRgb(),   
-        d3.color(interpolateViridis(0.8)).formatRgb(),   
-        d3.color(interpolateViridis(0.6)).formatRgb(),   
-        d3.color(interpolateViridis(0.4)).formatRgb(),
-        d3.color(interpolateViridis(0.2)).formatRgb(),
-        d3.color(interpolateViridis(0.0)).formatRgb()
+        d3.color(interpolatePlasma(0.0)).formatRgb(),   
+        d3.color(interpolatePlasma(0.2)).formatRgb(),   
+        d3.color(interpolatePlasma(0.2)).formatRgb(),   
+        d3.color(interpolatePlasma(0.4)).formatRgb(),
+        d3.color(interpolatePlasma(0.8)).formatRgb(),
+        d3.color(interpolatePlasma(1.0)).formatRgb()
         ]).interpolate(d3.interpolateRgb.gamma(2.2)); // https://observablehq.com/@d3/working-with-color
 
       let currentColorMap = function(val){
