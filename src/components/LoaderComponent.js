@@ -231,24 +231,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
           </Col>
         </Row>
       <Form>
-        <FormGroup as={Row}>
-          <Form.Label column sm="3">
-            Puck Depth
-          </Form.Label>
-          <Col xs="2">
-            <RangeSlider
-              value={chosenPuckid}
-              onChange={e => setChosenPuckid(e.target.value)}
-              min={1}
-              max={207}
-              step={2}
-            />
-          </Col>
-          <Col xs="1">
-            Max: {207}
-          </Col>
-        </FormGroup>
-        <FormGroup as={Row}>
+        <FormGroup as={Row} className="mt-4">
           <Form.Label column sm="3">Select Gene</Form.Label>
           <Col xs="3">
             <Typeahead
@@ -340,6 +323,7 @@ export default Loader;
 // https://stackoverflow.com/questions/50919164/how-to-merge-each-object-within-arrays-by-index
 // https://stackoverflow.com/questions/2998784/how-to-output-numbers-with-leading-zeros-in-javascript
 // https://firebase.google.com/docs/auth/web/manage-users - check if signed in already
+// https://typeofnan.dev/why-you-cant-setstate-multiple-times-in-a-row/
 
 
 
