@@ -4,7 +4,7 @@ import Scatterplot from './ScatterplotComponent';
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import RangeSlider from 'react-bootstrap-range-slider';
-import {Form, FormGroup, Col, Row} from 'react-bootstrap'
+import {Form, FormGroup, Col, Row, ProgressBar} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 import {useStore,useAuthStore} from '../store/store'
@@ -31,6 +31,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [opacityVal, setOpacityVal] = useState(0.8);
+
+  const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
+  const [dataLoadPercent, setDataLoadPercent] = useState(0);
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
@@ -65,6 +68,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
   //   console.log(url);
   //   return url;
   // }
+  
+  useEffect(()=>{
+    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
+  }, [dataLoadStatus]);
 
   // loading background image data and coords on puck change
   useEffect(()=>{
@@ -81,7 +88,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
       setCoordsData(readData);
     console.log("new  puckid ", chosenPuckid);
       // console.log(readData);
-
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
     }
     fetchData();
 
@@ -89,12 +96,16 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
       let nis_url = await getUrl(`${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`)
 
       setCurNisslUrl(nis_url);
+      // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
     }
 
     const fetchAtlas = async () => {
       let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
 
       setCurAtlasUrl(atlas_url);
+      // setDataLoadStatus(dataLoadStatus+1);
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
 
     }
 
@@ -118,9 +129,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
           return response.json();
         })
         .then(function(myJson) {
-          console.log(myJson.geneOptions);
+          // console.log(myJson.geneOptions, dataLoadStatus);
           // setData(myJson)
           setGeneOptions(myJson.geneOptions);
+          setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
         });
     }
 
@@ -157,8 +169,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
 
         // let maxVal = Math.max(...unifiedData.map(o => o.count));
         // console.log(unifiedData);
-        console.log("new puck loaded")
 
+        if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+          setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        }
       }
       fetchData();
     }else{
@@ -185,6 +199,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
       setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
+      setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
     }
     fetchData();
 
@@ -212,7 +227,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
           Select Puck
         </Col>
           <Col xs="10">
-            <BcdCarousel setChosenPuckid={setChosenPuckid} chosenPuckid={chosenPuckid}></BcdCarousel>
+            <BcdCarousel setChosenPuckid={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}} chosenPuckid={chosenPuckid}></BcdCarousel>
           </Col>
         </Row>
       <Form>
@@ -239,23 +254,20 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={setChosenGene}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
               options={geneOptions}
               placeholder="Choose another gene..."
               defaultInputValue={geneOptions[0]}
             />
           </Col>
           <Col xs="2">
-            for Puck
+            for Puck ID:<span style={{fontWeight:"bold"}}>{chosenPuckid}</span>
           </Col>
           <Col xs="1">
-            PID
+            Loaded:
           </Col>
-          <Col xs="1">
-            Loaded
-          </Col>
-          <Col xs="2">
-            Progress Bar
+          <Col xs="3">
+            <ProgressBar now={dataLoadPercent} label={`${dataLoadPercent}%`} />
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
