@@ -12,6 +12,7 @@ import Colorbar from '../components/ColorbarComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {getUrl} from "../shared/common"
+import BcdCarousel from "./BcdCarouselComponent"
 
 
 function pad(num, size) {
@@ -206,6 +207,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
   return(
     <div>
       <h4>{title}</h4>
+      <Row>
+        <Col xs="2">
+          Select Puck
+        </Col>
+          <Col xs="10">
+            <BcdCarousel setChosenPuckid={setChosenPuckid} chosenPuckid={chosenPuckid}></BcdCarousel>
+          </Col>
+        </Row>
       <Form>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
@@ -235,6 +244,18 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
               placeholder="Choose another gene..."
               defaultInputValue={geneOptions[0]}
             />
+          </Col>
+          <Col xs="2">
+            for Puck
+          </Col>
+          <Col xs="1">
+            PID
+          </Col>
+          <Col xs="1">
+            Loaded
+          </Col>
+          <Col xs="2">
+            Progress Bar
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
