@@ -24,6 +24,8 @@ const responsive = {
 
   let nis_ids = Array(104).keys();
   let nis_idxs = Array.from(nis_ids, x => String(2*x+1).padStart(3,'0'));
+  let forDeletion = ['005', '077', '167'];
+  nis_idxs = nis_idxs.filter( item => !forDeletion.includes(item));
   let img_paths = Array.from(nis_idxs, x => 'https://storage.googleapis.com/ml_portal/public/transformed_lowres/nis_'+x+'.jpg');
   let images = img_paths.map((x, idx)=>{
   
