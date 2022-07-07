@@ -31,7 +31,7 @@ const responsive = {
   
     let nissl_id = parseInt(nis_idxs[idx]);
   return(
-    <div className="slide" style={{position: "relative", cursor: "pointer"}} onClick={() => props.setChosenPuckid(nissl_id)}>
+    <div key={idx} className="slide" style={{position: "relative", cursor: "pointer"}} onClick={() => props.setChosenPuckid(nissl_id)}>
       <span style={{position: "absolute", fontSize: "70%"}}>{nis_idxs[idx]}</span>
       <Image 
         src = {x}
