@@ -3,9 +3,10 @@ import { app } from '../firebaseConfig';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { useState, useEffect } from 'react'
 import {useStore, useAuthStore} from '../store/store'
+import {Outlet} from "react-router-dom"
 
 
-function Header(props){
+function AuthHeader(props){
   
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
@@ -74,7 +75,6 @@ function Header(props){
   return(
     <>
       <Navbar bg="light" variant="light">
-        <Container>
           <Navbar.Brand href="/">Brain Cell Data Viewer</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link active={curRoute==="genex"} href="genex">GeneExp</Nav.Link>
@@ -85,16 +85,17 @@ function Header(props){
           <Nav>
             <Button onClick={logInOut}>{loginButtonText}</Button>
           </Nav>
-        </Container>
       </Navbar>
+      <Outlet/>
     </>
   );
 }
 
-export default Header;
+export default AuthHeader;
 
 // References
 // - https://firebase.google.com/docs/auth/web/google-signin
 // https://firebase.google.com/docs/auth/web/google-signin#advanced-handle-the-sign-in-flow-manually
 // https://firebase.google.com/docs/auth/web/auth-state-persistence
 // https://stackoverflow.com/questions/37828543/how-to-pass-props-without-value-to-component
+// https://stackoverflow.com/questions/54843302/reactjs-bootstrap-navbar-and-routing-not-working-together
