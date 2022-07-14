@@ -28,4 +28,13 @@ export const DATACONFIGS =
       title: "Regionally Aggregated Normalized Expression",
       relativePath: "test_data2/gene_csvs"
     },
+    {
+      id: 3,
+      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
+      prefix: "gene_",
+      geneOptions: [''],
+      maxCountMetadataKey: "maxCount",
+      title: "Regionally Aggregated Normalized Expression2",
+      relativePath: "test_data2/gene_csvs_s9d"
+    },
   ]
