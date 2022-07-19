@@ -45,7 +45,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
     id: 'scatterplot-layer',
     data: data,
     pickable: true,
-    opacity: opacityVal,
+    opacity: 1.0,//opacityVal,
     stroked: false,
     filled: true,
     radiusScale: 10,
@@ -95,7 +95,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       bounds: [0, 3605, 4096, 0],
       image: curAtlasUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
-      opacity: 1-opacityVal
+      opacity: opacityVal
     });
   }
 
