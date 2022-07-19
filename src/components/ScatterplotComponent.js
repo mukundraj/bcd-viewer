@@ -80,6 +80,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   }, [threshold, unidata]);
 
   let bitmap_layer=null;
+  let wireframe_bitmap_layer = null;
 
   if (id==='left_splot'){
     bitmap_layer = new BitmapLayer({
@@ -88,6 +89,13 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       image: curNisslUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
       opacity: 1-opacityVal
+    });
+    wireframe_bitmap_layer = new BitmapLayer({
+      id: 'wire-bitmap',
+      bounds: [0, 3605, 4096, 0],
+      image: curAtlasUrl,
+      // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
+      opacity: 1.0
     });
   }else if (id==='right_splot'){
     bitmap_layer = new BitmapLayer({
@@ -105,7 +113,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
         views={ortho_view}
         controller={true}
         onViewStateChange={onViewStateChange}
-        layers={[layer, bitmap_layer]} 
+        layers={[layer, bitmap_layer, wireframe_bitmap_layer]} 
         getCursor={() => "crosshair"}
       >
         {hoverInfo.object && (

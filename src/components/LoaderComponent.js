@@ -101,7 +101,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
     }
 
     const fetchAtlas = async () => {
-      let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
+      // let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
+      let atlas_url = await getUrl(`test_data2/common/wireframe_trans_bg/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -298,7 +299,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
           viewState={viewState}
           onViewStateChange={onViewStateChange}
           curNisslUrl={curNisslUrl}
-          curAtlasUral={curAtlasUrl}
+          curAtlasUrl={curAtlasUrl}
         />
       </div>
       <div className="add-border floater">
