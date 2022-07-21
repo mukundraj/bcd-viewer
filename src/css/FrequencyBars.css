@@ -1,0 +1,24 @@
+.outer {
+  width: 100%;
+  height: 40px;
+  overflow: auto;
+}
+
+#LPUgraph {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+div.fbar_tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}

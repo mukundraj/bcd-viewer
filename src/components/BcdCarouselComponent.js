@@ -1,7 +1,7 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Image from 'react-bootstrap/Image'
-import { useEffect, useState} from 'react'
+import { useEffect, useState, useRef} from 'react'
 
 function BcdCarousel(props){
 const responsive = {
@@ -43,9 +43,12 @@ const responsive = {
   )
 });
 
+  const carouselRef = useRef();
 
 return (
+  <>
 <Carousel
+  ref={carouselRef}
   swipeable={false}
   draggable={false}
   showDots={true}
@@ -66,6 +69,13 @@ return (
 >
   {images}
 </Carousel>
+    <button onClick={() => {
+    const nextSlide = carouselRef.current.state.currentSlide + 1;
+     // carouselRef.current.next()
+     // carouselRef.current.goToSlide(nextSlide)
+     carouselRef.current.goToSlide(20);
+  }}>Click</button>
+  </>
 )
 }
 

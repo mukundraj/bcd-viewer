@@ -13,14 +13,24 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {getUrl} from "../shared/common"
 import BcdCarousel from "./BcdCarouselComponent"
-
+import FrequencyBars from "./FrequencyBarsComponent"
+import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
 function pad(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
 }
 
-function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
+function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataPath}) {
+
+  const data = [
+  {year: 1980, efficiency: 24.3, sales: 8949000},
+  {year: 1985, efficiency: 27.6, sales: 10979000},
+  {year: 1990, efficiency: 28, sales: 9303000},
+  {year: 1992, efficiency: 28, sales: 9303000},
+  {year: 1991, efficiency: 28.4, sales: 8185000},
+  {year: 1995, efficiency: 28.4, sales: 8185000},
+  ];
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -28,6 +38,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+  const [fbarsData, setFbarsData] = useState({"sorted_regionwise_cnts":[], "sorted_puckwise_cnts":[], "regionid_to_name":[]});
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [opacityVal, setOpacityVal] = useState(0.8);
@@ -206,6 +217,36 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
 
   }, [relativePath, chosenPuckid, chosenGene]);
 
+
+  // loading frequency bar plot data
+  useEffect(()=>{
+    
+
+    const fetchData = async () => {
+      let fbars_data_path = `${freqBarsDataPath}/${chosenGene}.json`
+      let fbarsDataUrl = await getUrl(fbars_data_path);
+      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
+      // console.log('meta_data_path ', meta_data_path);
+      // console.log('meta_data_path ', meta_data_path2);
+      const readData = await fetch(fbarsDataUrl)
+       .then(response => response.json());
+        // .then(data_str => JSON.parse(data_str));
+
+
+      // console.log(readData);
+      setFbarsData(readData);
+      // setCoordsData(readData);
+      // setMaxUmiThreshold(parseFloat(readData['maxCount']));
+      // setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
+      // setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
+    }
+    fetchData();
+    
+    console.log(fbarsData);
+
+
+  },[chosenGene]);
+
   
   const [viewState, setViewState] = useState({
     // target: [228, 160, 0],
@@ -268,7 +309,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath}) {
             />
           </Col>
           <Col xs="1">
-            Max: {maxUmiThreshold}
+            Max: {Math.round(maxUmiThreshold * 1000) / 1000}
+          </Col>
+          <Col xs="1">
+            <BootstrapSwitchButton checked={true} onstyle="outline-primary" offstyle="outline-secondary" 
+            onlabel="R" offlabel="P"/>
+          </Col>
+          <Col xs="5">
+            <FrequencyBars data={fbarsData} />
           </Col>
         </FormGroup>
         <FormGroup as={Row}>

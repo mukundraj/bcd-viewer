@@ -19,6 +19,7 @@ function MainViewer({dataConfig, route}) {
         maxCountMetadataKey={dataConfig.maxCountMetadataKey}
         title={dataConfig.title}
         relativePath={dataConfig.relativePath}
+        freqBarsDataPath={dataConfig.freqBarsDataPath}
       />
     )
   }
