@@ -2,12 +2,17 @@ import '../css/FrequencyBars.css';
 import { useD3 } from '../hooks/useD3';
 import React from 'react';
 import * as d3 from 'd3';
+import {useStore} from '../store/store'
 
 
-function FrequencyBars({ data }) {
+function FrequencyBars({ setPuckidAndLoadStatus, data }) {
 
+  const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
-    alert("test"+event+" "+d.sr);
+    // alert("test"+event+" "+d.sr+" "+d.key[0]);
+    setPuckidAndLoadStatus(d.key[0]);
+    carouselRef.current.goToSlide(d.sr);
+    
   }
 
   const ref = useD3(
@@ -21,7 +26,6 @@ function FrequencyBars({ data }) {
       const width = element.getBoundingClientRect().width;
       const margin = { top: 0, right: 0, bottom: height*0.1, left: 0 };
 
-      console.log(data.sorted_puckwise_cnts);
       const x = d3
         .scaleBand()
         .domain(data.sorted_puckwise_cnts.map((d) => d.key[0]))

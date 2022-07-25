@@ -12,7 +12,11 @@ export const useStore = create(set => ({
     curRoute: 'none',
     setCurRoute: (val) => set({curRoute:val}),
     geneOptions: ['Pcp4'],
-    setGeneOptions: (val) => set({geneOptions:val})
+    setGeneOptions: (val) => set({geneOptions:val}),
+    chosenPuckid:1,
+    setChosenPuckid: (val)=>set({chosenPuckid:val}),
+    carouselRef:0,
+    setCarouselRef: (val)=>set({carouselRef:val})
     }));
 
 export const useAuthStore = create(persist(set => ({

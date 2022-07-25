@@ -36,7 +36,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const [chosenGene, setChosenGene] = useState(["Pcp4"])
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
-  const [chosenPuckid, setChosenPuckid] = useState(1)
+  // const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
   const [fbarsData, setFbarsData] = useState({"sorted_regionwise_cnts":[], "sorted_puckwise_cnts":[], "regionid_to_name":[]});
 
@@ -49,6 +49,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
 
+  const chosenPuckid = useStore(state => state.chosenPuckid);
+  const setChosenPuckid = useStore(state => state.setChosenPuckid);
 
   const geneOptions = useStore(state => state.geneOptions);
   const setGeneOptions = useStore(state => state.setGeneOptions);
@@ -269,7 +271,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           Select Puck
         </Col>
           <Col xs="10">
-            <BcdCarousel setChosenPuckid={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}} chosenPuckid={chosenPuckid}></BcdCarousel>
+            <BcdCarousel setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}} chosenPuckid={chosenPuckid}></BcdCarousel>
           </Col>
         </Row>
       <Form>
@@ -312,11 +314,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             Max: {Math.round(maxUmiThreshold * 1000) / 1000}
           </Col>
           <Col xs="1">
-            <BootstrapSwitchButton checked={true} onstyle="outline-primary" offstyle="outline-secondary" 
-            onlabel="R" offlabel="P"/>
+            <BootstrapSwitchButton checked={false} onstyle="outline-primary" offstyle="outline-secondary" 
+            onlabel="R" offlabel="P"
+              onChange={(checked)=>{alert(checked)}}/>
           </Col>
           <Col xs="5">
-            <FrequencyBars data={fbarsData} />
+            <FrequencyBars
+            setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
+            data={fbarsData} />
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
