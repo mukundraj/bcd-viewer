@@ -355,16 +355,16 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           curAtlasUrl={curAtlasUrl}
         />
       </div>
-      <div className="add-border floater">
-        <Scatterplot id={'right_splot'} 
-          unidata={unifiedData} threshold={umiThreshold} 
-          opacityVal={opacityVal}
-          viewState = {viewState}
-          onViewStateChange={onViewStateChange}
-          curNisslUrl={curNisslUrl}
-          curAtlasUrl={curAtlasUrl}
-        />
-      </div>
+      {/* <div className="add-border floater"> */}
+      {/*   <Scatterplot id={'right_splot'} */} 
+      {/*     unidata={unifiedData} threshold={umiThreshold} */} 
+      {/*     opacityVal={opacityVal} */}
+      {/*     viewState = {viewState} */}
+      {/*     onViewStateChange={onViewStateChange} */}
+      {/*     curNisslUrl={curNisslUrl} */}
+      {/*     curAtlasUrl={curAtlasUrl} */}
+      {/*   /> */}
+      {/* </div> */}
     </div>
   );
 }
