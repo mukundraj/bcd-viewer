@@ -1,7 +1,7 @@
 
 import Table from 'react-bootstrap/Table'
 import {useStore} from '../store/store'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate,Link} from 'react-router-dom'
 
 function AnalysisIdx({route}){
 
@@ -24,7 +24,8 @@ function AnalysisIdx({route}){
         <td>{item.name}</td>
         <td>{item.desc}</td>
         <td>
-          <button type="button" onClick={ () => {handleClick(item)}}>view</button>
+          {/* <button type="button" onClick={ () => {handleClick(item)}}>view</button> */}
+          <Link to={"/regag2"}>view</Link>
         </td>
       </tr>
     );

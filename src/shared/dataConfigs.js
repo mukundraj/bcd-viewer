@@ -35,6 +35,7 @@ export const DATACONFIGS =
       geneOptions: [''],
       maxCountMetadataKey: "maxCount",
       title: "Regionally Aggregated Normalized Expression2",
-      relativePath: "test_data2/gene_csvs_s9d"
+      relativePath: "test_data2/gene_csvs_s9d",
+      freqBarsDataPath:"test_data2/gene_jsons_s9e"
     },
   ]
