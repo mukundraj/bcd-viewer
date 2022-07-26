@@ -5,7 +5,11 @@ import * as d3 from 'd3';
 import {useStore} from '../store/store'
 
 
-function FrequencyBars({ setPuckidAndLoadStatus, data }) {
+function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
+
+  // let active_data_name = 'sorted_puckwise_cnts'
+  // let active_data_name = 'regionwise_cnts'
+  // let active_data_name = activeDataName;
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -28,13 +32,14 @@ function FrequencyBars({ setPuckidAndLoadStatus, data }) {
 
       const x = d3
         .scaleBand()
-        .domain(data.sorted_puckwise_cnts.map((d) => d.key[0]))
+        // .domain(data[active_data_name].map((d) => d.key[0]))
+        .domain(data[activeDataName].map((d,i) => i))
         .rangeRound([margin.left, width - margin.right])
         .padding(0.1);
 
       const y1 = d3
         .scaleLinear()
-        .domain([0, d3.max(data.sorted_puckwise_cnts, (d) => parseInt(d.cnt))])
+        .domain([0, d3.max(data[activeDataName], (d) => parseInt(d.cnt))])
         .rangeRound([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
@@ -76,11 +81,12 @@ function FrequencyBars({ setPuckidAndLoadStatus, data }) {
         .select(".plot-area")
         .attr("fill", "steelblue")
         .selectAll(".bar")
-        .data(data.sorted_puckwise_cnts)
+        .data(data[activeDataName])
         .join("rect")
         .on("click", (event, i)=>bar_click_handler(event, i))
         .attr("class", "bar")
-        .attr("x", (d) => x(parseInt(d.key[0])))
+      // .attr("x", (d) => x(parseInt(d.key[0])))
+        .attr("x", (d,i) => x(i))
         .attr("width", x.bandwidth())
         .attr("y", (d) => y1(d.cnt))
         .attr("height", (d) => y1(0) - y1(d.cnt))
@@ -89,9 +95,16 @@ function FrequencyBars({ setPuckidAndLoadStatus, data }) {
           div.transition()
             .duration(200)
             .style("opacity", .9);
-          div.html("pid:"+d.key[0]+", cnt:"+d.cnt + "<br/>")
-            .style("left", (event.pageX + 5) + "px")
-            .style("top", (event.pageY - 40) + "px");
+          if ('nm' in d){
+            div.html(d.nm+",pid:"+d.key[0]+" cnt:"+d.cnt + "<br/>")
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 40) + "px");
+
+          }else{
+            div.html("pid:"+d.key[0]+", cnt:"+d.cnt + "<br/>")
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 40) + "px");
+          }
         })
         .on("mouseout", function() {
           d3.select(this).style("fill","steelblue");
@@ -102,7 +115,7 @@ function FrequencyBars({ setPuckidAndLoadStatus, data }) {
 
     },
     // [data.length]
-    [data]
+    [data, activeDataName]
   );
 
   return (

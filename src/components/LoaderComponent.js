@@ -38,13 +38,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   // const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
-  const [fbarsData, setFbarsData] = useState({"sorted_regionwise_cnts":[], "sorted_puckwise_cnts":[], "regionid_to_name":[]});
+  const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
   const [opacityVal, setOpacityVal] = useState(0.8);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
+  const [fbarActiveDataName, setFbarActiveDataName] = useState('sorted_puckwise_cnts');
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
@@ -316,12 +317,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           <Col xs="1">
             <BootstrapSwitchButton checked={false} onstyle="outline-primary" offstyle="outline-secondary" 
             onlabel="R" offlabel="P"
-              onChange={(checked)=>{alert(checked)}}/>
+              onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
           </Col>
           <Col xs="5">
             <FrequencyBars
             setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
-            data={fbarsData} />
+            data={fbarsData}
+            activeDataName={fbarActiveDataName}/>
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
