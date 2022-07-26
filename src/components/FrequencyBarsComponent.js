@@ -7,9 +7,6 @@ import {useStore} from '../store/store'
 
 function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
 
-  // let active_data_name = 'sorted_puckwise_cnts'
-  // let active_data_name = 'regionwise_cnts'
-  // let active_data_name = activeDataName;
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -23,19 +20,23 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
     (svg) => {
 
       console.log(data);
+
       // const height = 100;
       // const width = 500;
       let element = svg.node();
       const height = element.getBoundingClientRect().height;
       const width = element.getBoundingClientRect().width;
-      const margin = { top: 0, right: 0, bottom: height*0.1, left: 0 };
+      const margin = { top: 0, right: 30, bottom: height*0.3, left: 10 };
+
+      let bandwidth = width/(data[activeDataName].length+2);
 
       const x = d3
-        .scaleBand()
+        // .scaleBand()
+        .scaleLinear()
         // .domain(data[active_data_name].map((d) => d.key[0]))
-        .domain(data[activeDataName].map((d,i) => i))
-        .rangeRound([margin.left, width - margin.right])
-        .padding(0.1);
+        .domain(d3.extent(data[activeDataName].map((d,i) => i)))
+        .range([margin.left, width - margin.right]);
+        // .padding(0.1);
 
       const y1 = d3
         .scaleLinear()
@@ -46,48 +47,49 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
         g.attr("transform", `translate(0,${height - margin.bottom})`).call(
           d3
             .axisBottom(x)
-            .tickValues(
-              d3
-                .ticks(...d3.extent(x.domain()), width / 40)
-                .filter((v) => x(v) !== undefined)
-            )
+          .tickValues( data[activeDataName].map((d,i)=>(i+0.5)))
+            .tickFormat((d,i)=>{if ('nm' in data[activeDataName][i]){return data[activeDataName][i].nm}else{return ""}})
             .tickSizeOuter(0)
+            .tickSizeInner(0)
         );
 
-      const y1Axis = (g) =>
-        g
-          .attr("transform", `translate(${margin.left},0)`)
-          .style("color", "steelblue")
-          .call(d3.axisLeft(y1).ticks(null, "s"))
-          .call((g) => g.select(".domain").remove())
-          .call((g) =>
-            g
-              .append("text")
-              .attr("x", -margin.left)
-              .attr("y", 10)
-              .attr("fill", "currentColor")
-              .attr("text-anchor", "start")
-              .text(data.y1)
-          );
+      // const y1Axis = (g) =>
+      //   g
+      //     .attr("transform", `translate(${margin.left},0)`)
+      //     .style("color", "steelblue")
+      //     .call(d3.axisLeft(y1).ticks(null, "s"))
+      //     .call((g) => g.select(".domain").remove())
+      //     .call((g) =>
+      //       g
+      //         .append("text")
+      //         .attr("x", -margin.left)
+      //         .attr("y", 10)
+      //         .attr("fill", "currentColor")
+      //         .attr("text-anchor", "start")
+      //         .text(data.y1)
+      //     );
 
       svg.select(".x-axis").call(xAxis);
-      svg.select(".y-axis").call(y1Axis);
+      // svg.select(".y-axis").call(y1Axis);
 
       var div = d3.select("body").append("div")
         .attr("class", "fbar_tooltip")
         .style("opacity", 0);
 
-      svg
+      let bars = svg
         .select(".plot-area")
         .attr("fill", "steelblue")
         .selectAll(".bar")
-        .data(data[activeDataName])
-        .join("rect")
+        .data(data[activeDataName]);
+        
+      bars.join("rect")
         .on("click", (event, i)=>bar_click_handler(event, i))
         .attr("class", "bar")
+        .style("position", "absolute")
       // .attr("x", (d) => x(parseInt(d.key[0])))
         .attr("x", (d,i) => x(i))
-        .attr("width", x.bandwidth())
+        // .attr("width", x.bandwidth())
+        .attr("width", bandwidth)
         .attr("y", (d) => y1(d.cnt))
         .attr("height", (d) => y1(0) - y1(d.cnt))
         .on("mouseover", function(event,d) {
@@ -114,7 +116,6 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
         });
 
     },
-    // [data.length]
     [data, activeDataName]
   );
 
