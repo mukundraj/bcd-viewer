@@ -45,11 +45,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
-  const [fbarActiveDataName, setFbarActiveDataName] = useState('sorted_puckwise_cnts');
   // const [fbarActiveDataName, setFbarActiveDataName] = useState('sorted_puckwise_cnts');
   //
   const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
   const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
+
+  const wireframeStatus = useStore(state => state.wireframeStatus);
+  const setWireframeStatus = useStore(state => state.setWireframeStatus);
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
@@ -346,7 +348,16 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           <Col xs="1">
             Max: {1}
           </Col>
-          <Col xs="6">
+          <Col xs="2">
+            <Form.Check 
+              defaultChecked={wireframeStatus}
+            type={'checkbox'}
+            id={`wf-checkbox`}
+            label={`Wireframe`}
+            onChange={e => setWireframeStatus(e.target.checked)}
+          />
+          </Col>
+          <Col xs="4">
             <Colorbar/>
           </Col>
         </FormGroup>

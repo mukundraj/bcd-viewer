@@ -80,7 +80,7 @@ function Colorbar(props){
 
   return(
     <>
-      <svg ref={svgRef} width="90%" height="35px"/>
+      <svg ref={svgRef} width="100%" height="35px"/>
     </>
   );
 }

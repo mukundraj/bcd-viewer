@@ -23,7 +23,8 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
 
   const currentColorMap = useStore(state => state.currentColorMap);
-  const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
+  // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
+  const wireframeStatus = useStore(state => state.wireframeStatus);
 
   // seHoverInfo(5);
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
@@ -95,7 +96,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       bounds: [0, 3605, 4096, 0],
       image: curAtlasUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
-      opacity: 1.0
+      opacity: wireframeStatus?1.0:0
     });
   }else if (id==='right_splot'){
     bitmap_layer = new BitmapLayer({
