@@ -5,8 +5,10 @@ import * as d3 from 'd3';
 import {useStore} from '../store/store'
 
 
-function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
+function FrequencyBars({ setPuckidAndLoadStatus, data}) {
 
+  const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
+  const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -28,27 +30,27 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
       const width = element.getBoundingClientRect().width;
       const margin = { top: 0, right: 30, bottom: height*0.3, left: 10 };
 
-      let bandwidth = width/(data[activeDataName].length+2);
+      let bandwidth = width/(data[fbarActiveDataName].length+2);
 
       const x = d3
         // .scaleBand()
         .scaleLinear()
         // .domain(data[active_data_name].map((d) => d.key[0]))
-        .domain(d3.extent(data[activeDataName].map((d,i) => i)))
+        .domain(d3.extent(data[fbarActiveDataName].map((d,i) => i)))
         .range([margin.left, width - margin.right]);
         // .padding(0.1);
 
       const y1 = d3
         .scaleLinear()
-        .domain([0, d3.max(data[activeDataName], (d) => parseInt(d.cnt))])
+        .domain([0, d3.max(data[fbarActiveDataName], (d) => parseInt(d.cnt))])
         .rangeRound([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
         g.attr("transform", `translate(0,${height - margin.bottom})`).call(
           d3
             .axisBottom(x)
-          .tickValues( data[activeDataName].map((d,i)=>(i+0.5)))
-            .tickFormat((d,i)=>{if ('nm' in data[activeDataName][i]){return data[activeDataName][i].nm}else{return ""}})
+          .tickValues( data[fbarActiveDataName].map((d,i)=>(i+0.5)))
+            .tickFormat((d,i)=>{if ('nm' in data[fbarActiveDataName][i]){return data[fbarActiveDataName][i].nm}else{return ""}})
             .tickSizeOuter(0)
             .tickSizeInner(0)
         );
@@ -80,7 +82,7 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
         .select(".plot-area")
         .attr("fill", "steelblue")
         .selectAll(".bar")
-        .data(data[activeDataName]);
+        .data(data[fbarActiveDataName]);
         
       bars.join("rect")
         .on("click", (event, i)=>bar_click_handler(event, i))
@@ -116,7 +118,7 @@ function FrequencyBars({ setPuckidAndLoadStatus, data, activeDataName}) {
         });
 
     },
-    [data, activeDataName]
+    [data, fbarActiveDataName]
   );
 
   return (

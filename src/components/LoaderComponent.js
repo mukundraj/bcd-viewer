@@ -46,6 +46,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
   const [fbarActiveDataName, setFbarActiveDataName] = useState('sorted_puckwise_cnts');
+  // const [fbarActiveDataName, setFbarActiveDataName] = useState('sorted_puckwise_cnts');
+  //
+  const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
+  const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
@@ -315,7 +319,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             Max: {Math.round(maxUmiThreshold * 1000) / 1000}
           </Col>
           <Col xs="1">
-            <BootstrapSwitchButton checked={false} onstyle="outline-primary" offstyle="outline-secondary" 
+            <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" 
             onlabel="R" offlabel="P"
               onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
           </Col>
@@ -323,7 +327,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             <FrequencyBars
             setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
             data={fbarsData}
-            activeDataName={fbarActiveDataName}/>
+            />
           </Col>
         </FormGroup>
         <FormGroup as={Row}>

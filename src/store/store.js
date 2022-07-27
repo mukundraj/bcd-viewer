@@ -17,6 +17,9 @@ export const useStore = create(set => ({
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
     carouselRef:0,
     setCarouselRef: (val)=>set({carouselRef:val})
+    setCarouselRef: (val)=>set({carouselRef:val}),
+    fbarActiveDataName:'sorted_puckwise_cnts',
+    setFbarActiveDataName: (val)=>set({fbarActiveDataName:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
