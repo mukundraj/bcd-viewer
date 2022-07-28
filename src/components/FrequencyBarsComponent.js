@@ -3,6 +3,7 @@ import { useD3 } from '../hooks/useD3';
 import React from 'react';
 import * as d3 from 'd3';
 import {useStore} from '../store/store'
+import {pidToSrno} from "../shared/common"
 
 
 function FrequencyBars({ setPuckidAndLoadStatus, data}) {
@@ -100,12 +101,12 @@ function FrequencyBars({ setPuckidAndLoadStatus, data}) {
             .duration(200)
             .style("opacity", .9);
           if ('nm' in d){
-            div.html(d.nm+",pid:"+d.key[0]+" cnt:"+d.cnt + "<br/>")
+            div.html(d.nm+",pid:"+pidToSrno[d.key[0]]+" cnt:"+d.cnt + "<br/>")
               .style("left", (event.pageX + 5) + "px")
               .style("top", (event.pageY - 40) + "px");
 
           }else{
-            div.html("pid:"+d.key[0]+", cnt:"+d.cnt + "<br/>")
+            div.html("pid:"+pidToSrno[d.key[0]]+", cnt:"+d.cnt + "<br/>")
               .style("left", (event.pageX + 5) + "px")
               .style("top", (event.pageY - 40) + "px");
           }

@@ -11,7 +11,7 @@ import {useStore,useAuthStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {getUrl} from "../shared/common"
+import {getUrl, pidToSrno} from "../shared/common"
 import BcdCarousel from "./BcdCarouselComponent"
 import FrequencyBars from "./FrequencyBarsComponent"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
@@ -299,7 +299,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             />
           </Col>
           <Col xs="2">
-            for Puck ID:<span style={{fontWeight:"bold"}}>{chosenPuckid}</span>
+            for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid]}</span>
           </Col>
           <Col xs="1">
             Loaded:

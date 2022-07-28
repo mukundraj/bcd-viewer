@@ -3,6 +3,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from 'react-bootstrap/Image'
 import { useEffect, useState, useRef} from 'react'
 import {useStore} from '../store/store'
+import {pidToSrno} from '../shared/common'
 
 function BcdCarousel(props){
   const responsive = {
@@ -33,7 +34,7 @@ function BcdCarousel(props){
     let nissl_id = parseInt(nis_idxs[idx]);
     return(
       <div key={idx} className="slide" style={{position: "relative", cursor: "pointer"}} onClick={() => props.setPuckidAndLoadStatus(nissl_id)}>
-        <span style={{position: "absolute", fontSize: "70%"}}>{nis_idxs[idx]}</span>
+        <span style={{position: "absolute", fontSize: "70%"}}>{pidToSrno[parseInt(nis_idxs[idx])]}</span>
         <Image 
           src = {x}
           style={{  width: "100%", height: "100%" }}
