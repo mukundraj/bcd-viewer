@@ -79,8 +79,8 @@ function AuthHeader(props){
           <Nav className="me-auto">
             <Nav.Link active={curRoute==="genex"} href="genex">GeneExp</Nav.Link>
             <Nav.Link active={curRoute==="anaindex"} href="anaindex">Analysis</Nav.Link>
-            <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link>
-            <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link>
+            {/* <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link> */}
+            {/* <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link> */}
             <Nav.Link active={curRoute==="qcindex"} href="qcindex">QC</Nav.Link>
           </Nav>
           <Nav>
