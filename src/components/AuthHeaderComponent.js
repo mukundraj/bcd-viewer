@@ -47,6 +47,7 @@ function AuthHeader(props){
           setAccessToken(token);
           setIsLoggedIn(true);
           sessionStorage.setItem('Auth Token', result._tokenResponse.refreshToken)
+          // console.log(result);
 
 
         })}).catch((error) => {
