@@ -3,10 +3,10 @@ import Table from 'react-bootstrap/Table'
 import {useStore} from '../store/store'
 import {useNavigate,Link} from 'react-router-dom'
 
-function AnalysisIdx({route}){
+function AnalysisIdx({}){
 
-  const setCurRoute = useStore(state => state.setCurRoute);
-  setCurRoute(route);
+  // const setCurRoute = useStore(state => state.setCurRoute);
+  // setCurRoute(route);
 
   let navigate = useNavigate();
   function handleClick(item){
@@ -25,7 +25,7 @@ function AnalysisIdx({route}){
         <td>{item.desc}</td>
         <td>
           {/* <button type="button" onClick={ () => {handleClick(item)}}>view</button> */}
-          <Link to={"/regag2"}>view</Link>
+          <Link to={"regag2"}>view</Link>
         </td>
       </tr>
     );
@@ -52,3 +52,4 @@ function AnalysisIdx({route}){
 }
 
 export default AnalysisIdx;
+

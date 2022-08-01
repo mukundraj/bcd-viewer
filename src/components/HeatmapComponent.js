@@ -8,7 +8,7 @@ import {useEffect, useState} from 'react'
 import {getUrl, fetchJsonAuth} from "../shared/common"
 
 
-function Heatmap({location}){
+function Heatmap(props){
 
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {

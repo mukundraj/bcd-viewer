@@ -10,9 +10,9 @@ import Table from 'react-bootstrap/Table'
 import {Link, Navigate, useNavigate} from 'react-router-dom'
 
 
-function QCIndex({route}){
-  const isLoggedIn = useAuthStore(state => state.isLoggedIn);
-  const setCurRoute = useStore(state => state.setCurRoute);
+function QCIndex({}){
+  // const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+  // const setCurRoute = useStore(state => state.setCurRoute);
 
   const [data,setData]=useState(null);
   const [metadata,setMetadata]=useState(null);
@@ -44,11 +44,11 @@ function QCIndex({route}){
   }, []);
 
 
-  setCurRoute(route);
+  // setCurRoute(route);
 
   let navigate = useNavigate();
   function handleClick(item){
-    navigate("/heatmap", 
+    navigate("heatmap", 
       {state:{title: item.name,
         desc: item.desc,
         filename: item.filename,
@@ -101,35 +101,35 @@ function QCIndex({route}){
   }
     
 
-  if(isLoggedIn){
+  // if(isLoggedIn){
     return(
       <>
-        <Breadcrumb>
-          <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-          <Breadcrumb.Item active>QC Index</Breadcrumb.Item>
-        </Breadcrumb>
-        <h3>QC Index</h3>
-        <div id="scroller">
-        <Table striped border="true" hover size="sm" className="table-responsive">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Description</td>
-              <td>Link</td>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-            {rows_nz}
-          </tbody>
-        </Table>
-        </div>
-        {/*<Heatmap title="title" desc="desc" data={data}/> */}
+          <Breadcrumb>
+            <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+            <Breadcrumb.Item active>QC Index</Breadcrumb.Item>
+          </Breadcrumb>
+          <h3>QC Index</h3>
+          <div id="scroller">
+            <Table striped border="true" hover size="sm" className="table-responsive">
+              <thead>
+                <tr>
+                  <td>Name</td>
+                  <td>Description</td>
+                  <td>Link</td>
+                </tr>
+              </thead>
+              <tbody>
+                {rows}
+                {rows_nz}
+              </tbody>
+            </Table>
+          </div>
+          {/*<Heatmap title="title" desc="desc" data={data}/> */}
       </>
     )
-  }else{
-    return <Home/>
-  }
+  // }else{
+  //   return <Home/>
+  // }
 }
 
 export default QCIndex;

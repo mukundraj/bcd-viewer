@@ -3,7 +3,7 @@ import { app } from '../firebaseConfig';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { useState, useEffect } from 'react'
 import {useStore, useAuthStore} from '../store/store'
-import {Outlet} from "react-router-dom"
+import {Outlet, useLocation, useNavigate, NavLink} from "react-router-dom"
 
 
 function AuthHeader(props){
@@ -15,6 +15,10 @@ function AuthHeader(props){
   const curRoute = useStore(state => state.curRoute)
 
   const [loginButtonText, setLoginButtonText] = useState("Login");
+
+  let navigate = useNavigate();
+  let location = useLocation();
+  let from = location.state?.from?.pathname || "/";
 
   useEffect(()=>{
 
@@ -49,6 +53,7 @@ function AuthHeader(props){
           sessionStorage.setItem('Auth Token', result._tokenResponse.refreshToken)
           // console.log(result);
 
+          navigate(from, { replace: true });
 
         })}).catch((error) => {
           // Handle Errors here.
@@ -78,11 +83,11 @@ function AuthHeader(props){
       <Navbar bg="light" variant="light">
           <Navbar.Brand href="/">Brain Cell Data Viewer</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link active={curRoute==="genex"} href="genex">GeneExp</Nav.Link>
-            <Nav.Link active={curRoute==="anaindex"} href="anaindex">Analysis</Nav.Link>
+            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/genex">GeneExp</NavLink>
+            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/anaindex">Analysis</NavLink>
             {/* <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link> */}
             {/* <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link> */}
-            <Nav.Link active={curRoute==="qcindex"} href="qcindex">QC</Nav.Link>
+            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink>
           </Nav>
           <Nav>
             <Button onClick={logInOut}>{loginButtonText}</Button>
@@ -101,3 +106,4 @@ export default AuthHeader;
 // https://firebase.google.com/docs/auth/web/auth-state-persistence
 // https://stackoverflow.com/questions/37828543/how-to-pass-props-without-value-to-component
 // https://stackoverflow.com/questions/54843302/reactjs-bootstrap-navbar-and-routing-not-working-together
+// https://stackblitz.com/github/remix-run/react-router/tree/main/examples/auth?file=src%2FApp.tsx
