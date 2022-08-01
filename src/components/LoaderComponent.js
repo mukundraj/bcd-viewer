@@ -41,7 +41,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   const [umiThreshold, setUmiThreshold ] = useState(-1);
-  const [opacityVal, setOpacityVal] = useState(0.8);
+  const [opacityVal, setOpacityVal] = useState(1.0);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
@@ -52,6 +52,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const wireframeStatus = useStore(state => state.wireframeStatus);
   const setWireframeStatus = useStore(state => state.setWireframeStatus);
+  const nisslStatus = useStore(state => state.nisslStatus);
+  const setNisslStatus = useStore(state => state.setNisslStatus);
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
@@ -350,7 +352,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             />
           </Col>
           <Col xs="1">
-            Max: {1}
+            <Form.Check 
+              defaultChecked={wireframeStatus}
+            type={'checkbox'}
+            id={`nis-checkbox`}
+            label={`Nissl`}
+            onChange={e => setNisslStatus(e.target.checked)}
+          />
           </Col>
           <Col xs="2">
             <Form.Check 

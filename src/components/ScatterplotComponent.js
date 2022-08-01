@@ -25,6 +25,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   const currentColorMap = useStore(state => state.currentColorMap);
   // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
   const wireframeStatus = useStore(state => state.wireframeStatus);
+  const nisslStatus = useStore(state => state.nisslStatus);
 
   // seHoverInfo(5);
   const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
@@ -46,7 +47,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
     id: 'scatterplot-layer',
     data: data,
     pickable: true,
-    opacity: 1.0,//opacityVal,
+    opacity: opacityVal,
     stroked: false,
     filled: true,
     radiusScale: 10,
@@ -89,7 +90,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       bounds: [0, 3605, 4096, 0],
       image: curNisslUrl,
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
-      opacity: 1-opacityVal
+      opacity: nisslStatus?1.0:0
     });
     wireframe_bitmap_layer = new BitmapLayer({
       id: 'wire-bitmap',
@@ -98,15 +99,16 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
       opacity: wireframeStatus?1.0:0
     });
-  }else if (id==='right_splot'){
-    bitmap_layer = new BitmapLayer({
-      id: 'bitmap-layer',
-      bounds: [0, 3605, 4096, 0],
-      image: curAtlasUrl,
-      // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
-      opacity: opacityVal
-    });
   }
+  // else if (id==='right_splot'){
+  //   bitmap_layer = new BitmapLayer({
+  //     id: 'bitmap-layer',
+  //     bounds: [0, 3605, 4096, 0],
+  //     image: curAtlasUrl,
+  //     // image: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/sf-districts.png',
+  //     opacity: opacityVal
+  //   });
+  // }
 
   return (
     <div className="splot" id={id}>
@@ -114,7 +116,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
         views={ortho_view}
         controller={true}
         onViewStateChange={onViewStateChange}
-        layers={[layer, bitmap_layer, wireframe_bitmap_layer]} 
+        layers={[bitmap_layer, layer, wireframe_bitmap_layer]} 
         getCursor={() => "crosshair"}
       >
         {hoverInfo.object && (

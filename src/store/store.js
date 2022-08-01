@@ -21,6 +21,8 @@ export const useStore = create(set => ({
     setFbarActiveDataName: (val)=>set({fbarActiveDataName:val}),
     wireframeStatus:true,
     setWireframeStatus: (val)=>set({wireframeStatus:val}),
+    nisslStatus:true,
+    setNisslStatus: (val)=>set({nisslStatus:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
