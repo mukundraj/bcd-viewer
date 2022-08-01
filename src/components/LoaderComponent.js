@@ -40,7 +40,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
-  const [umiThreshold, setUmiThreshold ] = useState(-1);
+  const [umiThreshold, setUmiThreshold ] = useState(0.01);
   const [opacityVal, setOpacityVal] = useState(1.0);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
@@ -320,7 +320,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
               onChange={e => setUmiThreshold(e.target.value)}
               min={0}
               max={maxUmiThreshold}
-              step={maxUmiThreshold/100}
+              step={maxUmiThreshold>2?1:maxUmiThreshold/100}
             />
           </Col>
           <Col xs="1">
