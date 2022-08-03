@@ -15,6 +15,7 @@ import {getUrl, pidToSrno} from "../shared/common"
 import BcdCarousel from "./BcdCarouselComponent"
 import FrequencyBars from "./FrequencyBarsComponent"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
+import Dendrogram from './DendrogramComponent'
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -383,6 +384,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
         />
+      </div>
+      <div className="add-border floater">
+        <Dendrogram/>
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 
