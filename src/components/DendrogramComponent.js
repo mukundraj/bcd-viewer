@@ -32,7 +32,8 @@ function Dendrogram(props){
     console.log('onChange::', currentNode, selectedNodes)
   }
   const onAction = (node, action) => {
-    console.log('onAction::', action, node)
+    console.log('onAction::', action, node, action.maxval_pid)
+    props.setPuckidAndLoadStatus(action.maxval_pid);
   }
   const onNodeToggle = currentNode => {
     console.log('onNodeToggle::', currentNode)
@@ -90,8 +91,9 @@ function Dendrogram(props){
   );
 }
 
-export default Dendrogram;
+export default React.memo(Dendrogram, (prevProps,nextProps)=>true);
 
 // https://stackoverflow.com/questions/23116591/how-to-include-a-font-awesome-icon-in-reacts-render
 // Actions example for Dropdown tree select - https://codesandbox.io/s/5vy246kzlk
 // fa icon https://fontawesome.com/v4/icon/level-up
+// Preventing rerendering https://stackoverflow.com/questions/59564601/how-to-avoid-rerendering-of-child-component

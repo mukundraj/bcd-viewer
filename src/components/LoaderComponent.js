@@ -386,7 +386,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         />
       </div>
       <div className="add-border floater">
-        <Dendrogram/>
+        <Dendrogram
+          setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
+        />
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 
