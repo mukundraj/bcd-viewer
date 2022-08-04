@@ -7,6 +7,7 @@ import {getUrl} from "../shared/common"
 import "../css/Dendrogram.css";
 import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import 'font-awesome/css/font-awesome.min.css';
 
 const useSize = (target) => {
   const [size, setSize] = React.useState()
@@ -90,3 +91,7 @@ function Dendrogram(props){
 }
 
 export default Dendrogram;
+
+// https://stackoverflow.com/questions/23116591/how-to-include-a-font-awesome-icon-in-reacts-render
+// Actions example for Dropdown tree select - https://codesandbox.io/s/5vy246kzlk
+// fa icon https://fontawesome.com/v4/icon/level-up

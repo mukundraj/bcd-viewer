@@ -8,3 +8,15 @@
 /*   flex: 1 1 auto; */
 /*   width: 100%; */
 /* } */
+
+.action {
+  cursor: pointer;
+  display: table-cell;
+  padding-left: 4px;
+  float: right;
+  margin-left: auto;
+}
+
+.action:hover {
+  color: green;
+}
