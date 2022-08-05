@@ -6,23 +6,28 @@ import {useStore} from '../store/store'
 import {pidToSrno} from "../shared/common"
 
 
-function FrequencyBars({ setPuckidAndLoadStatus, data}) {
+function FrequencyBars(props) {
 
   const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
   const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
+  const chosenPuckid = useStore(state => state.chosenPuckid);
+  const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
+  const setTogglePid = useStore(state => state.setTogglePid);
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
     // alert("test"+event+" "+d.sr+" "+d.key[0]);
-    setPuckidAndLoadStatus(d.key[0]);
-    carouselRef.current.goToSlide(d.sr);
-    
+    // console.log("chosen ", chosenPuckid);
+    // props.setPuckidAndLoadStatus(d.key[0]);
+    // carouselRef.current.goToSlide(d.sr);
+    setTogglePid(d.key[0]);
+    toggleGeneralToggleFlag();
   }
 
   const ref = useD3(
     (svg) => {
 
-      console.log(data);
+      console.log(props.data);
 
       // const height = 100;
       // const width = 500;
@@ -31,27 +36,27 @@ function FrequencyBars({ setPuckidAndLoadStatus, data}) {
       const width = element.getBoundingClientRect().width;
       const margin = { top: 0, right: 30, bottom: height*0.3, left: 10 };
 
-      let bandwidth = width/(data[fbarActiveDataName].length+2);
+      let bandwidth = width/(props.data[fbarActiveDataName].length+2);
 
       const x = d3
         // .scaleBand()
         .scaleLinear()
         // .domain(data[active_data_name].map((d) => d.key[0]))
-        .domain(d3.extent(data[fbarActiveDataName].map((d,i) => i)))
+        .domain(d3.extent(props.data[fbarActiveDataName].map((d,i) => i)))
         .range([margin.left, width - margin.right]);
         // .padding(0.1);
 
       const y1 = d3
         .scaleLinear()
-        .domain([0, d3.max(data[fbarActiveDataName], (d) => parseInt(d.cnt))])
+        .domain([0, d3.max(props.data[fbarActiveDataName], (d) => parseInt(d.cnt))])
         .rangeRound([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
         g.attr("transform", `translate(0,${height - margin.bottom})`).call(
           d3
             .axisBottom(x)
-          .tickValues( data[fbarActiveDataName].map((d,i)=>(i+0.5)))
-            .tickFormat((d,i)=>{if ('nm' in data[fbarActiveDataName][i]){return data[fbarActiveDataName][i].nm}else{return ""}})
+          .tickValues(props.data[fbarActiveDataName].map((d,i)=>(i+0.5)))
+            .tickFormat((d,i)=>{if ('nm' in props.data[fbarActiveDataName][i]){return props.data[fbarActiveDataName][i].nm}else{return ""}})
             .tickSizeOuter(0)
             .tickSizeInner(0)
         );
@@ -83,7 +88,7 @@ function FrequencyBars({ setPuckidAndLoadStatus, data}) {
         .select(".plot-area")
         .attr("fill", "steelblue")
         .selectAll(".bar")
-        .data(data[fbarActiveDataName]);
+        .data(props.data[fbarActiveDataName]);
         
       bars.join("rect")
         .on("click", (event, i)=>bar_click_handler(event, i))
@@ -119,7 +124,7 @@ function FrequencyBars({ setPuckidAndLoadStatus, data}) {
         });
 
     },
-    [data, fbarActiveDataName]
+    [props.data, fbarActiveDataName]
   );
 
   return (

@@ -8,6 +8,7 @@ import "../css/Dendrogram.css";
 import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import 'font-awesome/css/font-awesome.min.css';
+import {useStore} from '../store/store'
 
 const useSize = (target) => {
   const [size, setSize] = React.useState()
@@ -23,6 +24,9 @@ const useSize = (target) => {
 
 function Dendrogram(props){
 
+  const setTogglePid = useStore(state => state.setTogglePid);
+  const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
+
   const [data, setData] = useState({"label": "Root", "value":"root"})
 
   const target = React.useRef(null)
@@ -33,16 +37,13 @@ function Dendrogram(props){
   }
   const onAction = (node, action) => {
     console.log('onAction::', action, node, action.maxval_pid)
-    props.setPuckidAndLoadStatus(action.maxval_pid);
+    setTogglePid(action.maxval_pid);
+    toggleGeneralToggleFlag();
   }
   const onNodeToggle = currentNode => {
     console.log('onNodeToggle::', currentNode)
   }
 
-  useEffect(()=>{
-    console.log("sizes", size)
-
-  }, [size])
 
   // loading frequency bar plot data
   useEffect(()=>{
@@ -74,7 +75,7 @@ function Dendrogram(props){
 
   return(
     <>
-      <div>Barplot</div>
+      <div>[Barplot will go here...]</div>
       <div className="tree-inner-wrap" style={{"width":"90%", "height":"90%"}} ref={target}>
         <Scrollbars style={{ width: size?size.width:100, height: size?size.height:100}}>
           <DropdownTreeSelect

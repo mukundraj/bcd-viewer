@@ -33,6 +33,12 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   {year: 1995, efficiency: 28.4, sales: 8185000},
   ];
 
+  const carouselRef = useStore(state => state.carouselRef);
+
+  const generalToggleFlag = useStore(state => state.generalToggleFlag);
+  const togglePid = useStore(state => state.togglePid);
+  const [initialRender, setInitialRender] = useState(true);
+
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   const [chosenGene, setChosenGene] = useState(["Pcp4"])
@@ -91,7 +97,24 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   //   console.log(url);
   //   return url;
   // }
-  
+
+  useEffect(()=>{
+    console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);
+    if (initialRender===false){
+      if (togglePid===chosenPuckid){
+        alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+      }else{
+        setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));
+        setChosenPuckid(togglePid);
+        carouselRef.current.goToSlide(parseInt(pidToSrno[togglePid]-1));
+      }
+    }else{
+      setInitialRender(false);
+    }    
+
+
+  },[generalToggleFlag]);
+
   useEffect(()=>{
     setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
   }, [dataLoadStatus]);
@@ -272,6 +295,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     // Save the view state and trigger rerender
     setViewState(viewState);
   }, []);
+  
+  let setPuckidAndLoadStatus = (x)=>{
+    if (x===chosenPuckid){
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+    }else{
+      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);};
+  }
 
   return(
     <div>
@@ -281,7 +311,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           Select Puck
         </Col>
           <Col xs="10">
-            <BcdCarousel setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}} chosenPuckid={chosenPuckid}></BcdCarousel>
+            <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid}></BcdCarousel>
           </Col>
         </Row>
       <Form>
@@ -334,7 +364,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           </Col>
           <Col xs="5">
             <FrequencyBars
-            setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
+            setPuckidAndLoadStatus={setPuckidAndLoadStatus}
             data={fbarsData}
             />
           </Col>
@@ -385,7 +415,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           curAtlasUrl={curAtlasUrl}
         />
       </div>
-      <div className="add-border floater">
+      <div className="floater">
         <Dendrogram
           setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
         />

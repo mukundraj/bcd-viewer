@@ -23,6 +23,10 @@ export const useStore = create(set => ({
     setWireframeStatus: (val)=>set({wireframeStatus:val}),
     nisslStatus:true,
     setNisslStatus: (val)=>set({nisslStatus:val}),
+    togglePid:1,
+    setTogglePid: (val)=>set({togglePid:val}),
+    generalToggleFlag:true,
+    toggleGeneralToggleFlag: ()=>set((state)=>({generalToggleFlag: !state.generalToggleFlag})),
     }));
 
 export const useAuthStore = create(persist(set => ({
