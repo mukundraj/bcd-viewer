@@ -41,7 +41,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
-  const [chosenGene, setChosenGene] = useState(["Pcp4"])
+  // const [chosenGene, setChosenGene] = useState(["Pcp4"])
+  const chosenGene = useStore(state => state.chosenGene);
+  const setChosenGene = useStore(state => state.setChosenGene);
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   // const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
