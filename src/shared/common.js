@@ -49,3 +49,9 @@ export const pidToSrno = {
   181:'088', 183:'089', 185:'090', 187:'091', 189:'092', 191:'093', 193:'094', 195:'095', 197:'096', 199:'097',
   201:'098', 203:'099', 205:'100', 207:'101',
 }
+
+// https://stackoverflow.com/questions/23013573/swap-key-with-value-in-object
+const f = obj => Object.fromEntries(Object.entries(obj).map(a => a.reverse().map(x=>parseInt(x))))
+
+
+export const srnoToPid = f(pidToSrno);

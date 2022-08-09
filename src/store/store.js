@@ -29,6 +29,9 @@ export const useStore = create(set => ({
     setTogglePid: (val)=>set({togglePid:val}),
     generalToggleFlag:true,
     toggleGeneralToggleFlag: ()=>set((state)=>({generalToggleFlag: !state.generalToggleFlag})),
+    dendroBarData:[...Array(101).keys()].map(x=>0),
+    addDendroBarData: (val)=>set((state)=>({dendroBarData:state.dendroBarData.map((x,i)=>x+val[i])})),
+    subDendroBarData: (val)=>set((state)=>({dendroBarData:state.dendroBarData.map((x,i)=>x-val[i])})),
     }));
 
 export const useAuthStore = create(persist(set => ({

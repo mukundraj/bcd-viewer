@@ -38,6 +38,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const generalToggleFlag = useStore(state => state.generalToggleFlag);
   const togglePid = useStore(state => state.togglePid);
   const [initialRender, setInitialRender] = useState(true);
+  
+  const dendroBarData = useStore(state => state.dendroBarData);
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
@@ -99,6 +101,11 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   //   console.log(url);
   //   return url;
   // }
+  
+  useEffect(()=>{
+    console.log("dendroBarData", dendroBarData);
+
+  }, [dendroBarData]);
 
   useEffect(()=>{
     console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);

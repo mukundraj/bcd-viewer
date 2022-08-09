@@ -9,6 +9,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import 'font-awesome/css/font-awesome.min.css';
 import {useStore} from '../store/store'
+import DendroBars from "./DendroBarsComponent"
 
 const useSize = (target) => {
   const [size, setSize] = React.useState()
@@ -28,12 +29,43 @@ function Dendrogram(props){
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
 
   const [data, setData] = useState({"label": "Root", "value":"root"})
+  const chosenGene = useStore(state => state.chosenGene);
+  
+  // const dendroBarData = useStore(state => state.dendroBarData);
+  const addDendroBarData = useStore(state => state.addDendroBarData);
+  const subDendroBarData = useStore(state => state.subDendroBarData);
 
   const target = React.useRef(null)
   const size = useSize(target)
 
+
+
   const onChange = (currentNode, selectedNodes) => {
-    console.log('onChange::', currentNode, selectedNodes)
+
+    const fetchAndSetBarData = async (currentRegId, selectedRegIds) => {
+      let regionTreeDataPath = `test_data2/s9f/gene_jsons_s9f/${chosenGene}.json`
+      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
+      const readData = await fetch(regionTreeDataUrl)
+       .then(response => response.json());
+      // setData(readData["children"]);
+      // console.log(currentRegId, readData[parseInt(currentRegId)]);
+      console.log('onChange::', currentNode, selectedNodes)
+      let readDataArray = readData[parseInt(currentRegId)].puck_dist;
+      if (selectedRegIds.includes(currentNode.value)){
+        console.log("addingup");
+        // let newBarData = readDataArray.map((x,i)=>x+readDataArray[i]);
+        // console.log(readDataArray);
+        addDendroBarData(readDataArray);
+      }else{
+        console.log("subtracting");
+        // let newBarData = readDataArray.map((x,i)=>x-readDataArray[i]);
+        // console.log(newBarData);
+        subDendroBarData(readDataArray);
+      }
+    }
+    let selectedRegIds = selectedNodes.map(x => x.value);
+    // console.log(selectedRegIds, currentNode.value, selectedRegIds.includes(currentNode.value));
+    fetchAndSetBarData(currentNode.value, selectedRegIds);
   }
   const onAction = (node, action) => {
     console.log('onAction::', action, node, action.maxval_pid)
@@ -45,7 +77,8 @@ function Dendrogram(props){
   }
 
 
-  // loading frequency bar plot data
+
+  // loading dendro data
   useEffect(()=>{
     
     const fetchData = async () => {
@@ -75,7 +108,7 @@ function Dendrogram(props){
 
   return(
     <>
-      <div>[Barplot will go here...]</div>
+      <DendroBars/>
       <div className="tree-inner-wrap" style={{"width":"90%", "height":"90%"}} ref={target}>
         <Scrollbars style={{ width: size?size.width:100, height: size?size.height:100}}>
           <DropdownTreeSelect
