@@ -41,7 +41,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://localhost",
+  "homepage": "https://www.braincelldata.org",
   "eslintConfig": {
     "extends": [
       "react-app",
