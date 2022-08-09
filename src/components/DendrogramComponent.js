@@ -32,8 +32,7 @@ function Dendrogram(props){
   const chosenGene = useStore(state => state.chosenGene);
   
   // const dendroBarData = useStore(state => state.dendroBarData);
-  const addDendroBarData = useStore(state => state.addDendroBarData);
-  const subDendroBarData = useStore(state => state.subDendroBarData);
+  const setDendroBarData = useStore(state => state.setDendroBarData);
 
   const target = React.useRef(null)
   const size = useSize(target)
@@ -47,24 +46,38 @@ function Dendrogram(props){
       let regionTreeDataUrl = await getUrl(regionTreeDataPath);
       const readData = await fetch(regionTreeDataUrl)
        .then(response => response.json());
+      console.log(selectedRegIds);
+
+      let curDendroBarData = [...Array(101).keys()].map(x=>0);
+
+      selectedRegIds.map(regId =>{
+        
+        let readDataArray = readData[parseInt(regId)].puck_dist;
+        for (let i=0; i<curDendroBarData.length;i++){
+          curDendroBarData[i] += readDataArray[i];
+        }
+      });
+      console.log(curDendroBarData);
+      setDendroBarData(curDendroBarData);
+
       // setData(readData["children"]);
       // console.log(currentRegId, readData[parseInt(currentRegId)]);
-      console.log('onChange::', currentNode, selectedNodes)
-      let readDataArray = readData[parseInt(currentRegId)].puck_dist;
-      if (selectedRegIds.includes(currentNode.value)){
-        console.log("addingup");
-        // let newBarData = readDataArray.map((x,i)=>x+readDataArray[i]);
-        // console.log(readDataArray);
-        addDendroBarData(readDataArray);
-      }else{
-        console.log("subtracting");
-        // let newBarData = readDataArray.map((x,i)=>x-readDataArray[i]);
-        // console.log(newBarData);
-        subDendroBarData(readDataArray);
-      }
+      // let readDataArray = readData[parseInt(currentRegId)].puck_dist;
+      // if (selectedRegIds.includes(currentNode.value)){
+      //   console.log("addingup");
+      //   // let newBarData = readDataArray.map((x,i)=>x+readDataArray[i]);
+      //   // console.log(readDataArray);
+      //   addDendroBarData(readDataArray);
+      // }else{
+      //   console.log("subtracting");
+      //   // let newBarData = readDataArray.map((x,i)=>x-readDataArray[i]);
+      //   // console.log(newBarData);
+      //   subDendroBarData(readDataArray);
+      // }
     }
     let selectedRegIds = selectedNodes.map(x => x.value);
     // console.log(selectedRegIds, currentNode.value, selectedRegIds.includes(currentNode.value));
+      // console.log('onChange::', currentNode, selectedNodes)
     fetchAndSetBarData(currentNode.value, selectedRegIds);
   }
   const onAction = (node, action) => {
