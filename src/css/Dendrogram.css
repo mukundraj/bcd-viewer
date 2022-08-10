@@ -20,3 +20,7 @@
 .action:hover {
   color: green;
 }
+
+.infinite-scroll-component {
+  width: max-content;
+}
