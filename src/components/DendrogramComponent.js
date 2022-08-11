@@ -32,6 +32,7 @@ function Dendrogram(props){
   const chosenGene = useStore(state => state.chosenGene);
   
   // const dendroBarData = useStore(state => state.dendroBarData);
+  const setSelectedRegions = useStore(state => state.setSelectedRegions);
   const setDendroBarData = useStore(state => state.setDendroBarData);
 
   const target = React.useRef(null)
@@ -57,25 +58,16 @@ function Dendrogram(props){
           curDendroBarData[i] += readDataArray[i];
         }
       });
-      console.log(curDendroBarData);
+      // console.log(curDendroBarData);
       setDendroBarData(curDendroBarData);
 
-      // setData(readData["children"]);
-      // console.log(currentRegId, readData[parseInt(currentRegId)]);
-      // let readDataArray = readData[parseInt(currentRegId)].puck_dist;
-      // if (selectedRegIds.includes(currentNode.value)){
-      //   console.log("addingup");
-      //   // let newBarData = readDataArray.map((x,i)=>x+readDataArray[i]);
-      //   // console.log(readDataArray);
-      //   addDendroBarData(readDataArray);
-      // }else{
-      //   console.log("subtracting");
-      //   // let newBarData = readDataArray.map((x,i)=>x-readDataArray[i]);
-      //   // console.log(newBarData);
-      //   subDendroBarData(readDataArray);
-      // }
     }
     let selectedRegIds = selectedNodes.map(x => x.value);
+    let selectedRegNames = selectedNodes.map(x => x.label);
+    if (selectedRegNames.length>0)
+      setSelectedRegions(selectedRegNames);
+    else
+      setSelectedRegions([]);
     // console.log(selectedRegIds, currentNode.value, selectedRegIds.includes(currentNode.value));
       // console.log('onChange::', currentNode, selectedNodes)
     fetchAndSetBarData(currentNode.value, selectedRegIds);
@@ -107,6 +99,9 @@ function Dendrogram(props){
 
       // console.log(readData);
       setData(readData["children"]);
+      // setDendroData(readData["children"]);
+
+
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
       // setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
@@ -114,7 +109,7 @@ function Dendrogram(props){
     }
     fetchData();
     
-    console.log(data);
+    // console.log(data);
 
   }, []);
   

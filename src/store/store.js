@@ -33,6 +33,8 @@ export const useStore = create(set => ({
     // addDendroBarData: (val)=>set((state)=>({dendroBarData:state.dendroBarData.map((x,i)=>x+val[i])})),
     // subDendroBarData: (val)=>set((state)=>({dendroBarData:state.dendroBarData.map((x,i)=>x-val[i])})),
     setDendroBarData: (val)=>set({dendroBarData:val}),
+    selectedRegions:[],
+    setSelectedRegions: (val)=>set({selectedRegions:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({

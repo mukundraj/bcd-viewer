@@ -26,7 +26,7 @@ function DendroBars(props){
   const ref = useD3(
     (svg) => {
 
-      console.log(dendroBarData);
+      // console.log(dendroBarData);
 
 
       // const height = 100;

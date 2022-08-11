@@ -102,10 +102,6 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   //   return url;
   // }
   
-  useEffect(()=>{
-    console.log("dendroBarData", dendroBarData);
-
-  }, [dendroBarData]);
 
   useEffect(()=>{
     console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);

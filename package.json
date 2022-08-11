@@ -30,6 +30,7 @@
     "react-multi-carousel": "^2.8.2",
     "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.2",
+    "tree-util": "^1.0.7",
     "web-vitals": "^2.1.0",
     "zarr": "^0.5.1",
     "zarr-js": "^2.2.1",

@@ -8,6 +8,7 @@ import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
 import useStore from '../store/store'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import {getUrl} from "../shared/common"
 
 function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
@@ -21,6 +22,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   const hoverInfo = useStore(state => state.hoverInfo);
   const setHoverInfo = useStore(state => state.setHoverInfo);
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+  const selectedRegions = useStore(state => state.selectedRegions);
 
   const currentColorMap = useStore(state => state.currentColorMap);
   // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
@@ -35,6 +37,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   // const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
 
   const [data, setData] = useState(() => unidata);
+  const [regionTree, setRegionTree] = useState(null);
   const accessToken = useStore(state => state.accessToken);
   const isLoggedIn = useStore(state => state.isLoggedIn);
   // const [hoverInfo, setHoverInfo] = useState(0);
@@ -72,14 +75,44 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
   });
 
   useEffect(()=>{
+    const fetchData = async () => {
+      let regionArrayDataPath = `test_data2/s9f/regions_array.json`
+      let regionArrayDataUrl = await getUrl(regionArrayDataPath);
+      const readData = await fetch(regionArrayDataUrl)
+       .then(response => response.json());
 
-    // console.log(unidata);
+      var tree_util = require('tree-util')
+      var standardConfig =  { id : 'id', parentid : 'parentid'};
+      var trees = tree_util.buildTrees(readData, standardConfig);
+      setRegionTree(trees[0]);
+
+    }
+    fetchData();
+
+  },[]);
+
+  useEffect(()=>{
+
+    console.log(selectedRegions);
     let data_tmp = unidata.filter(bead => bead['count']>=threshold)
-    let data = data_tmp.sort((a,b) => (a.count > b.count)?1:-1);
-    // console.log(data);
-    setData(data);
+    if(regionTree && selectedRegions.length>0){
+      let data_tmp2 = data_tmp.filter(bead => {
+        for (let i=0;i<selectedRegions.length; i++){
+          let parent = regionTree.getNodeById(selectedRegions[i]);
+          let child = regionTree.getNodeById(bead.rname);
+          if (parent.isAncestorOf(child)) return true;
+        }
+        return false;
+      });
+      let data = data_tmp2.sort((a,b) => (a.count > b.count)?1:-1);
+      setData(data);
+    }else{
+      let data = data_tmp.sort((a,b) => (a.count > b.count)?1:-1);
+      // console.log(data);
+      setData(data);
+     }
 
-  }, [threshold, unidata]);
+  }, [threshold, unidata, selectedRegions]);
 
   let bitmap_layer=null;
   let wireframe_bitmap_layer = null;
