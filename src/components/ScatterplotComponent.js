@@ -10,7 +10,7 @@ import useStore from '../store/store'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {getUrl} from "../shared/common"
 
-function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
+function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
    * Data format:
    * [
@@ -93,8 +93,8 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
 
   useEffect(()=>{
 
-    console.log(selectedRegions);
-    let data_tmp = unidata.filter(bead => bead['count']>=threshold)
+    // console.log(selectedRegions, umiLowerThreshold, umiUpperThreshold);
+    let data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold)
     if(regionTree && selectedRegions.length>0){
       let data_tmp2 = data_tmp.filter(bead => {
         for (let i=0;i<selectedRegions.length; i++){
@@ -112,7 +112,7 @@ function Scatterplot({id, unidata, threshold, opacityVal, viewState, onViewState
       setData(data);
      }
 
-  }, [threshold, unidata, selectedRegions]);
+  }, [umiLowerThreshold, umiUpperThreshold, unidata, selectedRegions]);
 
   let bitmap_layer=null;
   let wireframe_bitmap_layer = null;

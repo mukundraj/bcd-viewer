@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware"
 export const useStore = create(set => ({
     hoverInfo: 0,
     setHoverInfo: (hoverInfo) => set({hoverInfo:hoverInfo}),
-    maxUmiThreshold:0,
+    maxUmiThreshold:1,
     setMaxUmiThreshold: (val) => set({maxUmiThreshold:val}),
     currentColorMap:interpolateViridis,
     setCurrentColorMap: (val) => set({currentColorMap:val}),

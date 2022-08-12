@@ -1,0 +1,7 @@
+.noUi-tooltip {
+  display: none;
+}
+.noUi-handle:hover .noUi-tooltip {
+  display: block;
+  bottom: initial;
+}

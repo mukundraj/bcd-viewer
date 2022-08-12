@@ -16,6 +16,7 @@ import BcdCarousel from "./BcdCarouselComponent"
 import FrequencyBars from "./FrequencyBarsComponent"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import Dendrogram from './DendrogramComponent'
+import DualSlider from './DualSliderComponent'
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -52,6 +53,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   const [umiThreshold, setUmiThreshold ] = useState(0.01);
+  const [umiLowerThreshold, setUmiLowerThreshold ] = useState(0.01);
+  const [umiUpperThreshold, setUmiUpperThreshold ] = useState(0.01);
   const [opacityVal, setOpacityVal] = useState(1.0);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
@@ -247,10 +250,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
 
-
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
       setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
+      setUmiUpperThreshold(parseFloat(readData[maxCountMetadataKey]));
       setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
     }
     fetchData();
@@ -351,13 +354,17 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             UMI Count Threshold
           </Form.Label>
           <Col xs="2">
-            <RangeSlider
-              value={umiThreshold}
-              onChange={e => setUmiThreshold(e.target.value)}
-              min={0}
-              max={maxUmiThreshold}
-              step={maxUmiThreshold>2?1:maxUmiThreshold/100}
-            />
+            {/* <RangeSlider */}
+            {/*   value={umiThreshold} */}
+            {/*   onChange={e => setUmiThreshold(e.target.value)} */}
+            {/*   min={0} */}
+            {/*   max={maxUmiThreshold} */}
+            {/*   step={maxUmiThreshold>2?1:maxUmiThreshold/100} */}
+            {/* /> */}
+            <DualSlider maxUmiThreshold={maxUmiThreshold}
+                        setUmiLowerThreshold={setUmiLowerThreshold} 
+                        setUmiUpperThreshold={setUmiUpperThreshold}>
+            </DualSlider>
           </Col>
           <Col xs="1">
             Max: {Math.round(maxUmiThreshold * 1000) / 1000}
@@ -412,7 +419,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       </Form>
       <div className="add-border floater" >
         <Scatterplot id={'left_splot'} 
-          unidata={unifiedData} threshold={umiThreshold}  
+          unidata={unifiedData} 
+          umiLowerThreshold={umiLowerThreshold} umiUpperThreshold={umiUpperThreshold}
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
@@ -448,6 +456,7 @@ export default Loader;
 // https://stackoverflow.com/questions/2998784/how-to-output-numbers-with-leading-zeros-in-javascript
 // https://firebase.google.com/docs/auth/web/manage-users - check if signed in already
 // https://typeofnan.dev/why-you-cant-setstate-multiple-times-in-a-row/
+// https://stackoverflow.com/questions/41278385/setstate-doesnt-update-the-state-immediately
 
 
 
