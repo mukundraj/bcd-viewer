@@ -5,3 +5,48 @@
   display: block;
   bottom: initial;
 }
+.noUi-handle {
+  background: #0d6efd;
+  border: 1px #0d6efd;
+  box-shadow: none;
+}
+
+/* For circular handles */
+
+/* #slider-round { */
+/*   height: 10px; */
+/* } */
+
+#slider-round .noUi-connect {
+  background: #ced4da;
+}
+
+#slider-round .noUi-handle {
+  height: 18px;
+  width: 18px;
+  top: -5px;
+  right: -9px; /* half the width */
+  border-radius: 9px;
+}
+
+/* thickness of bar */
+.noUi-horizontal {
+  height: 5px;
+}
+
+.noUi-target {
+  margin-top: 10px;
+}
+
+/* for dealing with strange double verticle line artifact */
+.noUi-handle:before,
+.noUi-handle:after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 14px;
+  width: 0px;
+  background: #e8e7e6;
+  left: 14px;
+  top: 6px;
+}
