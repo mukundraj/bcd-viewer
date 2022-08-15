@@ -4,6 +4,8 @@ import React from 'react';
 import * as d3 from 'd3';
 import {useStore} from '../store/store'
 import {srnoToPid} from "../shared/common"
+import { useEffect, useState } from 'react';
+import {getUrl} from "../shared/common"
 
 function DendroBars(props){
 
@@ -12,6 +14,8 @@ function DendroBars(props){
   // const chosenPuckid = useStore(state => state.chosenPuckid);
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
   const setTogglePid = useStore(state => state.setTogglePid);
+  const [regionwiseData, setRegionwiseData] = useState(null);
+  
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -22,6 +26,51 @@ function DendroBars(props){
   }
   const dendroBarData = useStore(state => state.dendroBarData);
   let data = dendroBarData.map((x,i)=>{return {"sr":i+1, "cnt":x}});
+
+  const chosenGene = useStore(state => state.chosenGene);
+  const selectedRegIds = useStore(state => state.selectedRegIds);
+  const setDendroBarData = useStore(state => state.setDendroBarData);
+
+  function updateDendroBars(regIds, data){
+      let curDendroBarData = [...Array(101).keys()].map(x=>0);
+
+      regIds.map(regId =>{
+        
+        let readDataArray = data[parseInt(regId)].puck_dist;
+        for (let i=0; i<curDendroBarData.length;i++){
+          curDendroBarData[i] += readDataArray[i];
+        }
+      });
+      // console.log(curDendroBarData);
+      setDendroBarData(curDendroBarData);
+
+  }
+
+  useEffect(()=>{
+
+      updateDendroBars(selectedRegIds, regionwiseData);
+
+  }, [selectedRegIds, regionwiseData]);
+
+  useEffect(()=>{
+
+    const fetchAndSetBarData = async (selectedRegIds) => {
+      let regionTreeDataPath = `test_data2/s9f/gene_jsons_s9f/${chosenGene}.json`
+      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
+      const readData = await fetch(regionTreeDataUrl)
+       .then(response => response.json());
+      console.log(selectedRegIds);
+
+      setRegionwiseData(readData);
+      updateDendroBars(selectedRegIds, readData);
+
+    }
+
+    fetchAndSetBarData(selectedRegIds);
+
+
+  }, [chosenGene]);
+
 
   const ref = useD3(
     (svg) => {

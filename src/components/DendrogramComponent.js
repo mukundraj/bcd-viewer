@@ -29,11 +29,9 @@ function Dendrogram(props){
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
 
   const [data, setData] = useState({"label": "Root", "value":"root"})
-  const chosenGene = useStore(state => state.chosenGene);
   
-  // const dendroBarData = useStore(state => state.dendroBarData);
   const setSelectedRegions = useStore(state => state.setSelectedRegions);
-  const setDendroBarData = useStore(state => state.setDendroBarData);
+  const setSelectedRegIds = useStore(state => state.setSelectedRegIds);
 
   const target = React.useRef(null)
   const size = useSize(target)
@@ -42,27 +40,9 @@ function Dendrogram(props){
 
   const onChange = (currentNode, selectedNodes) => {
 
-    const fetchAndSetBarData = async (currentRegId, selectedRegIds) => {
-      let regionTreeDataPath = `test_data2/s9f/gene_jsons_s9f/${chosenGene}.json`
-      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
-      const readData = await fetch(regionTreeDataUrl)
-       .then(response => response.json());
-      console.log(selectedRegIds);
-
-      let curDendroBarData = [...Array(101).keys()].map(x=>0);
-
-      selectedRegIds.map(regId =>{
-        
-        let readDataArray = readData[parseInt(regId)].puck_dist;
-        for (let i=0; i<curDendroBarData.length;i++){
-          curDendroBarData[i] += readDataArray[i];
-        }
-      });
-      // console.log(curDendroBarData);
-      setDendroBarData(curDendroBarData);
-
-    }
     let selectedRegIds = selectedNodes.map(x => x.value);
+    setSelectedRegIds(selectedRegIds);   
+    
     let selectedRegNames = selectedNodes.map(x => x.label);
     if (selectedRegNames.length>0)
       setSelectedRegions(selectedRegNames);
@@ -70,8 +50,10 @@ function Dendrogram(props){
       setSelectedRegions([]);
     // console.log(selectedRegIds, currentNode.value, selectedRegIds.includes(currentNode.value));
       // console.log('onChange::', currentNode, selectedNodes)
-    fetchAndSetBarData(currentNode.value, selectedRegIds);
+    // fetchAndSetBarData(selectedRegIds);
   }
+
+
   const onAction = (node, action) => {
     console.log('onAction::', action, node, action.maxval_pid)
     setTogglePid(action.maxval_pid);

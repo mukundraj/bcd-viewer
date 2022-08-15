@@ -35,6 +35,8 @@ export const useStore = create(set => ({
     setDendroBarData: (val)=>set({dendroBarData:val}),
     selectedRegions:[],
     setSelectedRegions: (val)=>set({selectedRegions:val}),
+    selectedRegIds:[],
+    setSelectedRegIds: (val)=>set({selectedRegIds:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
