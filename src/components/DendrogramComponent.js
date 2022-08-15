@@ -94,6 +94,13 @@ function Dendrogram(props){
     // console.log(data);
 
   }, []);
+
+  function searchPredicate(node, searchTerm) {
+    // console.log(node);
+    return ((node.title && node.title.toLowerCase().indexOf(searchTerm) >= 0) ||
+            (node.label && node.label.toLowerCase().indexOf(searchTerm) >= 0))
+  }
+
   
 
   return(
@@ -108,6 +115,7 @@ function Dendrogram(props){
             keepTreeOnSearch={true}
             keepChildrenOnSearch={false}
             showDropdown="initial"
+            searchPredicate={searchPredicate}
           />
         </Scrollbars>
       </div>
