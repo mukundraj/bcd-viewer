@@ -2,6 +2,7 @@ import { useEffect, useState} from 'react'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {useStore, useAuthStore} from '../store/store'
 import Test from './TestComponent'
+import Breadcrumbs from './BreadcrumbsComponent'
 
 function Home(props){
 
@@ -30,6 +31,7 @@ function Home(props){
 
   return(
     <>
+      <Breadcrumbs/>
       {content}
     </>
   );

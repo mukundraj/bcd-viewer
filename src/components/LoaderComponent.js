@@ -17,6 +17,7 @@ import FrequencyBars from "./FrequencyBarsComponent"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import Dendrogram from './DendrogramComponent'
 import DualSlider from './DualSliderComponent'
+import Breadcrumbs from './BreadcrumbsComponent'
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -313,7 +314,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   return(
     <div>
-      <h4>{title}</h4>
+      <Breadcrumbs/>
+      {/* <h4>{title}</h4> */}
       <Row>
         <Col xs="2">
           Select Puck

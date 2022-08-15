@@ -2,6 +2,7 @@
 import Table from 'react-bootstrap/Table'
 import {useStore} from '../store/store'
 import {useNavigate,Link} from 'react-router-dom'
+import Breadcrumbs from './BreadcrumbsComponent'
 
 function AnalysisIdx({}){
 
@@ -32,7 +33,8 @@ function AnalysisIdx({}){
 
   return(
     <>
-        <h3>Analysis Index</h3>
+        {/* <h3>Analysis Index</h3> */}
+        <Breadcrumbs/>
         <div id="scroller">
         <Table striped border="true" hover size="sm" className="table-responsive">
           <thead>
