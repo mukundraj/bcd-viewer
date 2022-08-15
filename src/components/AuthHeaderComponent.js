@@ -84,6 +84,7 @@ function AuthHeader(props){
           <Navbar.Brand href="/">Brain Cell Data Viewer</Navbar.Brand>
           <Nav className="me-auto">
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/genex">GeneExp</NavLink>
+            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/singlecell">SingleCell</NavLink>
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/anaindex">Analysis</NavLink>
             {/* <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link> */}
             {/* <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link> */}
