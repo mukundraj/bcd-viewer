@@ -106,12 +106,12 @@ function FrequencyBars(props) {
             .duration(200)
             .style("opacity", .9);
           if ('nm' in d){
-            div.html(d.nm+",pid:"+pidToSrno[d.key[0]]+" cnt:"+d.cnt + "<br/>")
+            div.html(d.nm+",pid:"+pidToSrno[d.key[0]]+" cptkp:"+d.cnt + "<br/>")
               .style("left", (event.pageX + 5) + "px")
               .style("top", (event.pageY - 40) + "px");
 
           }else{
-            div.html("pid:"+pidToSrno[d.key[0]]+", cnt:"+d.cnt + "<br/>")
+            div.html("pid:"+pidToSrno[d.key[0]]+", cptkp:"+d.cnt + "<br/>") //cptkp=counts per 10k all gene counts in puck
               .style("left", (event.pageX + 5) + "px")
               .style("top", (event.pageY - 40) + "px");
           }

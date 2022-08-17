@@ -47,7 +47,6 @@ function DendroBars(props){
   }
 
   useEffect(()=>{
-
       updateDendroBars(selectedRegIds, regionwiseData);
 
   }, [selectedRegIds, regionwiseData]);
@@ -97,7 +96,7 @@ function DendroBars(props){
 
       const y1 = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => parseInt(d.cnt))])
+        .domain([0, d3.max(data, (d) => parseFloat(d.cnt))])
         .rangeRound([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
@@ -139,7 +138,7 @@ function DendroBars(props){
           div.transition()
             .duration(200)
             .style("opacity", .9);
-            div.html("pid:"+d.sr+", cnt:"+d.cnt + "<br/>")
+            div.html("pid:"+d.sr+", cptkr:"+d.cnt + "<br/>") //cptk=counts per 10k all gene counts in region
               .style("left", (event.pageX + 5) + "px")
               .style("top", (event.pageY - 40) + "px");
         })
