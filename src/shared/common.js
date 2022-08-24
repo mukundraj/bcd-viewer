@@ -2,12 +2,12 @@
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export  async function getUrl(pathInBucket){
-    console.log(pathInBucket);
+    // console.log('pathInBucket', pathInBucket);
       const storage = getStorage();
       const gsReference = ref(storage, pathInBucket);
       let url = await getDownloadURL(ref(storage, gsReference))
         .then((url) => url);
-    console.log(url);
+    // console.log('encodedPath', url);
     return url;
   }
 
