@@ -29,6 +29,7 @@ function SingleCell(props){
   const [maxCellTypes, setMaxCellTypes] = useState(10);
   const [multiSelections, setMultiSelections] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
@@ -78,6 +79,13 @@ function SingleCell(props){
       console.log('added', added);
       let colIdx = geneOptions.indexOf(added[0]);
       fetchData(colIdx); // reminder: async function
+
+      // adding gene entry to columns array
+      let columnsTmp = columns;
+      columnsTmp.push({"label":added[0], "accessor":colIdx});
+      setColumns(columnsTmp);
+      console.log(columnsTmp);
+
     }else if(prevMultiSelections.current.length>multiSelections.length){
       removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
       console.log('removed', removed);
@@ -86,6 +94,11 @@ function SingleCell(props){
         delete draft[colIdx];
       }));
       setTableData(tableDataTmp);
+
+      // removing gene entry from column array
+      let columnsTmp = columns.filter(x=>x.accessor!==colIdx);
+      setColumns(columnsTmp);
+      console.log(columnsTmp);
 
     }
 
@@ -107,7 +120,7 @@ function SingleCell(props){
             multiple
             onChange={setMultiSelections}
             options={geneOptions}
-            placeholder="Choose genes..."
+            placeholder="Click here to select genes..."
             selected={multiSelections}
           />
         </Col>
