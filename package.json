@@ -20,6 +20,7 @@
     "dom": "^0.0.3",
     "firebase": "^9.8.1",
     "font-awesome": "^4.7.0",
+    "immer": "^9.0.15",
     "lodash": "^4.17.21",
     "nouislider-react": "^3.4.1",
     "react": "^18.1.0",
