@@ -8,6 +8,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
+import Table from './table/TableComponent'
 
 
 function SingleCell(props){
@@ -29,7 +30,7 @@ function SingleCell(props){
   const [maxCellTypes, setMaxCellTypes] = useState(10);
   const [multiSelections, setMultiSelections] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [columns, setColumns] = useState([]);
+  const [columns, setColumns] = useState([{"label":"celltype", "accessor":"ct"}]);
   const [geneOptions, setGeneOptions] = useState([]);
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
@@ -47,12 +48,12 @@ function SingleCell(props){
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
-      console.log(dataGenes);
-      console.log(dataCellTypes);
+      // console.log(dataGenes);
+      // console.log(dataCellTypes);
       setGeneOptions(dataGenes);
       setCellTypes(dataCellTypes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"ct":dataCellTypes[i]}});
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i]}});
       setTableData(initTableData);
     }
 
@@ -111,6 +112,7 @@ function SingleCell(props){
   return(
     <>
       <Breadcrumbs/>
+      <div>
       <Row>
         <Col xs="2">Select genes:</Col>
         <Col xs="6">
@@ -135,6 +137,10 @@ function SingleCell(props){
           />
         </Col>
       </Row>
+        <div className="container" style={{height:"70vh"}}>
+        <Table columns={columns} tableData={tableData} maxCellTypes={maxCellTypes}/>
+        </div>
+      </div>
     </>
   );
 }

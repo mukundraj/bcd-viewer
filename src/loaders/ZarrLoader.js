@@ -92,7 +92,7 @@ export default class ZarrLoader {
         }
       };
       const numRequests = Math.ceil(z.meta.shape[0] / z.meta.chunks[0]);
-      console.log(numRequests, z);
+      // console.log(numRequests, z);
       const requests = range(numRequests).map(async item => z.store
         .getItem(`${z.keyPrefix}${String(item)}`)
         .then(buf => z.compressor.then(compressor => compressor.decode(buf))));
