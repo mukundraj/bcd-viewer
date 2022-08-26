@@ -4,6 +4,7 @@ import TableBody from "./TableBodyComponent";
 import TableHead from "./TableHeadComponent";
 import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import './Table.css'
 
 const useSize = (target) => {
   const [size, setSize] = React.useState()

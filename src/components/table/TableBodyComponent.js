@@ -15,7 +15,7 @@ const TableBody = ({columns, tableData}) => {
 
   }, [maxColVals]);
 
-
+  let radius = 25;
 
   let tableDataInner = null;
   if (columns.length > 1){
@@ -24,8 +24,9 @@ const TableBody = ({columns, tableData}) => {
           return (
             <tr key={data.id}>
               {columns.map(({ accessor }) => {
-                const tData = data[accessor] ? data[accessor]/zVal : "——";
-                return <td key={accessor}>{tData}</td>;
+                const tData = data[accessor]/zVal;
+                const rFactor = isNaN(tData)?0:tData;
+                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius}}className="dot"></span></td>;
               })}
             </tr>
           );
