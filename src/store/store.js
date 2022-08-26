@@ -37,6 +37,8 @@ export const useStore = create(set => ({
     setSelectedRegions: (val)=>set({selectedRegions:val}),
     selectedRegIds:[],
     setSelectedRegIds: (val)=>set({selectedRegIds:val}),
+    maxColVals: {},
+    setMaxColVals: (val)=>set({maxColVals:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({

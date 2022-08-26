@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
 import Table from './table/TableComponent'
+import {useStore} from '../store/store'
 
 
 function SingleCell(props){
@@ -35,6 +36,8 @@ function SingleCell(props){
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
 
+  const maxColVals = useStore(state => state.maxColVals);
+  const setMaxColVals = useStore(state => state.setMaxColVals);
 
   let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
 
@@ -61,7 +64,6 @@ function SingleCell(props){
 
   }, []);
 
-
   // updating tableData json array on change in selected genes
   useEffect(()=>{
     const fetchData = async (col_idx) => {
@@ -71,6 +73,12 @@ function SingleCell(props){
         draft[col_idx] = dataCol[i];
       }));
       setTableData(tableDataTmp);
+
+      // noting the highest value in displayed items in selected column
+      let curMaxVal = Math.max(...dataCol.slice(0, maxCellTypes));
+      setMaxColVals(produce(maxColVals, draft=>{
+        draft[col_idx] = curMaxVal;
+      }));
     }
 
     // identify newly added or removed gene and update tableData accordingly
@@ -100,6 +108,11 @@ function SingleCell(props){
       let columnsTmp = columns.filter(x=>x.accessor!==colIdx);
       setColumns(columnsTmp);
       console.log(columnsTmp);
+
+      // removing the max col val for the removed column
+      setMaxColVals(produce(maxColVals, draft=>{
+        delete draft[colIdx];
+      }));
 
     }
 
