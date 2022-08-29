@@ -31,10 +31,11 @@ function SingleCell(props){
   const [maxCellTypes, setMaxCellTypes] = useState(10);
   const [multiSelections, setMultiSelections] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [columns, setColumns] = useState([{"label":"celltype", "accessor":"ct"}]);
+  const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
+  const cellTypeColumn = [{"label":"celltype", "accessor":"ct"}]
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
@@ -151,7 +152,11 @@ function SingleCell(props){
         </Col>
       </Row>
         <div className="container" style={{height:"70vh"}}>
-        <Table columns={columns} tableData={tableData} maxCellTypes={maxCellTypes}/>
+        {columns.length>0?
+          <>
+        <Table columns={cellTypeColumn} tableData={tableData} maxCellTypes={maxCellTypes} width={20}/>
+        <Table columns={columns} tableData={tableData} maxCellTypes={maxCellTypes} width={60}/>
+          </>:null}
         </div>
       </div>
     </>

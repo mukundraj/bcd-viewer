@@ -17,7 +17,7 @@ const useSize = (target) => {
   useResizeObserver(target, (entry) => setSize(entry.contentRect))
   return size;
 }
-const Table = ({columns, tableData, maxCellTypes}) => {
+const Table = ({columns, tableData, maxCellTypes, width}) => {
 
  // const columns = [
  //  { label: "Full Name", accessor: "full_name" },
@@ -30,9 +30,10 @@ const Table = ({columns, tableData, maxCellTypes}) => {
   const target = React.useRef(null)
   const size = useSize(target)
 
+  let tableStyle = (width)=>{return {width:`${width}%`, height:"100%"}}
  return (
   <>
-    <div className="add-border floater" style={{"width":"66%", "height":"100%"}} ref={target}>
+    <div className="add-border floater" style={tableStyle(width)} ref={target}>
       <Scrollbars style={{ width: size?size.width:300, height: size?size.height:100}}>
         <table className="table">
           <caption>
@@ -49,3 +50,4 @@ const Table = ({columns, tableData, maxCellTypes}) => {
 
 export default Table;
 
+// https://stackoverflow.com/questions/44752138/in-react-how-to-pass-a-dynamic-variable-to-a-const-css-style-list

@@ -18,7 +18,6 @@ const TableBody = ({columns, tableData}) => {
   let radius = 25;
 
   let tableDataInner = null;
-  if (columns.length > 1){
     tableDataInner = 
         tableData.map((data) => {
           return (
@@ -31,7 +30,6 @@ const TableBody = ({columns, tableData}) => {
             </tr>
           );
         });
-  }
   return(
     <>
       <tbody>
