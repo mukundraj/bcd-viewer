@@ -39,6 +39,8 @@ export const useStore = create(set => ({
     setSelectedRegIds: (val)=>set({selectedRegIds:val}),
     maxColVals: {},
     setMaxColVals: (val)=>set({maxColVals:val}),
+    scTableScrollTop:0, 
+    setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
