@@ -85,3 +85,8 @@ th.down {
   border-radius: 50%;
   display: inline-block;
 }
+
+table td > span {
+  overflow: hidden;
+  height: 15px;
+}

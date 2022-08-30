@@ -15,7 +15,7 @@ const TableBody = ({columns, tableData}) => {
 
   }, [maxColVals]);
 
-  let radius = 25;
+  let radius = 20;
 
   let tableDataInner = null;
     tableDataInner = 
