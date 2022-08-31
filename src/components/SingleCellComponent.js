@@ -150,6 +150,8 @@ function SingleCell(props){
   }, [sortField, order, tableData])
  
   const tableDataSorted = useStore(state => state.tableDataSorted);
+
+  // compute and set normalizer Z
   useEffect(()=>{
 
     let vals = [];
@@ -166,7 +168,7 @@ function SingleCell(props){
     setScTableZVal(Math.max(1, Math.max(...vals)));
     
 
-  }, [tableDataSorted, columns]);
+  }, [tableDataSorted, columns, maxCellTypes]);
 
 
   return(
