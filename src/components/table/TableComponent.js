@@ -6,6 +6,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import './Table.css'
 import {useStore} from '../../store/store'
+import { useSortableTable } from "./hooks";
 
 const useSize = (target) => {
   const [size, setSize] = React.useState()
@@ -18,16 +19,8 @@ const useSize = (target) => {
   useResizeObserver(target, (entry) => setSize(entry.contentRect))
   return size;
 }
-const Table = ({columns, tableData, maxCellTypes, width}) => {
+const Table = ({columns, tableDataSorted, maxCellTypes, width, handleSorting}) => {
 
- // const columns = [
- //  { label: "Full Name", accessor: "full_name" },
- //  { label: "Email", accessor: "email" },
- //  { label: "Gender", accessor: "gender" },
- //  { label: "Age", accessor: "age" },
- //  { label: "Start date", accessor: "start_date" },
- // ];
-  
   const scTableScrollTop = useStore(state => state.scTableScrollTop);
   const setScTableScrollTop = useStore(state => state.setScTableScrollTop);
 
@@ -53,6 +46,7 @@ const Table = ({columns, tableData, maxCellTypes, width}) => {
     // }
   }, [scTableScrollTop]);
 
+
  return (
   <>
     <div className="add-border floater" style={tableStyle(width)} ref={target}>
@@ -62,11 +56,10 @@ const Table = ({columns, tableData, maxCellTypes, width}) => {
         ref={scrollbarElement}
       >
         <table className="table">
-          <caption>
-            Todo: make columns sortable, extract useSize to global scope, sync scroll, fill remaing space in viewport
-          </caption>
-          <TableHead columns={columns} />
-          <TableBody columns={columns} tableData={tableData.slice(0, maxCellTypes)} maxCellTypes={maxCellTypes}/>
+          {/* <caption> */}
+          {/* </caption> */}
+          <TableHead columns={columns} handleSorting={handleSorting}/>
+          <TableBody columns={columns} tableDataSorted={tableDataSorted.slice(0, maxCellTypes)} maxCellTypes={maxCellTypes}/>
         </table>
       </Scrollbars>
     </div>

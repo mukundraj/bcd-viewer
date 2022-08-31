@@ -10,6 +10,7 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
 import Table from './table/TableComponent'
 import {useStore} from '../store/store'
+import { useSortableTable } from "./table/hooks";
 
 
 function SingleCell(props){
@@ -36,11 +37,17 @@ function SingleCell(props){
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype", "accessor":"ct"}]
+  const setTableDataSorted = useStore(state => state.setTableDataSorted);
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
   let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+  const setScTableZVal = useStore(state => state.setScTableZVal);
+  
+  const sortField = useStore(state => state.sortField);
+  const setSortField = useStore(state => state.setSortField);
+  const order = useStore(state => state.order);
 
   // get zarr store connection and initialize geneOptions
   useEffect(()=>{
@@ -59,6 +66,7 @@ function SingleCell(props){
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i]}});
       setTableData(initTableData);
+      setTableDataSorted(initTableData);
     }
 
     fetchData();
@@ -75,11 +83,13 @@ function SingleCell(props){
       }));
       setTableData(tableDataTmp);
 
-      // noting the highest value in displayed items in selected column
-      let curMaxVal = Math.max(...dataCol.slice(0, maxCellTypes));
-      setMaxColVals(produce(maxColVals, draft=>{
-        draft[col_idx] = curMaxVal;
-      }));
+
+      if (sortField===""){
+        setTableDataSorted(tableDataTmp);
+      }
+      // else{
+      //   handleSorting(sortField, order);
+      // }
     }
 
     // identify newly added or removed gene and update tableData accordingly
@@ -92,7 +102,7 @@ function SingleCell(props){
 
       // adding gene entry to columns array
       let columnsTmp = columns;
-      columnsTmp.push({"label":added[0], "accessor":colIdx});
+      columnsTmp.push({"label":added[0], "accessor":colIdx, "sortable":true});
       setColumns(columnsTmp);
       console.log(columnsTmp);
 
@@ -110,10 +120,21 @@ function SingleCell(props){
       setColumns(columnsTmp);
       console.log(columnsTmp);
 
-      // removing the max col val for the removed column
-      setMaxColVals(produce(maxColVals, draft=>{
-        delete draft[colIdx];
-      }));
+      console.log("sortField", sortField, colIdx, sortField===colIdx);
+      if (sortField===colIdx){
+        // Removing the current sortField
+        setSortField("");
+        setTableDataSorted(tableDataTmp);
+      }else{
+        // Removig field that is not current sortField
+        handleSorting(sortField, order); // calls setTableDataSorted internally
+      }
+
+
+      // // removing the max col val for the removed column
+      // setMaxColVals(produce(maxColVals, draft=>{
+      //   delete draft[colIdx];
+      // }));
 
     }
 
@@ -121,6 +142,31 @@ function SingleCell(props){
     prevMultiSelections.current=multiSelections;
 
   },[multiSelections]);
+ 
+  const [handleSorting] = useSortableTable(tableData);
+  // const tableDataSorted = useStore(state => state.tableDataSorted);
+  useEffect(()=>{
+    handleSorting(sortField, order);
+  }, [sortField, order, tableData])
+ 
+  const tableDataSorted = useStore(state => state.tableDataSorted);
+  useEffect(()=>{
+
+    let vals = [];
+    let curShown = tableDataSorted.slice(0, maxCellTypes);
+    curShown.map(x=>{
+    let curAccessors = columns.map(c=>c.accessor);
+      for (let i=0; i<curAccessors.length;i++){
+        vals.push(x[curAccessors[i]]);
+      }
+    });
+    
+    console.log(curShown, columns);
+    console.log(vals,"|", Math.max(...vals));
+    setScTableZVal(Math.max(1, Math.max(...vals)));
+    
+
+  }, [tableDataSorted, columns]);
 
 
   return(
@@ -154,8 +200,8 @@ function SingleCell(props){
         <div className="container" style={{height:"70vh"}}>
         {columns.length>0?
           <>
-        <Table columns={cellTypeColumn} tableData={tableData} maxCellTypes={maxCellTypes} width={20}/>
-        <Table columns={columns} tableData={tableData} maxCellTypes={maxCellTypes} width={60}/>
+        <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={20} handleSorting={handleSorting}/>
+        <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={60} handleSorting={handleSorting}/>
           </>:null}
         </div>
       </div>

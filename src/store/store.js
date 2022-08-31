@@ -41,6 +41,14 @@ export const useStore = create(set => ({
     setMaxColVals: (val)=>set({maxColVals:val}),
     scTableScrollTop:0, 
     setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
+    tableDataSorted:[], 
+    setTableDataSorted: (val)=>set({tableDataSorted:val}),
+    scTableZVal:1, 
+    setScTableZVal: (val)=>set({scTableZVal:val}),
+    sortField:"", 
+    setSortField: (val)=>set({sortField:val}),
+    order:"asc", 
+    setOrder: (val)=>set({order:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
