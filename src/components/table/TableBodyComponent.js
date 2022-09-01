@@ -26,7 +26,7 @@ const TableBody = ({columns, tableDataSorted}) => {
               {columns.map(({ accessor }) => {
                 const tData = data[accessor]/scTableZVal;
                 const rFactor = isNaN(tData)?0:tData;
-                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius}}className="dot"></span></td>;
+                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius}} className="dot sctooltip"><span className="sctooltiptext">{data[accessor]}</span></span></td>;
               })}
             </tr>
           );
