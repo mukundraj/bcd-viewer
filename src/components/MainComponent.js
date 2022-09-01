@@ -44,7 +44,7 @@ function Main(props){
             <Route path="/" element={<AuthHeader/>}>
               <Route index path="/" element={<Home/>}/>
               <Route path="genex" element={ <RequireAuth><MainViewer dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
-              <Route path="singlecell" element={ <SingleCell/>} />
+              <Route path="singlecell" element={ <RequireAuth><SingleCell/></RequireAuth>} />
               <Route path="anaindex">
                 <Route index element={<RequireAuth><AnalysisIdx /></RequireAuth>}/>
                 <Route path="regag2" element={<RequireAuth><MainViewer dataConfig={DATACONFIGS[3]}/> </RequireAuth>} />
