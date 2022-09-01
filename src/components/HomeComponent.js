@@ -22,7 +22,7 @@ function Home(props){
       setContent(
         <div>
           <h1>Welcome</h1>
-          <p>You are logged in. You can now explore data using tabs on navigation bar.</p>
+          <p>You can explore the data using tabs on navigation bar.</p>
         </div>
 
       )
