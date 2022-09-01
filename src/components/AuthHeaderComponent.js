@@ -12,13 +12,26 @@ function AuthHeader(props){
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
   const setAccessToken = useAuthStore(state => state.setAccessToken);
   const accessToken = useAuthStore(state => state.accessToken);
-  const curRoute = useStore(state => state.curRoute)
+  const curRoute = useStore(state => state.curRoute);
+  const isDemoPortal = useAuthStore(state => state.isDemoPortal);
+  const setIsDemoPortal = useAuthStore(state => state.setIsDemoPortal);
+  console.log(isDemoPortal);
 
   const [loginButtonText, setLoginButtonText] = useState("Login");
 
   let navigate = useNavigate();
   let location = useLocation();
   let from = location.state?.from?.pathname || "/";
+
+  useEffect(()=>{
+    let hostname = window.location.hostname;
+    console.log('hostname', hostname, 'isDemoPortal', isDemoPortal, hostname==='velina-208320.ue.r.appspot.com' );
+    if (hostname==='velina-208320.ue.r.appspot.com'){
+      setIsDemoPortal(true);
+      setIsLoggedIn(true);
+    }
+
+  },[])
 
   useEffect(()=>{
 
@@ -90,9 +103,11 @@ function AuthHeader(props){
             {/* <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link> */}
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink>
           </Nav>
-          <Nav>
-            <Button onClick={logInOut}>{loginButtonText}</Button>
-          </Nav>
+        {isDemoPortal?false:
+        <Nav>
+          <Button onClick={logInOut}>{loginButtonText}</Button>
+        </Nav>
+        }
       </Navbar>
       <Outlet/>
     </>

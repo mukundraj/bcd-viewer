@@ -56,9 +56,13 @@ export const useAuthStore = create(persist(set => ({
     setIsLoggedIn: (val) => set({isLoggedIn:val}),
     accessToken:null,
     setAccessToken: (val) => set({accessToken:val}),
-    })),
+    isDemoPortal: false,
+    setIsDemoPortal: (val) => set({isDemoPortal:val}),
+    }),
     {
-        name: "auth-storage"
-    });
+        name: "auth-storage",
+        getStorage: ()=>sessionStorage,
+    })
+);
 
 export default useStore;
