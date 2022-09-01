@@ -55,7 +55,7 @@ const Table = ({columns, tableDataSorted, maxCellTypes, width, handleSorting}) =
         onScrollFrame={handleScrollFrame}
         ref={scrollbarElement}
       >
-        <table className="table">
+        <table className="sctable">
           {/* <caption> */}
           {/* </caption> */}
           <TableHead columns={columns} handleSorting={handleSorting}/>
