@@ -32,7 +32,7 @@ const TableHead = ({columns, handleSorting}) => {
             return <th key={accessor} 
               onClick={() => handleSortingChange(accessor)}
               className={cl} >
-              {label}
+              <pre>{label}</pre>
             </th>;
           })
   return(

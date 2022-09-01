@@ -36,7 +36,7 @@ function SingleCell(props){
   const [geneOptions, setGeneOptions] = useState([]);
   const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
-  const cellTypeColumn = [{"label":"celltype", "accessor":"ct"}]
+  const cellTypeColumn = [{"label":"celltype                                   ", "accessor":"ct"}]
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
 
   const maxColVals = useStore(state => state.maxColVals);

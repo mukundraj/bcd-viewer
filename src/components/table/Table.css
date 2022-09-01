@@ -42,6 +42,10 @@ caption {
   text-align: left;
 }
 
+.sctable th > pre {
+  margin: 0;
+}
+
 .sctable th.up {
   background-image: url("../../images/up_arrow.png");
 }
@@ -84,11 +88,6 @@ th.down {
   background-color: #bbb;
   border-radius: 50%;
   display: inline-block;
-}
-
-table td > span {
-  overflow: hidden;
-  height: 15px;
 }
 
 /* for instant tooltip */
