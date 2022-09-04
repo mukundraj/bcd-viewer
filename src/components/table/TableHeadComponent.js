@@ -31,7 +31,9 @@ const TableHead = ({columns, handleSorting}) => {
      : "";
             return <th key={accessor} 
               onClick={() => handleSortingChange(accessor)}
-              className={cl} >
+              className={cl} 
+              style={{position:"sticky", top:0}}
+            >
               <pre>{label}</pre>
             </th>;
           })
@@ -47,3 +49,5 @@ const TableHead = ({columns, handleSorting}) => {
 };
 
 export default TableHead;
+
+// https://css-tricks.com/position-sticky-and-table-headers/
