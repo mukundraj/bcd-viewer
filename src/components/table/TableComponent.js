@@ -27,7 +27,7 @@ const Table = ({columns, tableDataSorted, maxCellTypes, width, handleSorting}) =
   const target = React.useRef(null)
   const size = useSize(target)
 
-  let tableStyle = (width)=>{return {width:`${width}%`, height:"100%"}}
+  let tableStyle = (width)=>{return {width:`${width}%`, height:"90%"}}
 
   const scrollbarElement = useRef();
   let handleScrollFrame = function(...args){

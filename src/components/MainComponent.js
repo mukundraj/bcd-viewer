@@ -39,7 +39,7 @@ function Main(props){
     <>
       {/* <Header /> */}
       <BrowserRouter>
-        <Container>
+        <Container className="d-flex" style={{height:"100vh", flexDirection:"column"}}>
           <Routes>
             <Route path="/" element={<AuthHeader/>}>
               <Route index path="/" element={<Home/>}/>

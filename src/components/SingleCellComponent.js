@@ -174,7 +174,7 @@ function SingleCell(props){
   return(
     <>
       <Breadcrumbs/>
-      <div>
+      <div className="d-flex" style={{flexDirection:"column", flexGrow:1}}>
       <Row>
         <Col xs="2">Select genes:</Col>
         <Col xs="6">
@@ -199,7 +199,7 @@ function SingleCell(props){
           />
         </Col>
       </Row>
-        <div className="container" style={{height:"70vh"}}>
+        <div className="container" style={{flexGrow:1}}>
         {columns.length>0?
           <>
         <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={20} handleSorting={handleSorting}/>
