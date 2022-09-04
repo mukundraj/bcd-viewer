@@ -25,8 +25,8 @@ function AuthHeader(props){
 
   useEffect(()=>{
     let hostname = window.location.hostname;
-    console.log('hostname', hostname, 'isDemoPortal', isDemoPortal, hostname==='velina-208320.ue.r.appspot.com' );
-    if (hostname==='velina-208320.ue.r.appspot.com'){
+    console.log('hostname', hostname, 'isDemoPortal', isDemoPortal, hostname==='braincelldata.uc.r.appspot.com' );
+    if (hostname==='braincelldata.uc.r.appspot.com'){
       setIsDemoPortal(true);
       setIsLoggedIn(true);
     }
