@@ -199,13 +199,21 @@ function SingleCell(props){
           />
         </Col>
       </Row>
-        <div className="container" style={{flexGrow:1}}>
-        {columns.length>0?
-          <>
-        <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={20} handleSorting={handleSorting}/>
-        <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={60} handleSorting={handleSorting}/>
-          </>:null}
-        </div>
+        <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
+          <Col className="" xs="10">
+            {columns.length>0?
+              <>
+                <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={24} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={73} handleSorting={handleSorting}/>
+              </>:null}
+          </Col>
+          <Col xs="2">
+          <Row>
+            {columns.length>0?"Colorbar":null
+            }
+          </Row>
+          </Col>
+        </Row>
       </div>
     </>
   );
