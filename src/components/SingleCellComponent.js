@@ -11,6 +11,7 @@ import produce from "immer";
 import Table from './table/TableComponent'
 import {useStore} from '../store/store'
 import { useSortableTable } from "./table/hooks";
+import Colorbar from '../components/ColorbarComponent'
 
 
 function SingleCell(props){
@@ -209,7 +210,7 @@ function SingleCell(props){
           </Col>
           <Col xs="2">
           <Row>
-            {columns.length>0?"Colorbar":null
+            {columns.length>0?<Colorbar max={10} cells={8} style={{marginTop:"30px"}}/>:null
             }
           </Row>
           </Col>

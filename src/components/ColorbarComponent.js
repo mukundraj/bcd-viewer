@@ -10,8 +10,9 @@ function Colorbar(props){
   // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const currentColorMap = useStore(state => state.currentColorMap);
   const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
-  const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+  // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const svgRef = useRef(null);
+  const maxVal = props.max;
 
 
   useEffect(()=>{
@@ -28,7 +29,7 @@ function Colorbar(props){
       //   d3.color(interpolatePlasma(0.0)).formatRgb()]);
 
       let logColorScale = d3.scaleLog()
-        .domain([0.0001, 0.01, 0.2*maxUmiThreshold, 0.4*maxUmiThreshold, 0.6*maxUmiThreshold, 0.8*maxUmiThreshold, maxUmiThreshold])
+        .domain([0.0001, 0.01, 0.2*maxVal, 0.4*maxVal, 0.6*maxVal, 0.8*maxVal, maxVal])
         .range([ 
         d3.color("#aaaaaa").formatRgb(),   
         d3.color(interpolatePlasma(1.0)).formatRgb(),   
@@ -64,7 +65,7 @@ function Colorbar(props){
 
       var legendLinear = legendColor()
         .shapeWidth(17)
-        .cells(15)
+        .cells(props.cells)
         .orient('horizontal')
         .scale(logColorScale);
 
@@ -76,11 +77,11 @@ function Colorbar(props){
     }
     drawColorbar();
 
-  }, [maxUmiThreshold]);
+  }, [maxVal]);
 
   return(
     <>
-      <svg ref={svgRef} width="100%" height="35px"/>
+      <span style={props.style}><svg ref={svgRef} width="100%" height="35px"/></span>
     </>
   );
 }

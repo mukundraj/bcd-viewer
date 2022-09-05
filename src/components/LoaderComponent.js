@@ -415,7 +415,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           />
           </Col>
           <Col xs="4">
-            <Colorbar/>
+            <Colorbar max={maxUmiThreshold} cells={15}/>
           </Col>
         </FormGroup>
       </Form>
