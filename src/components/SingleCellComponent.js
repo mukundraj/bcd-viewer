@@ -9,7 +9,8 @@ import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
 import Table from './table/TableComponent'
-import {useStore} from '../store/store'
+import useStore from '../store/store'
+import {useSCComponentStore} from '../store/SCComponentStore'
 import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
 
@@ -39,6 +40,7 @@ function SingleCell(props){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype                                   ", "accessor":"ct"}]
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
+  const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
@@ -210,7 +212,7 @@ function SingleCell(props){
           </Col>
           <Col xs="2">
           <Row>
-            {columns.length>0?<Colorbar max={10} cells={8} setCurrentColorMap={x=>{}}style={{marginTop:"30px"}}/>:null
+            {columns.length>0?<Colorbar max={20} cells={7} setCurrentColorMap={setCurrentColorMap} style={{marginTop:"30px"}}/>:null
             }
           </Row>
           </Col>
