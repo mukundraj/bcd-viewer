@@ -16,9 +16,7 @@ export const useSortableTable = (data) => {
     if (b[sortField] === null) return 0;
     if (a[sortField] === null && b[sortField] === null) return 0;
     return (
-     a[sortField].toString().localeCompare(b[sortField].toString(), "en", {
-      numeric: true,
-     }) * (sortOrder === "asc" ? 1 : -1)
+      (a[sortField]>b[sortField]?1:-1) * (sortOrder === "asc" ? 1 : -1)
     );
    });
    // setTableData(sorted);

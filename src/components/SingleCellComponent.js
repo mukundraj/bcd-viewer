@@ -56,8 +56,8 @@ function SingleCell(props){
   useEffect(()=>{
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let dataGenes = await zloader.getFlatArrDecompressed("z1.zarr/var/human_name/categories");
-      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z1.zarr/obs/_index");
+      let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
+      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
 
       let myRe = /=([\s\S]*)$/
@@ -80,7 +80,7 @@ function SingleCell(props){
   useEffect(()=>{
     const fetchData = async (col_idx) => {
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let dataCol = await zloader.getDataColumn("z1.zarr/X", col_idx);
+      let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[col_idx] = dataCol[i];
       }));
