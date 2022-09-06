@@ -8,11 +8,12 @@ function Colorbar(props){
 
   // const [currentColorMap, setCurrentColorMap] = useState(() => interpolatePlasma); 
   // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
-  const currentColorMap = useStore(state => state.currentColorMap);
-  const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
+  // const currentColorMap = useStore(state => state.currentColorMap);
+  // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
   // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
-  const svgRef = useRef(null);
+  const setCurrentColorMap = props.setCurrentColorMap;
   const maxVal = props.max;
+  const svgRef = useRef(null);
 
 
   useEffect(()=>{

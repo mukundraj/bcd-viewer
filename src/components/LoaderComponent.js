@@ -40,6 +40,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const generalToggleFlag = useStore(state => state.generalToggleFlag);
   const togglePid = useStore(state => state.togglePid);
   const [initialRender, setInitialRender] = useState(true);
+  const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
   
   const dendroBarData = useStore(state => state.dendroBarData);
 
@@ -415,7 +416,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           />
           </Col>
           <Col xs="4">
-            <Colorbar max={maxUmiThreshold} cells={15}/>
+            <Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>
           </Col>
         </FormGroup>
       </Form>

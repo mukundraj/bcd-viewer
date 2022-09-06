@@ -210,7 +210,7 @@ function SingleCell(props){
           </Col>
           <Col xs="2">
           <Row>
-            {columns.length>0?<Colorbar max={10} cells={8} style={{marginTop:"30px"}}/>:null
+            {columns.length>0?<Colorbar max={10} cells={8} setCurrentColorMap={x=>{}}style={{marginTop:"30px"}}/>:null
             }
           </Row>
           </Col>
