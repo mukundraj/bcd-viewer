@@ -20,7 +20,7 @@ const TableBody = ({columns, tableDataSorted}) => {
 
   let radius = 20;
 
-  let computedColor = (cFactor) => currentColorMap(cFactor*radius); // cFactor = colorFactor
+  let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
 
   let tableDataInner = null;
     tableDataInner = 
@@ -30,7 +30,7 @@ const TableBody = ({columns, tableDataSorted}) => {
               {columns.map(({ accessor }) => {
                 const tData = data[accessor]/scTableZVal;
                 const rFactor = isNaN(tData)?0:tData;
-                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(rFactor)}} className="dot sctooltip"><span className="sctooltiptext">{data[accessor]}</span></span></td>;
+                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(data[-accessor])}} className="dot sctooltip"><span className="sctooltiptext">{data[accessor]},{data[-accessor]}</span></span></td>;
               })}
             </tr>
           );

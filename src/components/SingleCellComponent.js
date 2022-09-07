@@ -41,6 +41,8 @@ function SingleCell(props){
   const cellTypeColumn = [{"label":"celltype                                   ", "accessor":"ct"}]
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
+  const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
+  const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
@@ -80,15 +82,18 @@ function SingleCell(props){
   useEffect(()=>{
     const fetchData = async (col_idx) => {
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
+      let zloader2 = new ZarrLoader({zarrPathInBucket});
+      // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
+      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
+                                                  zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[col_idx] = dataCol[i];
+        draft[-col_idx] = avgDataCol[i];
       }));
       setTableData(tableDataTmp);
-
-
       if (sortField===""){
         setTableDataSorted(tableDataTmp);
+        // console.log(tableDataTmp);
       }
       // else{
       //   handleSorting(sortField, order);
@@ -157,18 +162,20 @@ function SingleCell(props){
   // compute and set normalizer Z
   useEffect(()=>{
 
-    let vals = [];
+    let proportionVals = [], avgVals = [];
     let curShown = tableDataSorted.slice(0, maxCellTypes);
     curShown.map(x=>{
     let curAccessors = columns.map(c=>c.accessor);
       for (let i=0; i<curAccessors.length;i++){
-        vals.push(x[curAccessors[i]]);
+        proportionVals.push(x[curAccessors[i]]);
+        avgVals.push(x[-curAccessors[i]]);
       }
     });
     
-    console.log(curShown, columns);
-    console.log(vals,"|", Math.max(...vals));
-    setScTableZVal(Math.max(1, Math.max(...vals)));
+    console.log('curShown', curShown, columns);
+    // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
+    setScTableZVal(Math.max(1, Math.max(...proportionVals)));
+    setMaxAvgVal(Math.max(...avgVals));
     
 
   }, [tableDataSorted, columns, maxCellTypes]);
@@ -207,12 +214,12 @@ function SingleCell(props){
             {columns.length>0?
               <>
                 <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={24} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={73} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={72} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="2">
           <Row>
-            {columns.length>0?<Colorbar max={20} cells={7} setCurrentColorMap={setCurrentColorMap} style={{marginTop:"30px"}}/>:null
+            {columns.length>0?<Colorbar max={maxAvgVal} cells={8} setCurrentColorMap={setCurrentColorMap} style={{marginTop:"30px"}}/>:null
             }
           </Row>
           </Col>
