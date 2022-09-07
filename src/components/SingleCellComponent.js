@@ -228,10 +228,10 @@ function SingleCell(props){
                 <>
                   PercentExpression
                   <div style={{marginTop:"5px"}}>
-                  <div><span className="dotlegend"><span className="dot" style={{width:"20px", height:"20px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
-                <div><span className="dotlegend"><span className="dot" style={{width:"15px", height:"15px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
-                <div><span className="dotlegend"><span className="dot" style={{width:"10px", height:"10px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
-                  <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"5px", height:"5px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
+                  <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
+                <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
+                <div><span className="dotlegend"><span className="dot" style={{width:"8px", height:"8px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
+                  <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"4px", height:"4px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
                   </div>
                   </>:null
               }

@@ -18,7 +18,7 @@ const TableBody = ({columns, tableDataSorted}) => {
 
   // }, [maxColVals]);
 
-  let radius = 20;
+  let radius = 15;
 
   let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
 
