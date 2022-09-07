@@ -48,7 +48,7 @@ function SingleCell(props){
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
   let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
-  const setScTableZVal = useStore(state => state.setScTableZVal);
+  const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
   const sortField = useStore(state => state.sortField);
   const setSortField = useStore(state => state.setSortField);
@@ -174,7 +174,7 @@ function SingleCell(props){
     
     console.log('curShown', curShown, columns);
     // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
-    setScTableZVal(Math.max(1, Math.max(...proportionVals)));
+    setMaxProportionalVal(Math.max(...proportionVals)||Number.MIN_VALUE);
     setMaxAvgVal(Math.max(...avgVals));
     
 

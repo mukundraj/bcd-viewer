@@ -43,8 +43,6 @@ export const useStore = create(set => ({
     setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
     tableDataSorted:[], 
     setTableDataSorted: (val)=>set({tableDataSorted:val}),
-    scTableZVal:1, 
-    setScTableZVal: (val)=>set({scTableZVal:val}),
     sortField:"", 
     setSortField: (val)=>set({sortField:val}),
     order:"asc", 

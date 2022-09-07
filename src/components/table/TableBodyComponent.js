@@ -4,8 +4,8 @@ import {useSCComponentStore} from '../../store/SCComponentStore'
 
 const TableBody = ({columns, tableDataSorted}) => {
 
-  const maxColVals = useStore(state => state.maxColVals);
-  const scTableZVal = useStore(state => state.scTableZVal);
+  // const maxColVals = useStore(state => state.maxColVals);
+  const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const currentColorMap = useSCComponentStore(state => state.currentColorMap);
   // const [zVal, setZVal] = useState(1); // normalizing demominator data in table
 
@@ -28,7 +28,7 @@ const TableBody = ({columns, tableDataSorted}) => {
           return (
             <tr key={data.id}>
               {columns.map(({ accessor }) => {
-                const tData = data[accessor]/scTableZVal;
+                const tData = data[accessor]/maxProportionalVal;
                 const rFactor = isNaN(tData)?0:tData;
                 return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(data[-accessor])}} className="dot sctooltip"><span className="sctooltiptext">{data[accessor]},{data[-accessor]}</span></span></td>;
               })}

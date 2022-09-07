@@ -6,6 +6,8 @@ export const useSCComponentStore = create(set => ({
         setCurrentColorMap: (val) => set({currentColorMap:val}),
         maxAvgVal:1,
         setMaxAvgVal: (val) => set({maxAvgVal:val}),
+        maxProportionalVal:1, 
+        setMaxProportionalVal: (val)=>set({maxProportionalVal:val}),
     }));
 
 
