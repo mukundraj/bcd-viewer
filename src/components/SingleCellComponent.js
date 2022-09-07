@@ -48,6 +48,7 @@ function SingleCell(props){
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
   let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+  const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
   const sortField = useStore(state => state.sortField);
@@ -218,10 +219,23 @@ function SingleCell(props){
               </>:null}
           </Col>
           <Col xs="2">
-          <Row>
-            {columns.length>0?<Colorbar max={maxAvgVal} cells={8} setCurrentColorMap={setCurrentColorMap} style={{marginTop:"30px"}}/>:null
+          <Row style={{marginTop:"10px"}}>
+            {columns.length>0?<>AvgExpression<Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} /></>:null
             }
           </Row>
+            <Row style={{marginTop:"25px"}}>
+              {maxProportionalVal>0? 
+                <>
+                  PercentExpression
+                  <div style={{marginTop:"5px"}}>
+                  <div><span className="dotlegend"><span className="dot" style={{width:"20px", height:"20px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
+                <div><span className="dotlegend"><span className="dot" style={{width:"15px", height:"15px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
+                <div><span className="dotlegend"><span className="dot" style={{width:"10px", height:"10px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
+                  <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"5px", height:"5px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
+                  </div>
+                  </>:null
+              }
+            </Row>
           </Col>
         </Row>
       </div>

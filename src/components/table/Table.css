@@ -115,3 +115,10 @@ th.down {
 .sctooltip:hover .sctooltiptext {
   visibility: visible;
 }
+
+/* for legend */
+.dotlegend {
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+}
