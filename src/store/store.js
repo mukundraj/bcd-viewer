@@ -45,7 +45,7 @@ export const useStore = create(set => ({
     setTableDataSorted: (val)=>set({tableDataSorted:val}),
     sortField:"", 
     setSortField: (val)=>set({sortField:val}),
-    order:"asc", 
+    order:"desc", 
     setOrder: (val)=>set({order:val}),
     }));
 

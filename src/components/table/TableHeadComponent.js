@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import {useStore} from '../../store/store'
+import {useSCComponentStore} from '../../store/SCComponentStore'
 
 const TableHead = ({columns, handleSorting}) => {
 
   // const [sortField, setSortField] = useState("");
   // const [order, setOrder] = useState("asc");
+  const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
 
   const sortField = useStore(state => state.sortField);
   const setSortField = useStore(state => state.setSortField);
@@ -16,7 +18,7 @@ const TableHead = ({columns, handleSorting}) => {
       accessor === sortField && order === "asc" ? "desc" : "asc";
     setSortField(accessor);
     setOrder(sortOrder);
-    handleSorting(accessor, sortOrder);
+    handleSorting(accessor, sortOrder, sortByToggleVal);
   };
 
   let tableDataInner = null;

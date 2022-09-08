@@ -13,6 +13,7 @@ import useStore from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
 import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
+import {Form} from 'react-bootstrap'
 
 
 function SingleCell(props){
@@ -43,6 +44,9 @@ function SingleCell(props){
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
   const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
+  const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
+  const toggleSortByToggleVal = useSCComponentStore(state => state.toggleSortByToggleVal);
+
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
@@ -93,7 +97,9 @@ function SingleCell(props){
       }));
       setTableData(tableDataTmp);
       if (sortField===""){
+        setSortField(col_idx);
         setTableDataSorted(tableDataTmp);
+        handleSorting(sortField, order, sortByToggleVal);
         // console.log(tableDataTmp);
       }
       // else{
@@ -103,7 +109,7 @@ function SingleCell(props){
 
     // identify newly added or removed gene and update tableData accordingly
     let added = null, removed = null;
-    if (prevMultiSelections.current.length<multiSelections.length){
+    if (prevMultiSelections.current.length<multiSelections.length){ // gene added
       added = multiSelections.filter(x => !prevMultiSelections.current.includes(x));
       console.log('added', added);
       let colIdx = geneOptions.indexOf(added[0]);
@@ -115,7 +121,7 @@ function SingleCell(props){
       setColumns(columnsTmp);
       console.log(columnsTmp);
 
-    }else if(prevMultiSelections.current.length>multiSelections.length){
+    }else if(prevMultiSelections.current.length>multiSelections.length){ // gene removed
       removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
       console.log('removed', removed);
       let colIdx = geneOptions.indexOf(removed[0]);
@@ -127,16 +133,21 @@ function SingleCell(props){
       // removing gene entry from column array
       let columnsTmp = columns.filter(x=>x.accessor!==colIdx);
       setColumns(columnsTmp);
+
+      let sortFieldAfterGeneRemoval = "";
+      if (columnsTmp.length>0){
+        sortFieldAfterGeneRemoval = columnsTmp.at(-1).accessor;
+      }
       console.log(columnsTmp);
 
       console.log("sortField", sortField, colIdx, sortField===colIdx);
       if (sortField===colIdx){
         // Removing the current sortField
-        setSortField("");
+        setSortField(sortFieldAfterGeneRemoval);
         setTableDataSorted(tableDataTmp);
       }else{
         // Removig field that is not current sortField
-        handleSorting(sortField, order); // calls setTableDataSorted internally
+        handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
       }
 
 
@@ -155,8 +166,9 @@ function SingleCell(props){
   const [handleSorting] = useSortableTable(tableData);
   // const tableDataSorted = useStore(state => state.tableDataSorted);
   useEffect(()=>{
-    handleSorting(sortField, order);
-  }, [sortField, order, tableData])
+    handleSorting(sortField, order, sortByToggleVal);
+    console.log("sortByToggleVal ", sortByToggleVal);
+  }, [sortField, order, tableData, sortByToggleVal])
  
   const tableDataSorted = useStore(state => state.tableDataSorted);
 
@@ -220,13 +232,29 @@ function SingleCell(props){
           </Col>
           <Col xs="2">
           <Row style={{marginTop:"10px"}}>
-            {columns.length>0?<>AvgExpression<Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} /></>:null
+            {columns.length>0?<>
+                  <Form.Check
+                    value="sortbyavgexp"
+                    type="radio"
+                    aria-label="sort by avg exp"
+                    label="Sort by AvgExpression"
+                    onChange={toggleSortByToggleVal}
+                    checked={sortByToggleVal===1}
+                  />
+                <Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} /></>:null
             }
           </Row>
             <Row style={{marginTop:"25px"}}>
               {maxProportionalVal>0? 
                 <>
-                  PercentExpression
+                  <Form.Check
+                    value="sortbypercentexp"
+                    type="radio"
+                    aria-label="sort by percent exp"
+                    label="Sort by PercentExpression"
+                    onChange={toggleSortByToggleVal}
+                    checked={sortByToggleVal===-1}
+                  />
                   <div style={{marginTop:"5px"}}>
                   <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
                 <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
@@ -246,3 +274,4 @@ function SingleCell(props){
 export default SingleCell;
 
 // https://stackoverflow.com/questions/40589499/what-do-the-signs-in-numpy-dtype-mean
+// https://codesandbox.io/s/react-with-bootstrap-and-radio-buttons-u3zr3?file=/src/App.js:590-754

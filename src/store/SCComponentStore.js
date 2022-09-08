@@ -8,6 +8,8 @@ export const useSCComponentStore = create(set => ({
         setMaxAvgVal: (val) => set({maxAvgVal:val}),
         maxProportionalVal:1, 
         setMaxProportionalVal: (val)=>set({maxProportionalVal:val}),
+        sortByToggleVal:1,
+        toggleSortByToggleVal: () => set((state)=>({sortByToggleVal:-1*state.sortByToggleVal})),
     }));
 
 

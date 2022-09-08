@@ -7,8 +7,9 @@ export const useSortableTable = (data) => {
   // const tableDataSorted = useStore(state => state.tableDataSorted);
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
 
- const handleSorting = (sortField, sortOrder) => {
+ const handleSorting = (inpSortField, sortOrder, sortByToggleVal) => {
    // console.log("sortField", sortField, data);
+  let sortField = -sortByToggleVal * inpSortField;
   console.log("sortfield", sortField);
   if (sortField!==null && sortField !=="") { // let sortField=0 pass through
    const sorted = [...data].sort((a, b) => {
