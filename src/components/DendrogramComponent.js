@@ -10,18 +10,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import 'font-awesome/css/font-awesome.min.css';
 import {useStore} from '../store/store'
 import DendroBars from "./DendroBarsComponent"
-
-const useSize = (target) => {
-  const [size, setSize] = React.useState()
-
-  React.useLayoutEffect(() => {
-    setSize(target.current.getBoundingClientRect())
-  }, [target])
-
-  // Where the magic happens
-  useResizeObserver(target, (entry) => setSize(entry.contentRect))
-  return size
-}
+import useSize from '../hooks/useSize'
 
 function Dendrogram(props){
 

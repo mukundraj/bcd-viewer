@@ -7,18 +7,8 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import './Table.css'
 import {useStore} from '../../store/store'
 import { useSortableTable } from "./hooks";
+import useSize from '../../hooks/useSize'
 
-const useSize = (target) => {
-  const [size, setSize] = React.useState()
-
-  React.useLayoutEffect(() => {
-    setSize(target.current.getBoundingClientRect())
-  }, [target])
-
-  // Where the magic happens
-  useResizeObserver(target, (entry) => setSize(entry.contentRect))
-  return size;
-}
 const Table = ({columns, tableDataSorted, maxCellTypes, width, handleSorting}) => {
 
   const scTableScrollTop = useStore(state => state.scTableScrollTop);
