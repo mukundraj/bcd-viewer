@@ -15,7 +15,7 @@ const TableHead = ({columns, handleSorting}) => {
 
   const handleSortingChange = (accessor) => {
     const sortOrder =
-      accessor === sortField && order === "asc" ? "desc" : "asc";
+      accessor === sortField? (order==="desc"?"asc":"desc") : order;
     setSortField(accessor);
     setOrder(sortOrder);
     handleSorting(accessor, sortOrder, sortByToggleVal);

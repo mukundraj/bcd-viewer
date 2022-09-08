@@ -38,7 +38,7 @@ export const useStore = create(set => ({
     selectedRegIds:[],
     setSelectedRegIds: (val)=>set({selectedRegIds:val}),
     maxColVals: {},
-    setMaxColVals: (val)=>set({maxColVals:val}),
+    setMaxColVals: (val)=>set({maxColVals:val}), //  change to maxRows
     scTableScrollTop:0, 
     setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
     tableDataSorted:[], 
