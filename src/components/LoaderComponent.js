@@ -18,6 +18,7 @@ import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import Dendrogram from './DendrogramComponent'
 import DualSlider from './DualSliderComponent'
 import Breadcrumbs from './BreadcrumbsComponent'
+import RegEnrich from "./RegEnrichComponent"
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -435,6 +436,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         <Dendrogram
           setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
         />
+        <RegEnrich/>
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 

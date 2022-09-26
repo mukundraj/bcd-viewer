@@ -1,6 +1,6 @@
 // Adapted from https://github.com/vitessce/vitessce/blob/b28ae1abbc5e08d296f979f0f3606c6e75365e47/src/loaders/data-sources/ZarrDataSource.js
 
-import { HTTPStore, openArray, slice } from 'zarr';
+import { HTTPStore, openArray, slice, KeyError } from 'zarr';
 import range from 'lodash/range';
 
 const readFloat32FromUint8 = (bytes) => {
@@ -50,15 +50,27 @@ export default class ZarrLoader {
   }
 
   async getDataColumn(path, col_idx){
-      const z = await openArray({
-        store: this.zarrPathInBucket,
-        path: path,
-        mode: "r"
-      });
-      let data = await z.get([slice(null, null), col_idx]);
-      
-      // console.log(z,data);
-      return data.data;
+    const z = await openArray({
+      store: this.zarrPathInBucket,
+      path: path,
+      mode: "r"
+    });
+    let data = await z.get([slice(null, null), col_idx]);
+
+    // console.log(z,data);
+    return data.data;
+  }
+
+  async getDataRow(path, row_idx){
+    const z = await openArray({
+      store: this.zarrPathInBucket,
+      path: path,
+      mode: "r",
+    });
+    let data = await z.get([row_idx, slice(null, null)]);
+
+    // console.log(z,data);
+    return data.data;
   }
 
 

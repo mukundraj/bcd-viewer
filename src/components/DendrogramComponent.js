@@ -95,7 +95,7 @@ function Dendrogram(props){
   return(
     <>
       <DendroBars/>
-      <div className="tree-inner-wrap" style={{"width":"90%", "height":"90%"}} ref={target}>
+      <div className="tree-inner-wrap" style={{"width":"70%", "height":"60%"}} ref={target}>
         <Scrollbars style={{ width: size?size.width:100, height: size?size.height:100}}>
           <DropdownTreeSelect
             data={data} 
