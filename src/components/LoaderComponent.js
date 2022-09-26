@@ -337,6 +337,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
               options={geneOptions}
               placeholder="Choose another gene..."
               defaultInputValue={geneOptions[0]}
+              selected={chosenGene}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)

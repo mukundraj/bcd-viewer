@@ -18,9 +18,13 @@ const TableBodyGeneric = ({columns, tableDataSorted}) => {
 
   // }, [maxColVals]);
 
-  let radius = 15;
 
-  let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
+  const setChosenGene = useStore(state => state.setChosenGene);
+
+  function updateChosenGene(chosenGene){
+    console.log('chosenGene ', chosenGene);
+    setChosenGene([chosenGene]);
+  }
 
   let tableDataInner = null;
     tableDataInner = 
@@ -28,7 +32,10 @@ const TableBodyGeneric = ({columns, tableDataSorted}) => {
           return (
             <tr key={data.key}>
               {columns.map(({ accessor }) => {
-                return <td key={accessor}>{data[accessor]}</td>;
+                if (accessor==='g')
+                  return <td key={accessor}><button onClick={()=>updateChosenGene(data[accessor])}>{data[accessor]}</button></td>;
+                else
+                  return <td key={accessor}>{data[accessor]}</td>;
               })}
             </tr>
           );
