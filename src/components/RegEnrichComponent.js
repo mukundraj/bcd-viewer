@@ -1,7 +1,7 @@
 import RangeSlider from 'react-bootstrap-range-slider';
 import {Col, Row} from 'react-bootstrap'
-import Table from './table/TableComponent'
-import { useSortableTable } from "./table/hooks";
+import TableGeneric from './table/TableGenericComponent'
+import { useSortableTableGeneric } from "./table/hooks";
 import { useState, useEffect } from 'react';
 import useStore from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
@@ -41,13 +41,14 @@ function RegEnrich(props){
  // },
 // ];
   // const [tableData, setTableData] = useState(data);
-  const tableDataSorted = useStore(state => state.tableDataSorted);
+  // const tableDataFiltered = useStore(state => state.tableDataFiltered);
+  const [tableDataFiltered, setTableDataFiltered] = useState([]);
 
 
-  const [handleSorting] = useSortableTable(tableDataSorted);
+  const [handleSorting] = useSortableTableGeneric(tableDataFiltered);
   const setSortField = useStore(state => state.setSortField);
   const sortField = useStore(state => state.sortField);
-  const setTableDataSorted = useStore(state => state.setTableDataSorted);
+  const tableDataSorted = useStore(state => state.tableDataSorted);
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const selectedRegIds = useStore(state => state.selectedRegIds);
@@ -150,10 +151,9 @@ function RegEnrich(props){
   useEffect(()=>{
 
     if (inFracs.length===outFracs.length && outFracs.length===geneNames.length){
-      console.log("YES", inFracs.length);
       let fullDataTmp = [];
       for (let i=0; i<geneNames.length; i++){
-        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*1000)/1000, "-1": outFracs[i]})
+        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*1000)/1000, "-1": Math.round(outFracs[i]*1000)/1000})
       }
 
       // console.log(fullDataTmp);
@@ -172,25 +172,30 @@ function RegEnrich(props){
 
 
     let filterdData = fullData.filter(obj=>{return (obj['1'] > minFrac) && (obj['-1'] < maxFrac) });
-    filterdData.sort((a,b)=>(a['1']>b['1'])?-1:1);
+    setTableDataFiltered(filterdData);
+    // filterdData.sort((a,b)=>(a['1']>b['1'])?-1:1);
 
-
-    console.log("filterdData length ", filterdData.length, minFrac, maxFrac,filterdData);
-    setTableDataSorted(filterdData);
-
-
-      if (sortField===""){
-        setSortField("1");
-        handleSorting(sortField, "asc", 1);
-      }
 
 
   }, [fullData, minFrac, maxFrac])
 
-  
   useEffect(()=>{
-    console.log("chosenPuckid ", chosenPuckid, "selectedRegIds", selectedRegIds);
-  }, [chosenPuckid, selectedRegIds])
+    console.log("filterdData length ", tableDataFiltered.length, minFrac, maxFrac,tableDataFiltered);
+    console.log("sortField ", sortField);
+
+
+    if (sortField ===""){
+      setSortField("1");
+    }
+    handleSorting("1", "desc");
+    // handleSorting(sortField, "desc");
+
+  }, [tableDataFiltered])
+
+  
+  // useEffect(()=>{
+  //   console.log("chosenPuckid ", chosenPuckid, "selectedRegIds", selectedRegIds);
+  // }, [chosenPuckid, selectedRegIds])
 
 
 
@@ -230,7 +235,7 @@ function RegEnrich(props){
             </Row>
           </Col>
           <Col xs="7">
-          <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={100} width={100} handleSorting={handleSorting}/>
+          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={100} width={100} handleSorting={handleSorting}/>
           </Col>
         </Row>
     </>
