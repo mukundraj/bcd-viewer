@@ -52,6 +52,9 @@ function RegEnrich(props){
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const selectedRegIds = useStore(state => state.selectedRegIds);
+  const currentREgene = useStore(state => state.currentREgene);
+  const setChosenGene = useStore(state => state.setChosenGene);
+  const chosenGene = useStore(state => state.chosenGene);
 
   const [ridToIdx, setRidToIdx] = useState({});
   const [inFracs, setInFracs] = useState([]);
@@ -60,6 +63,7 @@ function RegEnrich(props){
   const [fullData, setFullData] = useState([]);
   const [minFrac, setMinFrac] = useState(0); // at least frac
   const [maxFrac, setMaxFrac] = useState(1); // at most frac
+  const setCurrentREgene = useStore(state => state.setCurrentREgene);
 
   // useEffect(()=>{
   //     if (sortField===""){
@@ -188,7 +192,7 @@ function RegEnrich(props){
       setSortField("1");
     }
     handleSorting("1", "desc");
-    // handleSorting(sortField, "desc");
+    setCurrentREgene(chosenGene);
 
   }, [tableDataFiltered])
 
@@ -202,7 +206,7 @@ function RegEnrich(props){
 
   return(
     <>
-      <h6>Region Enrichment</h6>
+      <h6>Region Enrichment for {currentREgene!=="None"?<button onClick={()=>{setChosenGene(currentREgene)}}>{currentREgene}</button>:<span style={{backgroundColor:"LightSalmon"}}>None</span>}</h6>
         <Row>
           <Col xs="5">
             <Row>

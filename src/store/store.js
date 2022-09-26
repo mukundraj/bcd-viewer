@@ -47,6 +47,8 @@ export const useStore = create(set => ({
     setSortField: (val)=>set({sortField:val}),
     order:"desc", 
     setOrder: (val)=>set({order:val}),
+    currentREgene: "None",
+    setCurrentREgene: (val)=>set({currentREgene:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({

@@ -336,7 +336,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
               onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
               options={geneOptions}
               placeholder="Choose another gene..."
-              defaultInputValue={geneOptions[0]}
+              // defaultInputValue={geneOptions[0]}
               selected={chosenGene}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
