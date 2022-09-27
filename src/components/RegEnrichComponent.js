@@ -52,8 +52,6 @@ function RegEnrich(props){
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const selectedRegIds = useStore(state => state.selectedRegIds);
-  const currentREgene = useStore(state => state.currentREgene);
-  const setChosenGene = useStore(state => state.setChosenGene);
   const chosenGene = useStore(state => state.chosenGene);
 
   const [ridToIdx, setRidToIdx] = useState({});
@@ -206,7 +204,7 @@ function RegEnrich(props){
 
   return(
     <>
-      <h6>Region Enrichment for {currentREgene!=="None"?<button onClick={()=>{setChosenGene(currentREgene)}}>{currentREgene}</button>:<span style={{backgroundColor:"LightSalmon"}}>None</span>}</h6>
+      <h6>Region Enrichment [max-rows:100]</h6>
         <Row>
           <Col xs="5">
             <Row>
