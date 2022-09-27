@@ -2,7 +2,7 @@ import {useStore} from '../../store/store'
 import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
 
-const TableBodyGeneric = ({columns, tableDataSorted}) => {
+const TableBodyGeneric = ({columns, tableDataSorted, setChosenGene}) => {
 
   // const maxColVals = useStore(state => state.maxColVals);
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
@@ -19,7 +19,7 @@ const TableBodyGeneric = ({columns, tableDataSorted}) => {
   // }, [maxColVals]);
 
 
-  const setChosenGene = useStore(state => state.setChosenGene);
+  // const setChosenGene = useStore(state => state.setChosenGene);
 
   function updateChosenGene(chosenGene){
     console.log('chosenGene ', chosenGene);

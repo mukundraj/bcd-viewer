@@ -7,7 +7,7 @@ import useStore from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
-function RegEnrich(props){
+function RegEnrich({setChosenGene}){
 
 
   const columns = [
@@ -237,7 +237,7 @@ function RegEnrich(props){
             </Row>
           </Col>
           <Col xs="7">
-          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={100} width={100} handleSorting={handleSorting}/>
+          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={100} width={100} handleSorting={handleSorting} setChosenGene={setChosenGene}/>
           </Col>
         </Row>
     </>
