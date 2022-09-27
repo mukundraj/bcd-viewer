@@ -109,8 +109,13 @@ function RegEnrich({setChosenGene}){
         // const sum = inFracsTmp.reduce((p,c)=>p+c, initVal);
         // console.log('sum ', sum);
 
-
-      } 
+      }else if(selectedRegIds==0){
+          let inFracsTmp = [];
+          let outFracsTmp = [];
+          setInFracs(inFracsTmp);
+          setOutFracs(outFracsTmp);
+      }
+ 
 
 
     }
