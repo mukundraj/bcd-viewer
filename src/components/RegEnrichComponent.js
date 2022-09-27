@@ -200,11 +200,11 @@ function RegEnrich({setChosenGene}){
   // }, [chosenPuckid, selectedRegIds])
 
 
-
+  let maxRows = 100;
 
   return(
     <>
-      <h6>Region Enrichment [max-rows:100]</h6>
+      <h6>Region Enrichment{tableDataFiltered.length>0?<><span> : </span><span style={{backgroundColor:"#ccccff"}}>showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length}</span></>:""} </h6>
         <Row>
           <Col xs="5">
             <Row>
@@ -237,7 +237,7 @@ function RegEnrich({setChosenGene}){
             </Row>
           </Col>
           <Col xs="7">
-          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={100} width={100} handleSorting={handleSorting} setChosenGene={setChosenGene}/>
+          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setChosenGene={setChosenGene}/>
           </Col>
         </Row>
     </>
