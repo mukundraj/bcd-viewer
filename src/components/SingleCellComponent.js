@@ -63,20 +63,28 @@ function SingleCell(props){
   useEffect(()=>{
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
-      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
+      // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
+      // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
+      let dataGenes = await zloader.getFlatArrDecompressed("scZarr.zarr/var/genes");
+      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
+      // console.log(dataGenes);
+      // console.log(dataCellTypesRaw);
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
-      // console.log(dataGenes);
-      // console.log(dataCellTypes);
       setGeneOptions(dataGenes);
       setCellTypes(dataCellTypes);
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i]}});
       setTableData(initTableData);
       setTableDataSorted(initTableData);
+
+      // let zloader2 = new ZarrLoader({zarrPathInBucket});
+      // let dataGenes2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/var/genes");
+      // let dataCellTypesRaw2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
+      // console.log('dataGenes2', dataGenes2);
+      // console.log('datacellTypesRaw2', dataCellTypesRaw2);
     }
 
     fetchData();
@@ -87,10 +95,12 @@ function SingleCell(props){
   useEffect(()=>{
     const fetchData = async (col_idx) => {
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let zloader2 = new ZarrLoader({zarrPathInBucket});
+      // let zloader2 = new ZarrLoader({zarrPathInBucket});
       // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
-      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
-                                                  zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
+      // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
+      //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
+      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("scZarr.zarr/nz/X", col_idx),
+                                                  zloader.getDataColumn("scZarr.zarr/avg/X", col_idx)]);
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[col_idx] = dataCol[i];
         draft[-col_idx] = avgDataCol[i];
