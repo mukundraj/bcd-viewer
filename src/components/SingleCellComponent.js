@@ -58,6 +58,11 @@ function SingleCell(props){
   const sortField = useStore(state => state.sortField);
   const setSortField = useStore(state => state.setSortField);
   const order = useStore(state => state.order);
+  const setOrder = useStore(state => state.setOrder);
+
+  useEffect(()=>{ // since 'order' is shared between component - fix it sometime
+    setOrder("desc");
+  },[]);
 
   // get zarr store connection and initialize geneOptions
   useEffect(()=>{

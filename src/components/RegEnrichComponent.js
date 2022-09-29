@@ -62,17 +62,11 @@ function RegEnrich({setChosenGene}){
   const [minFrac, setMinFrac] = useState(0); // at least frac
   const [maxFrac, setMaxFrac] = useState(1); // at most frac
   const setCurrentREgene = useStore(state => state.setCurrentREgene);
+  const setOrder = useStore(state => state.setOrder);
 
-  // useEffect(()=>{
-  //     if (sortField===""){
-  //       setSortField("1");
-  //       handleSorting(sortField, "asc", 1);
-  //       setTableDataSorted(tableData);
-  //     }
-
-  //       console.log("XXX" ,tableData);
-    
-  // }, [tableData]);
+  useEffect(()=>{ // since 'order' is shared between component - fix it sometime
+    setOrder("desc");
+  },[]);
 
 
   useEffect(()=>{
