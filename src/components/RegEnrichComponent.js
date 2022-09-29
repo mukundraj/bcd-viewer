@@ -97,9 +97,12 @@ function RegEnrich({setChosenGene}){
           for (let i=1; i<selectedRegIds.length; i++){
             let row_idx = ridToIdx[selectedRegIds[i]];
             let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/Xout`, row_idx)]);
-            for (let j=0; j<dataRow.length; j++){
-              inFracsTmp[j] += dataRow[j];
-              outFracsTmp[j] += dataRowOut[j];
+            // console.log('dataRow', dataRow);
+            if (!isNaN(dataRow[0]) && (!isNaN(dataRowOut[0]))){ // a lazy check too see if selected region/outRegion has no beads for current puck
+              for (let j=0; j<dataRow.length; j++){
+                inFracsTmp[j] += dataRow[j];
+                outFracsTmp[j] += dataRowOut[j];
+              }    
             }
           }
         }
