@@ -100,7 +100,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         for (let i=0;i<selectedRegions.length; i++){
           let parent = regionTree.getNodeById(selectedRegions[i]);
           let child = regionTree.getNodeById(bead.rname);
-          if (parent.isAncestorOf(child)) return true;
+          if (parent.isAncestorOf(child) || parent===child) return true;
         }
         return false;
       });
