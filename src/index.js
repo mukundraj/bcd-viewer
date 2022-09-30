@@ -6,7 +6,8 @@ import reportWebVitals from './reportWebVitals';
 
 import 'bootstrap/dist/css/bootstrap.css'; // for slider
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css'; // for slider
-import 'react-bootstrap-typeahead/css/Typeahead.css'; // for multiple select typeahead
+import 'react-bootstrap-typeahead/css/Typeahead.css'; // for typeahead
+import 'react-bootstrap-typeahead/css/Typeahead.bs5.css'; // for typeahead's bootstrap5 support (fixed clearButton issue)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

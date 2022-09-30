@@ -17,6 +17,8 @@ export const useStore = create(set => ({
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
     chosenGene:['Pcp4'],
     setChosenGene: (val)=>set({chosenGene:val}),
+    chosenGene2:[],
+    setChosenGene2: (val)=>set({chosenGene2:val}),
     carouselRef:0,
     setCarouselRef: (val)=>set({carouselRef:val}),
     fbarActiveDataName:'sorted_puckwise_cnts',

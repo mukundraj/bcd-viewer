@@ -50,6 +50,10 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   // const [chosenGene, setChosenGene] = useState(["Pcp4"])
   const chosenGene = useStore(state => state.chosenGene);
   const setChosenGene = useStore(state => state.setChosenGene);
+
+  const chosenGene2 = useStore(state => state.chosenGene2);
+  const setChosenGene2 = useStore(state => state.setChosenGene2);
+
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   // const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
@@ -127,7 +131,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   },[generalToggleFlag]);
 
   useEffect(()=>{
-    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
+
+    // 100% -> puck 4; gene 2; metadata 1;
+    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/7)));
   }, [dataLoadStatus]);
 
   // loading background image data and coords on puck change
@@ -239,6 +245,53 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       
   },[coordsData, chosenGene]);
   
+  // loading new counts on new gene selection for chosenGene2
+  useEffect(()=>{
+    if (geneOptions.includes(chosenGene2[0])){
+      // create filename string using gene name and puckid
+
+      // read gene data
+      const fetchData = async () => {
+      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      // let geneDataUrl = await getUrl(geneDataPath);
+      // console.log("geneDataPath ", geneDataUrl);
+      //   const geneData = await load(geneDataUrl, [CSVLoader]);
+
+
+      //   // create unifiedData
+      //   let readData = coordsData.map((obj, index) => ({
+      //     ...obj,
+      //     ...geneData[index]
+      //   }));
+
+      //   // update state of unifiedData
+      //   setUnifiedData(readData);
+      //   // console.log(readData);
+
+      //   // let maxVal = Math.max(...unifiedData.map(o => o.count));
+      //   // console.log(unifiedData);
+
+        // if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+        //   // if (chosenGene2.length===0){
+        //   //   setDataLoadStatus((p)=>({...p, gene:p.gene+2}));
+        //   // }else{
+        //     setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        //   // }
+        // }
+          setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+      }
+      fetchData();
+    }else{
+      console.log("chosenGene2 not included", chosenGene2, dataLoadStatus);
+        if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+        setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        }
+      
+    }
+
+  }, [coordsData, chosenGene2])
+
+
   // loading meta data on new puck or new gene selection
   useEffect(()=>{
 
@@ -261,7 +314,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     }
     fetchData();
 
-  }, [relativePath, chosenPuckid, chosenGene]);
+  }, [relativePath, chosenPuckid, chosenGene, chosenGene2]);
 
 
   // loading frequency bar plot data
@@ -328,14 +381,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         </Row>
       <Form>
         <FormGroup as={Row} className="mt-4">
-          <Form.Label column sm="3">Select Gene</Form.Label>
-          <Col xs="3">
+          <Form.Label column sm="3">Select Gene(s)</Form.Label>
+          <Col xs="2">
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:1, metadata:0}));setChosenGene(x)}}
               options={geneOptions}
-              placeholder="Choose another gene..."
+              placeholder="Choose a gene..."
               // defaultInputValue={geneOptions[0]}
               selected={chosenGene}
               filterBy={(option, props) => {
@@ -345,12 +398,29 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             />
           </Col>
           <Col xs="2">
+            <Typeahead
+              id="basic-typeahead-single2"
+              labelKey="name"
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:1, metadata:0}));setChosenGene2(x)}}
+              options={geneOptions}
+              placeholder="Choose another gene..."
+              // defaultInputValue={geneOptions[0]}
+              selected={chosenGene2}
+              filterBy={(option, props) => {
+                /* Own filtering code goes here. */
+                return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
+              }}
+              disabled={chosenGene.length>0?false:true}
+              clearButton
+            />
+          </Col>
+          <Col xs="2">
             for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid]}</span>
           </Col>
           <Col xs="1">
             Loaded:
           </Col>
-          <Col xs="3">
+          <Col xs="2">
             <ProgressBar now={dataLoadPercent} label={`${dataLoadPercent}%`} />
           </Col>
         </FormGroup>

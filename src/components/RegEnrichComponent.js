@@ -127,8 +127,6 @@ function RegEnrich({setChosenGene}){
       let zloader = new ZarrLoader({zarrPathInBucket});
       let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
-      console.log("dataRow:", dataRow);
-
       let ridToIdxTmp = {};
       for (let i=0; i<dataRow.length; i++){
         ridToIdxTmp[dataRow[i]] = i;
