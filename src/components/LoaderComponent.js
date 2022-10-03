@@ -252,41 +252,28 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
       // read gene data
       const fetchData = async () => {
-      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
-      // let geneDataUrl = await getUrl(geneDataPath);
-      // console.log("geneDataPath ", geneDataUrl);
-      //   const geneData = await load(geneDataUrl, [CSVLoader]);
+        let gene2DataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
+        let gene2DataUrl = await getUrl(gene2DataPath);
+        const gene2Data = await load(gene2DataUrl, [CSVLoader]);
 
+        // create unifiedData
+        let readData = unifiedData.map((obj, index) => ({
+          ...obj,
+          count2:gene2Data[index].count
+        }));
 
-      //   // create unifiedData
-      //   let readData = coordsData.map((obj, index) => ({
-      //     ...obj,
-      //     ...geneData[index]
-      //   }));
+        // update state of unifiedData
+        setUnifiedData(readData);
 
-      //   // update state of unifiedData
-      //   setUnifiedData(readData);
-      //   // console.log(readData);
-
-      //   // let maxVal = Math.max(...unifiedData.map(o => o.count));
-      //   // console.log(unifiedData);
-
-        // if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-        //   // if (chosenGene2.length===0){
-        //   //   setDataLoadStatus((p)=>({...p, gene:p.gene+2}));
-        //   // }else{
-        //     setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
-        //   // }
-        // }
-          setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
       }
       fetchData();
     }else{
       console.log("chosenGene2 not included", chosenGene2, dataLoadStatus);
-        if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+      if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
         setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
-        }
-      
+      }
+
     }
 
   }, [coordsData, chosenGene2])
