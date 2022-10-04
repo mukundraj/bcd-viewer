@@ -222,14 +222,22 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
 
         // create unifiedData
-        let readData = coordsData.map((obj, index) => ({
-          ...obj,
-          ...geneData[index]
-        }));
-
+        let readData = null;
+        if(chosenGene2.length>0){ // if a comparison gene is also selected
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            ...geneData[index], 
+            count2: unifiedData[index].count2
+          }));
+        }else{ // when no comparison gene is selected
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            ...geneData[index], 
+            count2: undefined
+          }));
+         }
         // update state of unifiedData
         setUnifiedData(readData);
-        // console.log(readData);
 
         // let maxVal = Math.max(...unifiedData.map(o => o.count));
         // console.log(unifiedData);
