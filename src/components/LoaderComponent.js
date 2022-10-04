@@ -149,7 +149,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
       setCoordsData(readData);
-    console.log("new  puckid ", chosenPuckid);
+      console.log("new  puckid ", chosenPuckid);
       // console.log(readData);
       setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
     }
@@ -277,6 +277,14 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       }
       fetchData();
     }else{
+        // create unifiedData
+        let readData = unifiedData.map((obj, index) => ({
+          ...obj,
+          count2:undefined
+        }));
+
+        // update state of unifiedData
+        setUnifiedData(readData);
       console.log("chosenGene2 not included", chosenGene2, dataLoadStatus);
       if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
         setDataLoadStatus((p)=>({...p, gene:p.gene+1}));

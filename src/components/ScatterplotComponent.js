@@ -44,6 +44,33 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   // const [opacityNissl, setOpacityNissl] = useState(0);
   // const [opacitySS, setOpacitySS] = useState(1);
   // const [opacityAtlas, setOpacityAtlas] = useState(0);
+  const chosenGene = useStore(state => state.chosenGene);
+  const chosenGene2 = useStore(state => state.chosenGene2);
+  const generalColormap = useStore(state => state.generalColormap);
+  const setGeneralColormap = useStore(state => state.setGeneralColormap);
+
+  function getGeneralColormap(chosenGene2){ 
+    function getRGB1(count, count2){ // initially
+      return toRGBArray(currentColorMap(count));
+    }
+    function getRGB2(count, count2){ // after
+      return [0, 0, 0];
+    }
+
+    if (chosenGene2.length > 0){
+      return getRGB2;
+    }else{
+      return getRGB1;
+    }
+  }
+
+  useEffect(()=>{
+
+    let colormap = getGeneralColormap(chosenGene2, currentColorMap);
+    setGeneralColormap(colormap);
+
+  }, [chosenGene, chosenGene2, data]);
+
 
   // console.log(unidata);
   const layer = new ScatterplotLayer({
@@ -60,7 +87,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
     // getPosition: d => d.coordinates,
     getPosition: d => [d.x,d.y],
     getRadius: d => 0.15,
-    getFillColor: d => toRGBArray(currentColorMap(d.count)),
+    getFillColor: d => generalColormap(d.count, d.count2),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001,
     onHover: info => setHoverInfo(info),
@@ -88,6 +115,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
 
     }
     fetchData();
+
 
   },[]);
 

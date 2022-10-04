@@ -51,6 +51,8 @@ export const useStore = create(set => ({
     setOrder: (val)=>set({order:val}),
     currentREgene: "None",
     setCurrentREgene: (val)=>set({currentREgene:val}),
+    generalColormap: ()=>[0, 0, 0],
+    setGeneralColormap: (val)=>set({generalColormap:val}),
     }));
 
 export const useAuthStore = create(persist(set => ({
