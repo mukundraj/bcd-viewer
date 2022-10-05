@@ -7,6 +7,8 @@ export const useStore = create(set => ({
     setHoverInfo: (hoverInfo) => set({hoverInfo:hoverInfo}),
     maxUmiThreshold:1,
     setMaxUmiThreshold: (val) => set({maxUmiThreshold:val}),
+    maxUmiThreshold2:1,
+    setMaxUmiThreshold2: (val) => set({maxUmiThreshold2:val}),
     currentColorMap:interpolateViridis,
     setCurrentColorMap: (val) => set({currentColorMap:val}),
     curRoute: 'none',

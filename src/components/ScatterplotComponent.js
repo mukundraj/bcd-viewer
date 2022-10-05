@@ -22,6 +22,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   const hoverInfo = useStore(state => state.hoverInfo);
   const setHoverInfo = useStore(state => state.setHoverInfo);
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+  const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
   const selectedRegions = useStore(state => state.selectedRegions);
 
   const currentColorMap = useStore(state => state.currentColorMap);
@@ -49,27 +50,64 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   const generalColormap = useStore(state => state.generalColormap);
   const setGeneralColormap = useStore(state => state.setGeneralColormap);
 
-  function getGeneralColormap(chosenGene2){ 
-    function getRGB1(count, count2){ // initially
-      return toRGBArray(currentColorMap(count));
-    }
-    function getRGB2(count, count2){ // after
-      return [0, 0, 0];
-    }
 
-    if (chosenGene2.length > 0){
-      return getRGB2;
-    }else{
-      return getRGB1;
-    }
-  }
 
   useEffect(()=>{
+    function getGeneralColormap(chosenGene2){ 
+      function getRGB1(count, count2){ // initially
+        return toRGBArray(currentColorMap(count));
+      }
+      function getRGB2(count, count2){ // after
+
+        // compute fractions for gene1 and gene2
+        let p_x = count/maxUmiThreshold;
+        let p_y = count2/maxUmiThreshold2;
+
+        // specify vertices
+        let x_v1 = 0, y_v1 = 1;
+        let x_v2 = 1, y_v2 = 0;
+        let x_v3 = 1, y_v3 = 1;
+
+        // compute barycentric weights
+        let w_v1 = ((y_v2 - y_v3)*(p_x - x_v3) + (x_v3-x_v2)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
+        let w_v2 = ((y_v3 - y_v1)*(p_x - x_v3) + (x_v1-x_v3)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
+        let w_v3 = 1 - w_v1 - w_v2;
+
+
+        // compute final rgb color using weights
+        let rgbColor = null;
+        if (0<=w_v1 && w_v1<=1 && 0 <= w_v2 && w_v2<=1 && 0 <=w_v3 && w_v3<=1){
+          let c1 = [255, 0, 0];
+          let c2 = [0, 255, 0];
+          let c3 = [255, 255, 0];
+
+          c1 = c1.map((x)=> parseInt(x*w_v1));
+          c2 = c2.map((x)=> parseInt(x*w_v2));
+          c3 = c3.map((x)=> parseInt(x*w_v3));
+
+          rgbColor = [c1[0]+c2[0]+c3[0], 
+            c1[1]+c2[1]+c3[1],
+            c1[2]+c2[2]+c3[2]
+          ];
+        }else{
+          rgbColor = [128, 128, 128, 0];
+        }
+
+        // console.log('maxUmiThreshold2 ', maxUmiThreshold2);
+        return rgbColor;
+      }
+
+      if (chosenGene2.length > 0){
+        return getRGB2;
+      }else{
+        return getRGB1;
+      }
+    }
 
     let colormap = getGeneralColormap(chosenGene2, currentColorMap);
     setGeneralColormap(colormap);
 
-  }, [chosenGene, chosenGene2, data]);
+  }, [chosenGene2.length, data, maxUmiThreshold, maxUmiThreshold2]);
 
 
   // console.log(unidata);

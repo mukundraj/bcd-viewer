@@ -78,6 +78,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
+  const setMaxUmiThreshold2 = useStore(state => state.setMaxUmiThreshold2);
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
@@ -317,7 +318,35 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     }
     fetchData();
 
-  }, [relativePath, chosenPuckid, chosenGene, chosenGene2]);
+  }, [relativePath, chosenPuckid, chosenGene]);
+
+  useEffect(()=>{
+    if (chosenGene2.length>0){
+    // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
+    const fetchData = async () => {
+      let meta_data_path = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2}.json`
+      let metaDataUrl = await getUrl(meta_data_path);
+      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
+      // console.log('meta_data_path ', meta_data_path2);
+      const readData = await fetch(metaDataUrl)
+       .then(response => response.json());
+        // .then(data_str => JSON.parse(data_str));
+
+      // setCoordsData(readData);
+      // setMaxUmiThreshold(parseFloat(readData['maxCount']));
+      setMaxUmiThreshold2(parseFloat(readData[maxCountMetadataKey]));
+      setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
+      console.log('setting maxUmiThreshold2 ', parseFloat(readData[maxCountMetadataKey]));
+    }
+    fetchData();
+
+    }else{
+      if (coordsData.length>1){
+        setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
+      }
+    }
+
+  }, [chosenPuckid, chosenGene2])
 
 
   // loading frequency bar plot data
