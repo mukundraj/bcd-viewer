@@ -51,47 +51,60 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   const setGeneralColormap = useStore(state => state.setGeneralColormap);
 
 
-
+  // a closure for generating a general colormap based on whether a chosenGene2 is present
   useEffect(()=>{
     function getGeneralColormap(chosenGene2){ 
+
       function getRGB1(count, count2){ // initially
         return toRGBArray(currentColorMap(count));
       }
+
       function getRGB2(count, count2){ // after
 
         // compute fractions for gene1 and gene2
         let p_x = count/maxUmiThreshold;
         let p_y = count2/maxUmiThreshold2;
+        let rgbColor = null;
 
-        // specify vertices
+        let c1=null, c2=null, c3=null;
         let x_v1 = 0, y_v1 = 1;
         let x_v2 = 1, y_v2 = 0;
-        let x_v3 = 1, y_v3 = 1;
+        let x_v3 = null, y_v3 = null; 
+        if (p_x + p_y - 1 > 0){ // when both genes have higher expression 
 
-        // compute barycentric weights
-        let w_v1 = ((y_v2 - y_v3)*(p_x - x_v3) + (x_v3-x_v2)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
-        let w_v2 = ((y_v3 - y_v1)*(p_x - x_v3) + (x_v1-x_v3)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
-        let w_v3 = 1 - w_v1 - w_v2;
+          // specify top right vertex
+          x_v3 = 1; y_v3 = 1;
+
+          // if (0<=w_v1 && w_v1<=1 && 0 <= w_v2 && w_v2<=1 && 0 <=w_v3 && w_v3<=1){
+            c1 = [255, 0, 0];
+            c2 = [0, 255, 0];
+            c3 = [255, 255, 0];
 
 
-        // compute final rgb color using weights
-        let rgbColor = null;
-        if (0<=w_v1 && w_v1<=1 && 0 <= w_v2 && w_v2<=1 && 0 <=w_v3 && w_v3<=1){
-          let c1 = [255, 0, 0];
-          let c2 = [0, 255, 0];
-          let c3 = [255, 255, 0];
+        }else{ // when both genes have lower expression
 
-          c1 = c1.map((x)=> parseInt(x*w_v1));
-          c2 = c2.map((x)=> parseInt(x*w_v2));
-          c3 = c3.map((x)=> parseInt(x*w_v3));
+          // specify bottom left vertex
+          x_v3 = 0; y_v3 = 0;
 
-          rgbColor = [c1[0]+c2[0]+c3[0], 
-            c1[1]+c2[1]+c3[1],
-            c1[2]+c2[2]+c3[2]
-          ];
-        }else{
-          rgbColor = [128, 128, 128, 0];
+           c1 = [255, 0, 0];
+           c2 = [0, 255, 0];
+           c3 = [0, 0, 255];
+
         }
+          // compute barycentric weights
+          let w_v1 = ((y_v2 - y_v3)*(p_x - x_v3) + (x_v3-x_v2)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
+          let w_v2 = ((y_v3 - y_v1)*(p_x - x_v3) + (x_v1-x_v3)*(p_y - y_v3))/((y_v2 - y_v3)*(x_v1 - x_v3)+(x_v3-x_v2)*(y_v1-y_v3));
+          let w_v3 = 1 - w_v1 - w_v2;
+
+            // compute final rgb color using weights
+            c1 = c1.map((x)=> parseInt(x*w_v1));
+            c2 = c2.map((x)=> parseInt(x*w_v2));
+            c3 = c3.map((x)=> parseInt(x*w_v3));
+
+            rgbColor = [c1[0]+c2[0]+c3[0], 
+              c1[1]+c2[1]+c3[1],
+              c1[2]+c2[2]+c3[2]
+            ];
 
         // console.log('maxUmiThreshold2 ', maxUmiThreshold2);
         return rgbColor;
