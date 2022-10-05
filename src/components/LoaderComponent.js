@@ -234,7 +234,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
-            count2: undefined
+            count2: 0
           }));
          }
         // update state of unifiedData
@@ -281,7 +281,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         // create unifiedData
         let readData = unifiedData.map((obj, index) => ({
           ...obj,
-          count2:undefined
+          count2:0
         }));
 
         // update state of unifiedData

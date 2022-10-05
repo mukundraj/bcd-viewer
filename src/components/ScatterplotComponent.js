@@ -183,10 +183,10 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         }
         return false;
       });
-      let data = data_tmp2.sort((a,b) => (a.count > b.count)?1:-1);
+      let data = data_tmp2.sort((a,b) => (a.count+a.count2 > b.count+b.count2)?1:-1);
       setData(data);
     }else{
-      let data = data_tmp.sort((a,b) => (a.count > b.count)?1:-1);
+      let data = data_tmp.sort((a,b) => (a.count+a.count2 > b.count+b.count2)?1:-1);
       // console.log(data);
       setData(data);
      }
@@ -233,7 +233,8 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
       >
         {hoverInfo.object && (
           <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
-            count:{hoverInfo.object.count}, region:{hoverInfo.object.rname}, {hoverInfo.object.x}, {hoverInfo.object.y}
+            count:{hoverInfo.object.count}, count2:{hoverInfo.object.count2}, region:{hoverInfo.object.rname}
+            {/* , {hoverInfo.object.x}, {hoverInfo.object.y} */}
           </div>
         )}
       </DeckGL>
