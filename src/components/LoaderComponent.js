@@ -78,6 +78,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
+  const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
   const setMaxUmiThreshold2 = useStore(state => state.setMaxUmiThreshold2);
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
@@ -207,6 +208,44 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   },[relativePath, chosenPuckid]);
 
+
+  // when puck changes, reload both gene data
+  useEffect(()=>{
+    // read gene data
+    const fetchData = async () => {
+      let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      let geneDataUrl = await getUrl(geneDataPath);
+      const geneData = await load(geneDataUrl, [CSVLoader]);
+
+      let readData = null;
+      if (chosenGene2.length > 0){ // fetch and update both geneData1 and geneData2
+        
+        let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
+        let geneDataUrl = await getUrl(geneDataPath);
+        const geneData2= await load(geneDataUrl, [CSVLoader]);
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            ...geneData[index], 
+            count2: geneData2[index].count
+          }));
+
+
+      }else{ // just fetch and update geneData1
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            ...geneData[index], 
+            count2: 0
+          }));
+      }       
+      setUnifiedData(readData);
+      setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+    }
+
+    fetchData();
+
+
+  }, [coordsData]);
+
   // loading new counts on new gene selection
   useEffect(()=>{
     // console.log("new chosen gene ", chosenGene);
@@ -252,7 +291,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       console.log("chosen gene not included", chosenGene);
     }
       
-  },[coordsData, chosenGene]);
+  },[chosenGene]);
   
   // loading new counts on new gene selection for chosenGene2
   useEffect(()=>{
@@ -266,10 +305,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         const gene2Data = await load(gene2DataUrl, [CSVLoader]);
 
         // create unifiedData
-        let readData = unifiedData.map((obj, index) => ({
-          ...obj,
-          count2:gene2Data[index].count
-        }));
+        let readData = null;
+        if (chosenGene2.length > 0){
+          readData = unifiedData.map((obj, index) => ({
+            ...obj,
+            count2:gene2Data[index].count
+          }));
+        }
 
         // update state of unifiedData
         setUnifiedData(readData);
@@ -293,7 +335,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
     }
 
-  }, [coordsData, chosenGene2])
+  }, [chosenGene2])
 
 
   // loading meta data on new puck or new gene selection
@@ -312,8 +354,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
-      setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
-      setUmiUpperThreshold(parseFloat(readData[maxCountMetadataKey]));
+      setMaxUmiThreshold(Math.max(maxUmiThreshold2, parseFloat(readData[maxCountMetadataKey])));
+      setUmiUpperThreshold(Math.max(maxUmiThreshold2, parseFloat(readData[maxCountMetadataKey])));
       setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
     }
     fetchData();
@@ -335,6 +377,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       // setCoordsData(readData);
       // setMaxUmiThreshold(parseFloat(readData['maxCount']));
       setMaxUmiThreshold2(parseFloat(readData[maxCountMetadataKey]));
+      setUmiUpperThreshold(Math.max(maxUmiThreshold, parseFloat(readData[maxCountMetadataKey])));
       setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
       console.log('setting maxUmiThreshold2 ', parseFloat(readData[maxCountMetadataKey]));
     }
@@ -343,6 +386,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     }else{
       if (coordsData.length>1){
         setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
+        setMaxUmiThreshold2(0);
+        setUmiUpperThreshold(maxUmiThreshold);
       }
     }
 
@@ -468,13 +513,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             {/*   max={maxUmiThreshold} */}
             {/*   step={maxUmiThreshold>2?1:maxUmiThreshold/100} */}
             {/* /> */}
-            <DualSlider maxUmiThreshold={maxUmiThreshold}
+            <DualSlider maxUmiThreshold={Math.max(maxUmiThreshold, maxUmiThreshold2)}
                         setUmiLowerThreshold={setUmiLowerThreshold} 
                         setUmiUpperThreshold={setUmiUpperThreshold}>
             </DualSlider>
           </Col>
           <Col xs="1">
-            Max: {Math.round(maxUmiThreshold * 1000) / 1000}
+            Max ({Math.round(maxUmiThreshold* 1000) / 1000}, {Math.round(maxUmiThreshold2* 1000) / 1000})
           </Col>
           <Col xs="1">
             <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" 
