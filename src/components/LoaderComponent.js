@@ -9,6 +9,7 @@ import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 import {useStore,useAuthStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
+import ColorSquare from '../components/ColorSquareComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {getUrl, pidToSrno} from "../shared/common"
@@ -564,8 +565,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             onChange={e => setWireframeStatus(e.target.checked)}
           />
           </Col>
-          <Col xs="4">
-            <Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>
+          <Col xs="4" className="align-items-center">
+            {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
           </Col>
         </FormGroup>
       </Form>

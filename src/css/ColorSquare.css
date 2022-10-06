@@ -1,0 +1,13 @@
+.colorsquarecanvas {
+  border: 1px solid black;
+}
+
+.colorsquare {
+  position: relative;
+}
+
+.colorsquarelabels {
+  position: absolute;
+  width: 100%;
+  font-size: small;
+}
