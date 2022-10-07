@@ -11,10 +11,10 @@ function ColorSquare(props){
 
     const gl = document.querySelector('canvas').getContext('webgl');
 
-    const tl = [255, 0, 0];
-    const tr = [255, 255, 0];
-    const bl = [0, 0, 255];
-    const br = [0, 255, 0];
+    const tl = [255, 0, 0, 255];
+    const tr = [255, 255, 0, 255];
+    const bl = [127, 127, 127, 127];
+    const br = [0, 255, 0, 255];
 
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -22,11 +22,11 @@ function ColorSquare(props){
     gl.texImage2D(
       gl.TEXTURE_2D,
       0, // mip level
-      gl.RGB,  // internal format
+      gl.RGBA,  // internal format
       2,  // width,
       2,  // height,
       0,  // border
-      gl.RGB, // format
+      gl.RGBA, // format
       gl.UNSIGNED_BYTE, // type
       new Uint8Array([...bl, ...br, ...tl, ...tr]));
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);

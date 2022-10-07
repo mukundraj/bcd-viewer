@@ -9,6 +9,7 @@ import {legendLinear, legendColor} from 'd3-svg-legend'
 import useStore from '../store/store'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {getUrl} from "../shared/common"
+import * as d3 from 'd3';
 
 function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
@@ -51,6 +52,9 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   const setGeneralColormap = useStore(state => state.setGeneralColormap);
 
 
+  let coeff = 2;
+  const logScale = d3.scaleLog().base(10).domain([1, 1+coeff*1]);
+  // console.log('logScale', logScale(1)/logScale(coeff*1 + 1), logScale(coeff*0.5+1)/logScale(coeff*1+1), logScale(coeff*1+1)/logScale(coeff*1+1));
   // a closure for generating a general colormap based on whether a chosenGene2 is present
   useEffect(()=>{
     function getGeneralColormap(chosenGene2){ 
@@ -60,25 +64,35 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
       }
 
       function getRGB2(count, count2){ // after
-
+        
         // compute fractions for gene1 and gene2
-        let p_x = count/maxUmiThreshold;
-        let p_y = count2/maxUmiThreshold2;
+        // let p_x = logScale(coeff*count/maxUmiThreshold+1)/logScale(coeff*1+1);
+        // let p_y = logScale(coeff*count2/maxUmiThreshold2+1)/logScale(coeff*1+1);
+        let p_x = Math.log(count+1)/Math.log(maxUmiThreshold);
+        let p_y = Math.log(count2+1)/Math.log(maxUmiThreshold2);
+        // let p_x = count/77;
+        // let p_y = count2/4;
         let rgbColor = null;
 
         let c1=null, c2=null, c3=null;
-        let x_v1 = 0, y_v1 = 1;
-        let x_v2 = 1, y_v2 = 0;
+        
+        let x_v1 = 1, y_v1 = 0;
+        let x_v2 = 0, y_v2 = 1;
         let x_v3 = null, y_v3 = null; 
+
+        // if (p_x+p_y<0.001){
+        //   rgbColor = [127, 127, 127, 255] // #aaaaaa
+
+        // } else
         if (p_x + p_y - 1 > 0){ // when both genes have higher expression 
 
           // specify top right vertex
           x_v3 = 1; y_v3 = 1;
 
           // if (0<=w_v1 && w_v1<=1 && 0 <= w_v2 && w_v2<=1 && 0 <=w_v3 && w_v3<=1){
-            c1 = [255, 0, 0];
-            c2 = [0, 255, 0];
-            c3 = [255, 255, 0];
+            c1 = [255, 0, 0, 255]; // red
+            c2 = [0, 255, 0, 255]; // green
+            c3 = [255, 255, 0, 255]; // yellow
 
 
         }else{ // when both genes have lower expression
@@ -86,9 +100,9 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
           // specify bottom left vertex
           x_v3 = 0; y_v3 = 0;
 
-           c1 = [255, 0, 0];
-           c2 = [0, 255, 0];
-           c3 = [0, 0, 255];
+           c1 = [255, 0, 0, 255]; // red 
+           c2 = [0, 255, 0, 255]; // green
+           c3 = [127, 127, 127, 127]; // gray
 
         }
           // compute barycentric weights
@@ -101,9 +115,11 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
             c2 = c2.map((x)=> parseInt(x*w_v2));
             c3 = c3.map((x)=> parseInt(x*w_v3));
 
-            rgbColor = [c1[0]+c2[0]+c3[0], 
+            rgbColor = [
+              c1[0]+c2[0]+c3[0], 
               c1[1]+c2[1]+c3[1],
-              c1[2]+c2[2]+c3[2]
+              c1[2]+c2[2]+c3[2],
+              c1[3]+c2[3]+c3[3]
             ];
 
         // console.log('maxUmiThreshold2 ', maxUmiThreshold2);
@@ -183,10 +199,10 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         }
         return false;
       });
-      let data = data_tmp2.sort((a,b) => (a.count+a.count2 > b.count+b.count2)?1:-1);
+      let data = data_tmp2.sort((a,b) => (a.count/maxUmiThreshold+a.count2/maxUmiThreshold2 > b.count/maxUmiThreshold+b.count2/maxUmiThreshold2)?1:-1);
       setData(data);
     }else{
-      let data = data_tmp.sort((a,b) => (a.count+a.count2 > b.count+b.count2)?1:-1);
+      let data = data_tmp.sort((a,b) => (a.count/maxUmiThreshold+a.count2/maxUmiThreshold2 > b.count/maxUmiThreshold+b.count2/maxUmiThreshold2)?1:-1);
       // console.log(data);
       setData(data);
      }
