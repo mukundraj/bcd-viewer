@@ -59,17 +59,18 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
   useEffect(()=>{
     function getGeneralColormap(chosenGene2){ 
 
-      function getRGB1(count, count2){ // initially
+      function getRGB1(count){ // initially
+        // return toRGBArray(currentColorMap(count));
         return toRGBArray(currentColorMap(count));
       }
 
-      function getRGB2(count, count2){ // after
+      function getRGB2(logcnt1, logcnt2){ // after
         
         // compute fractions for gene1 and gene2
         // let p_x = logScale(coeff*count/maxUmiThreshold+1)/logScale(coeff*1+1);
         // let p_y = logScale(coeff*count2/maxUmiThreshold2+1)/logScale(coeff*1+1);
-        let p_x = Math.log(count+1)/Math.log(maxUmiThreshold+1);
-        let p_y = Math.log(count2+1)/Math.log(maxUmiThreshold2+1);
+        let p_x = logcnt1;
+        let p_y = logcnt2;
         // let p_x = count/77;
         // let p_y = count2/4;
         let rgbColor = null;
@@ -154,7 +155,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
     // getPosition: d => d.coordinates,
     getPosition: d => [d.x,d.y],
     getRadius: d => 0.15,
-    getFillColor: d => generalColormap(d.count, d.count2),
+    getFillColor: d => chosenGene2.length>0?generalColormap(d.logcnt1, d.logcnt2):generalColormap(d.count),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001,
     onHover: info => setHoverInfo(info),
@@ -188,7 +189,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
 
   useEffect(()=>{
 
-    // console.log(selectedRegions, umiLowerThreshold, umiUpperThreshold);
+    console.log('unidata', unidata);
     let data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold)
     if(regionTree && selectedRegions.length>0){
       let data_tmp2 = data_tmp.filter(bead => {
@@ -199,10 +200,12 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         }
         return false;
       });
-      let data = data_tmp2.sort((a,b) => (a.count/maxUmiThreshold+a.count2/maxUmiThreshold2 > b.count/maxUmiThreshold+b.count2/maxUmiThreshold2)?1:-1);
+      // let data = data_tmp2.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
+      let data = data_tmp2.sort((a,b) => (a.count>b.count)?1:-1);
       setData(data);
     }else{
-      let data = data_tmp.sort((a,b) => (a.count/maxUmiThreshold+a.count2/maxUmiThreshold2 > b.count/maxUmiThreshold+b.count2/maxUmiThreshold2)?1:-1);
+      // let data = data_tmp.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
+      let data = data_tmp.sort((a,b) => (a.count>b.count)?1:-1);
       // console.log(data);
       setData(data);
      }

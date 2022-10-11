@@ -162,7 +162,6 @@ function RegEnrich({setChosenGene}){
       setFullData(fullDataTmp);
 
     }else{
-      console.log("NO", inFracs.length, outFracs.length, geneNames.length);
       setFullData([]);
     }
 

@@ -57,7 +57,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   // const [chosenPuckid, setChosenPuckid] = useState(1)
-  const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+  const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   // const [umiThreshold, setUmiThreshold ] = useState(0.01);
@@ -117,6 +117,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   //   return url;
   // }
   
+  // useEffect(()=>{
+  //   console.log('unifiedData', unifiedData);
+  // }, [unifiedData]);
 
   useEffect(()=>{
     console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);
@@ -229,7 +232,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
-            count2: geneData2[index].count
+            count2: geneData2[index].count,
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
+            logcnt2: Math.log(geneData2[index].count + 1)/Math.log(maxUmiThreshold2+1),
           }));
 
 
@@ -237,7 +242,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
-            count2: 0
+            count2: 0,
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
+            logcnt2: 1
           }));
       }       
       setUnifiedData(readData);
@@ -247,7 +254,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     fetchData();
 
 
-  }, [coordsData]);
+  }, [coordsData, maxUmiThreshold, maxUmiThreshold2]);
 
   // loading new counts on new gene selection
   useEffect(()=>{
@@ -270,13 +277,16 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
-            count2: unifiedData[index].count2
+            count2: unifiedData[index].count2,
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
+            logcnt2: unifiedData[index].logcnt2,
           }));
         }else{ // when no comparison gene is selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
-            count2: 0
+            count2: 0,
+            logcnt2: 1
           }));
          }
         // update state of unifiedData
@@ -294,7 +304,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       console.log("chosen gene not included", chosenGene);
     }
       
-  },[chosenGene]);
+  }, [chosenGene, maxUmiThreshold]);
   
   // loading new counts on new gene selection for chosenGene2
   useEffect(()=>{
@@ -312,7 +322,9 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         if (chosenGene2.length > 0){
           readData = unifiedData.map((obj, index) => ({
             ...obj,
-            count2:gene2Data[index].count
+            count2:gene2Data[index].count,
+            logcnt1: unifiedData[index].logcnt1,
+            logcnt2: Math.log(gene2Data[index].count + 1)/Math.log(maxUmiThreshold2+1)
           }));
         }
 
@@ -326,7 +338,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         // create unifiedData
         let readData = unifiedData.map((obj, index) => ({
           ...obj,
-          count2:0
+          count2:0,
+          logcnt2: 1, 
         }));
 
         // update state of unifiedData
@@ -338,7 +351,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
     }
 
-  }, [chosenGene2])
+  }, [chosenGene2, maxUmiThreshold2])
 
 
   // loading meta data on new puck or new gene selection
