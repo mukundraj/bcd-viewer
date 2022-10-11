@@ -68,8 +68,8 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         // compute fractions for gene1 and gene2
         // let p_x = logScale(coeff*count/maxUmiThreshold+1)/logScale(coeff*1+1);
         // let p_y = logScale(coeff*count2/maxUmiThreshold2+1)/logScale(coeff*1+1);
-        let p_x = Math.log(count+1)/Math.log(maxUmiThreshold);
-        let p_y = Math.log(count2+1)/Math.log(maxUmiThreshold2);
+        let p_x = Math.log(count+1)/Math.log(maxUmiThreshold+1);
+        let p_y = Math.log(count2+1)/Math.log(maxUmiThreshold2+1);
         // let p_x = count/77;
         // let p_y = count2/4;
         let rgbColor = null;
