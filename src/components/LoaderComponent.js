@@ -60,9 +60,11 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
-  const [umiThreshold, setUmiThreshold ] = useState(0.01);
+  // const [umiThreshold, setUmiThreshold ] = useState(0.01);
   const [umiLowerThreshold, setUmiLowerThreshold ] = useState(0.01);
   const [umiUpperThreshold, setUmiUpperThreshold ] = useState(0.01);
+  const [umiLowerThreshold2, setUmiLowerThreshold2 ] = useState(0);
+  const [umiUpperThreshold2, setUmiUpperThreshold2 ] = useState(1.0);
   const [opacityVal, setOpacityVal] = useState(1.0);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
@@ -387,7 +389,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     }else{
       if (coordsData.length>1){
         setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
-        setMaxUmiThreshold2(0);
+        setMaxUmiThreshold2(1);
         setUmiUpperThreshold(maxUmiThreshold);
       }
     }
@@ -506,28 +508,32 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           <Form.Label column sm="3">
             UMI Count Threshold
           </Form.Label>
-          <Col xs="2">
-            {/* <RangeSlider */}
-            {/*   value={umiThreshold} */}
-            {/*   onChange={e => setUmiThreshold(e.target.value)} */}
-            {/*   min={0} */}
-            {/*   max={maxUmiThreshold} */}
-            {/*   step={maxUmiThreshold>2?1:maxUmiThreshold/100} */}
-            {/* /> */}
-            <DualSlider maxUmiThreshold={Math.max(maxUmiThreshold, maxUmiThreshold2)}
+          <Col xs="1">
+            <DualSlider maxUmiThreshold={maxUmiThreshold}
                         setUmiLowerThreshold={setUmiLowerThreshold} 
                         setUmiUpperThreshold={setUmiUpperThreshold}>
             </DualSlider>
           </Col>
           <Col xs="1">
-            Max ({Math.round(maxUmiThreshold* 1000) / 1000}, {Math.round(maxUmiThreshold2* 1000) / 1000})
+            Max: {Math.round(maxUmiThreshold* 1000) / 1000}
           </Col>
+          {chosenGene2.length>0?<>
+          <Col xs="1">
+            <DualSlider maxUmiThreshold={maxUmiThreshold2}
+                        setUmiLowerThreshold={setUmiLowerThreshold2} 
+                        setUmiUpperThreshold={setUmiUpperThreshold2}>
+            </DualSlider>
+          </Col>
+          <Col xs="1">
+            Max: {Math.round(maxUmiThreshold2* 1000) / 1000}
+          </Col>
+          </>:<Col xs="2"/>}
           <Col xs="1">
             <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" 
             onlabel="R" offlabel="P"
               onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
           </Col>
-          <Col xs="5">
+          <Col xs="4">
             <FrequencyBars
             setPuckidAndLoadStatus={setPuckidAndLoadStatus}
             data={fbarsData}
