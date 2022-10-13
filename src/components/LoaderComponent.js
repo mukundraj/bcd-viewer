@@ -140,8 +140,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   useEffect(()=>{
 
-    // 100% -> puck 4; gene 2; metadata 1;
-    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/7)));
+    // 100% -> puck 4; gene 1; metadata 1;
+    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
   }, [dataLoadStatus]);
 
   // loading background image data and coords on puck change
@@ -214,7 +214,6 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   },[relativePath, chosenPuckid]);
 
-
   // when puck changes, reload both gene data
   useEffect(()=>{
     // read gene data
@@ -282,7 +281,8 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         }));
       }       
       setUnifiedData(readData);
-      setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+      if (coordsData.length>1)
+        setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1})); 
     }
 
     fetchData();
@@ -340,7 +340,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         // console.log(unifiedData);
 
         if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-          setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
         }
       }
       fetchData();
@@ -384,7 +384,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         // update state of unifiedData
         setUnifiedData(readData);
 
-        setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
       }
       fetchData();
     }else{
@@ -399,7 +399,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         setUnifiedData(readData);
       console.log("chosenGene2 not included", chosenGene2, dataLoadStatus);
       if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-        setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
+        setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
       }
 
     }
@@ -476,7 +476,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:1, metadata:0}));setChosenGene(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
               options={geneOptions}
               placeholder="Choose a gene..."
               // defaultInputValue={geneOptions[0]}
@@ -491,7 +491,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             <Typeahead
               id="basic-typeahead-single2"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:1, metadata:0}));setChosenGene2(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene2(x)}}
               options={geneOptions}
               placeholder="Choose another gene..."
               // defaultInputValue={geneOptions[0]}
