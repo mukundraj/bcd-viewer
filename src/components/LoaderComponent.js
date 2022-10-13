@@ -228,24 +228,58 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         
         let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
         let geneDataUrl = await getUrl(geneDataPath);
+
+        // load metadata for gene1 and gene2
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let metaDataUrl1 = await getUrl(meta_data_path1);
+        let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
+        let metaDataUrl2 = await getUrl(meta_data_path2);
+
+        let [metaData, metaData2] = await Promise.all([
+                                    fetch(metaDataUrl1).then(response => response.json()), 
+                                    fetch(metaDataUrl2).then(response => response.json())]);
+
+        let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        setMaxUmiThreshold(locMaxUmiThreshold);
+        setUmiUpperThreshold(locMaxUmiThreshold);
+
+        let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
+        locMaxUmiThreshold2 = parseFloat(locMaxUmiThreshold2);
+        setMaxUmiThreshold2(locMaxUmiThreshold2);
+        setUmiUpperThreshold2(locMaxUmiThreshold2);
+
         const geneData2= await load(geneDataUrl, [CSVLoader]);
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
             count2: geneData2[index].count,
-            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
-            logcnt2: Math.log(geneData2[index].count + 1)/Math.log(maxUmiThreshold2+1),
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+            logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
           }));
+
 
 
       }else{ // just fetch and update geneData1
-          readData = coordsData.map((obj, index) => ({
-            ...obj,
-            ...geneData[index], 
-            count2: 0,
-            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
-            logcnt2: 1
-          }));
+
+        // load metadata for gene1
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let metaDataUrl1 = await getUrl(meta_data_path1);
+        let metaData = await fetch(metaDataUrl1)
+          .then(response => response.json());
+
+        let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        setMaxUmiThreshold(locMaxUmiThreshold);
+        setUmiUpperThreshold(locMaxUmiThreshold);
+
+        readData = coordsData.map((obj, index) => ({
+          ...obj,
+          ...geneData[index], 
+          count2: 0,
+          logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+          logcnt2: 1
+        }));
       }       
       setUnifiedData(readData);
       setDataLoadStatus((p)=>({...p, gene:p.gene+1}));
@@ -254,7 +288,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
     fetchData();
 
 
-  }, [coordsData, maxUmiThreshold, maxUmiThreshold2]);
+  }, [coordsData]);
 
   // loading new counts on new gene selection
   useEffect(()=>{
@@ -267,8 +301,18 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       const fetchData = async () => {
       let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
       let geneDataUrl = await getUrl(geneDataPath);
-      console.log("geneDataPath ", geneDataUrl);
         const geneData = await load(geneDataUrl, [CSVLoader]);
+
+        // load metadata for gene1
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let metaDataUrl1 = await getUrl(meta_data_path1);
+        let metaData = await fetch(metaDataUrl1).then(response => response.json());
+        let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        setMaxUmiThreshold(locMaxUmiThreshold);
+        setUmiUpperThreshold(locMaxUmiThreshold);
+
+        console.log('locMaxUmiThreshold', locMaxUmiThreshold, 'chosenGene', chosenGene);
 
 
         // create unifiedData
@@ -278,13 +322,13 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             ...obj,
             ...geneData[index], 
             count2: unifiedData[index].count2,
-            logcnt1: Math.log(geneData[index].count + 1)/Math.log(maxUmiThreshold+1),
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
             logcnt2: unifiedData[index].logcnt2,
           }));
         }else{ // when no comparison gene is selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
-            ...geneData[index], 
+            ...geneData[index], // stores count
             count2: 0,
             logcnt2: 1
           }));
@@ -304,7 +348,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
       console.log("chosen gene not included", chosenGene);
     }
       
-  }, [chosenGene, maxUmiThreshold]);
+  }, [chosenGene]);
   
   // loading new counts on new gene selection for chosenGene2
   useEffect(()=>{
@@ -317,6 +361,15 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         let gene2DataUrl = await getUrl(gene2DataPath);
         const gene2Data = await load(gene2DataUrl, [CSVLoader]);
 
+        // load metadata for gene2
+        let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
+        let metaDataUrl2 = await getUrl(meta_data_path2);
+        let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
+        let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
+        locMaxUmiThreshold2 = parseFloat(locMaxUmiThreshold2);
+        setMaxUmiThreshold2(locMaxUmiThreshold2);
+        setUmiUpperThreshold2(locMaxUmiThreshold2);
+
         // create unifiedData
         let readData = null;
         if (chosenGene2.length > 0){
@@ -324,7 +377,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
             ...obj,
             count2:gene2Data[index].count,
             logcnt1: unifiedData[index].logcnt1,
-            logcnt2: Math.log(gene2Data[index].count + 1)/Math.log(maxUmiThreshold2+1)
+            logcnt2: Math.log(gene2Data[index].count + 1)/Math.log(locMaxUmiThreshold2+1)
           }));
         }
 
@@ -351,63 +404,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
     }
 
-  }, [chosenGene2, maxUmiThreshold2])
-
-
-  // loading meta data on new puck or new gene selection
-  useEffect(()=>{
-
-    // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
-    const fetchData = async () => {
-      let meta_data_path = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene}.json`
-      let metaDataUrl = await getUrl(meta_data_path);
-      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
-      console.log('meta_data_path ', meta_data_path);
-      // console.log('meta_data_path ', meta_data_path2);
-      const readData = await fetch(metaDataUrl)
-       .then(response => response.json());
-        // .then(data_str => JSON.parse(data_str));
-
-      // setCoordsData(readData);
-      // setMaxUmiThreshold(parseFloat(readData['maxCount']));
-      setMaxUmiThreshold(Math.max(maxUmiThreshold2, parseFloat(readData[maxCountMetadataKey])));
-      setUmiUpperThreshold(Math.max(maxUmiThreshold2, parseFloat(readData[maxCountMetadataKey])));
-      setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
-    }
-    fetchData();
-
-  }, [relativePath, chosenPuckid, chosenGene]);
-
-  useEffect(()=>{
-    if (chosenGene2.length>0){
-    // Math.max.apply(Math, unifiedData.map(function(o) { return o.y; }))
-    const fetchData = async () => {
-      let meta_data_path = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2}.json`
-      let metaDataUrl = await getUrl(meta_data_path);
-      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
-      // console.log('meta_data_path ', meta_data_path2);
-      const readData = await fetch(metaDataUrl)
-       .then(response => response.json());
-        // .then(data_str => JSON.parse(data_str));
-
-      // setCoordsData(readData);
-      // setMaxUmiThreshold(parseFloat(readData['maxCount']));
-      setMaxUmiThreshold2(parseFloat(readData[maxCountMetadataKey]));
-      setUmiUpperThreshold(Math.max(maxUmiThreshold, parseFloat(readData[maxCountMetadataKey])));
-      setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
-      console.log('setting maxUmiThreshold2 ', parseFloat(readData[maxCountMetadataKey]));
-    }
-    fetchData();
-
-    }else{
-      if (coordsData.length>1){
-        setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
-        setMaxUmiThreshold2(1);
-        setUmiUpperThreshold(maxUmiThreshold);
-      }
-    }
-
-  }, [chosenPuckid, chosenGene2])
+  }, [chosenGene2])
 
 
   // loading frequency bar plot data

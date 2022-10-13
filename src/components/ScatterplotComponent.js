@@ -139,7 +139,6 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
 
   }, [chosenGene2.length, data, maxUmiThreshold, maxUmiThreshold2]);
 
-
   // console.log(unidata);
   const layer = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -189,7 +188,6 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
 
   useEffect(()=>{
 
-    console.log('unidata', unidata);
     let data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold)
     if(regionTree && selectedRegions.length>0){
       let data_tmp2 = data_tmp.filter(bead => {
@@ -210,7 +208,7 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
       setData(data);
      }
 
-  }, [umiLowerThreshold, umiUpperThreshold, unidata, selectedRegions]);
+  }, [maxUmiThreshold, umiLowerThreshold, umiUpperThreshold, unidata, selectedRegions]);
 
   let bitmap_layer=null;
   let wireframe_bitmap_layer = null;
