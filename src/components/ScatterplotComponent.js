@@ -11,7 +11,10 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {getUrl} from "../shared/common"
 import * as d3 from 'd3';
 
-function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
+function Scatterplot({id, unidata, 
+  umiLowerThreshold, umiUpperThreshold, 
+  umiLowerThreshold2, umiUpperThreshold2, 
+  opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
   /**
    * Data format:
    * [
@@ -188,7 +191,13 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
 
   useEffect(()=>{
 
-    let data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold)
+    let data_tmp = null;
+    if (chosenGene2.length>0){
+      data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold && bead['count2']>=umiLowerThreshold2 && bead['count2']<=umiUpperThreshold2);
+    }else{
+      data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold);
+    }
+
     if(regionTree && selectedRegions.length>0){
       let data_tmp2 = data_tmp.filter(bead => {
         for (let i=0;i<selectedRegions.length; i++){
@@ -198,17 +207,17 @@ function Scatterplot({id, unidata, umiLowerThreshold, umiUpperThreshold, opacity
         }
         return false;
       });
-      // let data = data_tmp2.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
-      let data = data_tmp2.sort((a,b) => (a.count>b.count)?1:-1);
+      let data = data_tmp2.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
+      // let data = data_tmp2.sort((a,b) => (a.count>b.count)?1:-1);
       setData(data);
     }else{
-      // let data = data_tmp.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
-      let data = data_tmp.sort((a,b) => (a.count>b.count)?1:-1);
+      let data = data_tmp.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
+      // let data = data_tmp.sort((a,b) => (a.count>b.count)?1:-1);
       // console.log(data);
       setData(data);
      }
 
-  }, [maxUmiThreshold, umiLowerThreshold, umiUpperThreshold, unidata, selectedRegions]);
+  }, [maxUmiThreshold, umiLowerThreshold, umiUpperThreshold, umiLowerThreshold2, umiUpperThreshold2, unidata, selectedRegions]);
 
   let bitmap_layer=null;
   let wireframe_bitmap_layer = null;

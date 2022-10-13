@@ -63,7 +63,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   // const [umiThreshold, setUmiThreshold ] = useState(0.01);
   const [umiLowerThreshold, setUmiLowerThreshold ] = useState(0.01);
   const [umiUpperThreshold, setUmiUpperThreshold ] = useState(0.01);
-  const [umiLowerThreshold2, setUmiLowerThreshold2 ] = useState(0);
+  const [umiLowerThreshold2, setUmiLowerThreshold2 ] = useState(1.0);
   const [umiUpperThreshold2, setUmiUpperThreshold2 ] = useState(1.0);
   const [opacityVal, setOpacityVal] = useState(1.0);
 
@@ -590,6 +590,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         <Scatterplot id={'left_splot'} 
           unidata={unifiedData} 
           umiLowerThreshold={umiLowerThreshold} umiUpperThreshold={umiUpperThreshold}
+          umiLowerThreshold2={umiLowerThreshold2} umiUpperThreshold2={umiUpperThreshold2}
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
