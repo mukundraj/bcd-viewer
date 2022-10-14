@@ -329,6 +329,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], // stores count
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
             count2: 0,
             logcnt2: 1
           }));
