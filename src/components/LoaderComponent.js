@@ -407,6 +407,32 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
 
   }, [chosenGene2])
 
+  useEffect(()=>{
+
+    // recreate unifiedData
+    if (chosenGene2.length>0){
+      let readData = unifiedData.map((obj, index) => ({
+        ...obj,
+        logcnt1: Math.log(unifiedData[index].count + 1 - umiLowerThreshold)/Math.log(umiUpperThreshold+1)
+      }));
+      setUnifiedData(readData);
+    }    
+
+  }, [umiLowerThreshold, umiUpperThreshold]);
+
+  useEffect(()=>{
+        // recreate unifiedData
+    if (chosenGene2.length>0){
+      let readData = unifiedData.map((obj, index) => ({
+        ...obj,
+        logcnt2: Math.log(unifiedData[index].count2 +1 - umiLowerThreshold2)/Math.log(umiUpperThreshold2+1)
+      }));
+      setUnifiedData(readData);
+      console.log("set2 ", readData);
+    }  
+
+  }, [umiLowerThreshold2, umiUpperThreshold2]);
+
 
   // loading frequency bar plot data
   useEffect(()=>{
