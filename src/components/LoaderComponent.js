@@ -239,12 +239,12 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
                                     fetch(metaDataUrl2).then(response => response.json())]);
 
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
         setUmiUpperThreshold(locMaxUmiThreshold);
 
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
-        locMaxUmiThreshold2 = parseFloat(locMaxUmiThreshold2);
+        locMaxUmiThreshold2 = locMaxUmiThreshold2>0 ? locMaxUmiThreshold2 : 0.1;
         setMaxUmiThreshold2(locMaxUmiThreshold2);
         setUmiUpperThreshold2(locMaxUmiThreshold2);
 
@@ -268,7 +268,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
           .then(response => response.json());
 
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
         setUmiUpperThreshold(locMaxUmiThreshold);
 
@@ -308,7 +308,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         let metaDataUrl1 = await getUrl(meta_data_path1);
         let metaData = await fetch(metaDataUrl1).then(response => response.json());
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        locMaxUmiThreshold = parseFloat(locMaxUmiThreshold);
+        locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
         setUmiUpperThreshold(locMaxUmiThreshold);
 
@@ -367,7 +367,7 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
         let metaDataUrl2 = await getUrl(meta_data_path2);
         let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
-        locMaxUmiThreshold2 = parseFloat(locMaxUmiThreshold2);
+        locMaxUmiThreshold2 = locMaxUmiThreshold2>0?locMaxUmiThreshold2:0.1;
         setMaxUmiThreshold2(locMaxUmiThreshold2);
         setUmiUpperThreshold2(locMaxUmiThreshold2);
 
