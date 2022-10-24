@@ -9,6 +9,7 @@ const Breadcrumbs = () => {
     { path: '/', exact: true, breadcrumb: 'Home'},
     { path: '/genex', breadcrumb: 'Gene Expression' },
     { path: '/singlecell', breadcrumb: 'Single Cell' },
+    { path: '/cellspatial', breadcrumb: 'Cell Spatial' },
     { path: '/anaindex', breadcrumb: 'Analysis Index' },
     // { path: '/custom-props', breadcrumb: CustomPropsBreadcrumb, props: { someProp: "Hi" }},
   ];

@@ -98,10 +98,9 @@ function AuthHeader(props){
           <Nav className="me-auto">
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/genex">GeneExp</NavLink>
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/singlecell">SingleCell</NavLink>
-            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/anaindex">Analysis</NavLink>
-            {/* <Nav.Link active={curRoute==="regag"} href="regag">RegionAgg</Nav.Link> */}
-            {/* <Nav.Link active={curRoute==="normalized"} href="normalized">Normalized</Nav.Link> */}
-            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink>
+            <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/cellspatial">CellSpatial</NavLink>
+            {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/anaindex">Analysis</NavLink> */}
+            {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink> */}
           </Nav>
         {isDemoPortal?false:
         <Nav>

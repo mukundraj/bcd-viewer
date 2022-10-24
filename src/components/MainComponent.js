@@ -11,6 +11,8 @@ import { useState, useEffect} from 'react'
 import Heatmap from './HeatmapComponent'
 import RequireAuth from './RequireAuthComponent'
 import SingleCell from './SingleCellComponent'
+import LoaderCellSpatial from './LoaderCellSpatialComponent';
+import Loader from './LoaderComponent';
 
 function Main(props){
 
@@ -43,16 +45,17 @@ function Main(props){
           <Routes>
             <Route path="/" element={<AuthHeader/>}>
               <Route index path="/" element={<Home/>}/>
-              <Route path="genex" element={ <RequireAuth><MainViewer dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
+              <Route path="genex" element={ <RequireAuth><Loader dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
               <Route path="singlecell" element={ <RequireAuth><SingleCell/></RequireAuth>} />
-              <Route path="anaindex">
-                <Route index element={<RequireAuth><AnalysisIdx /></RequireAuth>}/>
-                <Route path="regag2" element={<RequireAuth><MainViewer dataConfig={DATACONFIGS[3]}/> </RequireAuth>} />
-              </Route>
-              <Route path="qcindex">
-                <Route index element={<RequireAuth><QCIndex /></RequireAuth>} />
-                <Route path="heatmap" element={<Heatmap />} />
-              </Route>
+              <Route path="cellspatial" element={ <RequireAuth><LoaderCellSpatial dataConfig={DATACONFIGS[1]}/></RequireAuth>} />
+              {/* <Route path="anaindex"> */}
+              {/*   <Route index element={<RequireAuth><AnalysisIdx /></RequireAuth>}/> */}
+              {/*   <Route path="regag2" element={<RequireAuth><MainViewer dataConfig={DATACONFIGS[4]}/> </RequireAuth>} /> */}
+              {/* </Route> */}
+              {/* <Route path="qcindex"> */}
+              {/*   <Route index element={<RequireAuth><QCIndex /></RequireAuth>} /> */}
+              {/*   <Route path="heatmap" element={<Heatmap />} /> */}
+              {/* </Route> */}
             </Route>
           </Routes>
         </Container>

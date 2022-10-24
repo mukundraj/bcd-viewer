@@ -26,16 +26,9 @@ function pad(num, size) {
     return s.substr(s.length-size);
 }
 
-function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataPath}) {
+function Loader({dataConfig}){
 
-  const data = [
-  {year: 1980, efficiency: 24.3, sales: 8949000},
-  {year: 1985, efficiency: 27.6, sales: 10979000},
-  {year: 1990, efficiency: 28, sales: 9303000},
-  {year: 1992, efficiency: 28, sales: 9303000},
-  {year: 1991, efficiency: 28.4, sales: 8185000},
-  {year: 1995, efficiency: 28.4, sales: 8185000},
-  ];
+  const {prefix, maxCountMetadataKey, title, relativePath, freqBarsDataPath} = dataConfig;
 
   const carouselRef = useStore(state => state.carouselRef);
 
@@ -44,8 +37,6 @@ function Loader({prefix, maxCountMetadataKey, title, relativePath, freqBarsDataP
   const [initialRender, setInitialRender] = useState(true);
   const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
   
-  const dendroBarData = useStore(state => state.dendroBarData);
-
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   // const [chosenGene, setChosenGene] = useState(["Pcp4"])

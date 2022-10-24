@@ -11,6 +11,16 @@ export const DATACONFIGS =
       freqBarsDataPath:"test_data2/gene_jsons_s9e"
     },
     {
+      id: 0,
+      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_jsons",
+      prefix:"cell_",
+      cellOptions: [],
+      maxCountMetadataKey: "maxCount",
+      title: "Cell Score",
+      relativePath: "test_data2/gene_jsons",
+      freqBarsDataPath:"test_data2/gene_jsons_s9e"
+    },
+    {
       id: 1,
       basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
       prefix: "rc_",
