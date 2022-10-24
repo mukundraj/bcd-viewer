@@ -112,6 +112,7 @@ function Loader({dataConfig}){
   //   console.log('unifiedData', unifiedData);
   // }, [unifiedData]);
 
+  // generalToggleFlag gets toggled when the user clicks on frequency bar or dendro bar
   useEffect(()=>{
     console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);
     if (initialRender===false){
@@ -129,6 +130,7 @@ function Loader({dataConfig}){
 
   },[generalToggleFlag]);
 
+  // determine percentage of data loaded when dataLoadStatus changes
   useEffect(()=>{
 
     // 100% -> puck 4; gene 1; metadata 1;
@@ -398,9 +400,9 @@ function Loader({dataConfig}){
 
   }, [chosenGene2])
 
+  // recreate unifiedData on change of umiUpperThreshold or umiLowerThreshold
   useEffect(()=>{
 
-    // recreate unifiedData
     if (chosenGene2.length>0){
       let readData = unifiedData.map((obj, index) => ({
         ...obj,
@@ -411,8 +413,8 @@ function Loader({dataConfig}){
 
   }, [umiLowerThreshold, umiUpperThreshold]);
 
+  // recreate unifiedData on change of umiUpperThreshold2 or umiLowerThreshold2
   useEffect(()=>{
-        // recreate unifiedData
     if (chosenGene2.length>0){
       let readData = unifiedData.map((obj, index) => ({
         ...obj,
@@ -425,7 +427,7 @@ function Loader({dataConfig}){
   }, [umiLowerThreshold2, umiUpperThreshold2]);
 
 
-  // loading frequency bar plot data
+  // loading frequency bar plot data on change of chosenGene
   useEffect(()=>{
     
 
