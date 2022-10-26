@@ -9,15 +9,32 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
+import ZarrLoader from "../loaders/ZarrLoader"
+import DualSlider from './DualSliderComponent'
+import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
 function LoaderCellSpatial({dataConfig}){
 
   const {prefix, maxCountMetadataKey, title, basePath, relativePath, freqBarsDataPath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
+
+
+  const maxScoreThreshold = useCSComponentStore(state => state.maxScoreThreshold);
+  const setMaxScoreThreshold = useCSComponentStore(state => state.setMaxScoreThreshold);
+  const maxScoreThreshold2 = useCSComponentStore(state => state.maxScoreThreshold2);
+  const setMaxScoreThreshold2 = useCSComponentStore(state => state.setMaxScoreThreshold2);
+
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
-  const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
+  const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, cell:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
+
+  const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
+
+  const [scoreLowerThreshold, setScoreLowerThreshold ] = useState(0.0001);
+  const [scoreUpperThreshold, setScoreUpperThreshold ] = useState(0.0001);
+  const [scoreLowerThreshold2, setScoreLowerThreshold2 ] = useState(0.0001);
+  const [scoreUpperThreshold2, setScoreUpperThreshold2 ] = useState(0.0001);
   const [opacityVal, setOpacityVal] = useState(1.0);
   
   const wireframeStatus = useStore(state => state.wireframeStatus);
@@ -36,22 +53,29 @@ function LoaderCellSpatial({dataConfig}){
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
 
+  const [cellNameToIdx, setCellNameToIdx] = useState({'Inh_Lhx6_Nmu_1':560 });
+
+  const curPuckMaxScores = useCSComponentStore(state => state.curPuckMaxScores);
+  const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
+
 
   let setPuckidAndLoadStatus = (x)=>{
     if (x===chosenPuckid){
       alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
     }else{
-      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);
+      setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid(x);
     };
   }
 
 
-  // // determine percentage of data loaded when dataLoadStatus changes
-  // useEffect(()=>{
+  // determine percentage of data loaded when dataLoadStatus changes
+  useEffect(()=>{
 
-  //   // 100% -> puck 4; gene 1; metadata 1;
-  //   setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
-  // }, [dataLoadStatus]);
+    // 100% -> puck 4; cell 1; metadata 1;
+    setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.cell+dataLoadStatus.metadata)/6)));
+
+    console.log("dataLoadStatus changed to: ", dataLoadStatus);
+  }, [dataLoadStatus]);
 
   // loading background image data and coords on puck change
   useEffect(()=>{
@@ -111,6 +135,16 @@ function LoaderCellSpatial({dataConfig}){
           // setData(myJson)
           setCellOptions(myJson.cellOptions);
           setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+
+          console.log("cellOptions", myJson.cellOptions[560]);
+
+          // create cellNameToIdx
+          let cellNameToIdx = {};
+          myJson.cellOptions.forEach((cell, idx)=>{
+            cellNameToIdx[cell] = idx;
+          }
+          );
+          setCellNameToIdx(()=>cellNameToIdx);
         });
     }
 
@@ -118,6 +152,107 @@ function LoaderCellSpatial({dataConfig}){
     console.log("puck update initiated..");
 
   },[chosenPuckid]);
+
+
+  // when puck changes, reload both cell data
+  useEffect(()=>{
+    // read gene data
+    const fetchData = async () => {
+      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenCell[0]}.csv`
+      // let geneDataUrl = await getUrl(geneDataPath);
+      // const geneData = await load(geneDataUrl, [CSVLoader]);
+
+      let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+      console.log("zarrPathInBucket ", zarrPathInBucket);
+      let zloader = new ZarrLoader({zarrPathInBucket});
+      let rowIdx = cellNameToIdx[chosenCell[0]];
+      const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
+
+      let readData = null;
+      if (chosenCell2.length > 0){ // fetch and update both geneData1 and geneData2
+        
+        // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
+        // let geneDataUrl = await getUrl(geneDataPath);
+
+        // // load metadata for gene1 and gene2
+        // let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        // let metaDataUrl1 = await getUrl(meta_data_path1);
+        // let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
+        // let metaDataUrl2 = await getUrl(meta_data_path2);
+
+        // let [metaData, metaData2] = await Promise.all([
+        //                             fetch(metaDataUrl1).then(response => response.json()), 
+        //                             fetch(metaDataUrl2).then(response => response.json())]);
+
+        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        // locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
+        // setMaxUmiThreshold(locMaxUmiThreshold);
+        // setUmiUpperThreshold(locMaxUmiThreshold);
+
+        // let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
+        // locMaxUmiThreshold2 = locMaxUmiThreshold2>0 ? locMaxUmiThreshold2 : 0.1;
+        // setMaxUmiThreshold2(locMaxUmiThreshold2);
+        // setUmiUpperThreshold2(locMaxUmiThreshold2);
+
+        // const geneData2= await load(geneDataUrl, [CSVLoader]);
+        //   readData = coordsData.map((obj, index) => ({
+        //     ...obj,
+        //     ...geneData[index], 
+        //     count2: geneData2[index].count,
+        //     logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+        //     logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
+        //   }));
+
+      }else{ // just fetch and update geneData1
+
+        // load metadata for gene1
+        // let metaDataUrl = `${basePath}${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenCell[0]}.json`
+        // // let metaDataUrl1 = await getUrl(meta_data_path1);
+        // let metaData = await fetch(metaDataUrl)
+        //   .then(response => response.json());
+
+        // console.log('metaData', metaData);
+
+        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        // locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
+        // setMaxUmiThreshold(locMaxUmiThreshold);
+        // setUmiUpperThreshold(locMaxUmiThreshold);
+        //
+
+        let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+        setCurPuckMaxScores(locMaxScores);
+
+
+
+        let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
+        locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
+        console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
+        setMaxScoreThreshold(locMaxScoreThreshold);
+        setScoreUpperThreshold(locMaxScoreThreshold);
+        console.log("scoreLowerThreshold", scoreLowerThreshold);
+
+        // console.log("coordsData", coordsData);
+        // console.log("cellData", cellData);
+        
+        readData = coordsData.map((obj, index) => ({
+          ...obj,
+          count:cellData[index], 
+          // count2: 0,
+          // logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+          // logcnt2: 1
+        }));
+      }       
+      console.log("readData", readData);
+
+      setUnifiedData(readData);
+      if (coordsData.length>1)
+        setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1})); 
+    }
+
+    fetchData();
+
+
+  }, [coordsData]);
 
   return(
     <div>
@@ -175,42 +310,42 @@ function LoaderCellSpatial({dataConfig}){
             <ProgressBar now={dataLoadPercent} label={`${dataLoadPercent}%`} />
           </Col>
         </FormGroup>
-        {/* <FormGroup as={Row}> */}
-        {/*   <Form.Label column sm="3"> */}
-        {/*     UMI Count Threshold */}
-        {/*   </Form.Label> */}
-        {/*   <Col xs="1"> */}
-        {/*     <DualSlider maxUmiThreshold={maxUmiThreshold} */}
-        {/*                 setUmiLowerThreshold={setUmiLowerThreshold} */} 
-        {/*                 setUmiUpperThreshold={setUmiUpperThreshold}> */}
-        {/*     </DualSlider> */}
-        {/*   </Col> */}
-        {/*   <Col xs="1"> */}
-        {/*     Max: {Math.round(maxUmiThreshold* 1000) / 1000} */}
-        {/*   </Col> */}
-        {/*   {chosenGene2.length>0?<> */}
-        {/*   <Col xs="1"> */}
-        {/*     <DualSlider maxUmiThreshold={maxUmiThreshold2} */}
-        {/*                 setUmiLowerThreshold={setUmiLowerThreshold2} */} 
-        {/*                 setUmiUpperThreshold={setUmiUpperThreshold2}> */}
-        {/*     </DualSlider> */}
-        {/*   </Col> */}
-        {/*   <Col xs="1"> */}
-        {/*     Max: {Math.round(maxUmiThreshold2* 1000) / 1000} */}
-        {/*   </Col> */}
-        {/*   </>:<Col xs="2"/>} */}
-        {/*   <Col xs="1"> */}
-        {/*     <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" */} 
-        {/*     onlabel="R" offlabel="P" */}
-        {/*       onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/> */}
-        {/*   </Col> */}
-        {/*   <Col xs="4"> */}
-        {/*     <FrequencyBars */}
-        {/*     setPuckidAndLoadStatus={setPuckidAndLoadStatus} */}
-        {/*     data={fbarsData} */}
-        {/*     /> */}
-        {/*   </Col> */}
-        {/* </FormGroup> */}
+        <FormGroup as={Row}>
+          <Form.Label column sm="3">
+            UMI Count Threshold
+          </Form.Label>
+          <Col xs="1">
+            <DualSlider upperThreshold={maxScoreThreshold}
+                        lowerThreshold={scoreLowerThreshold}
+                        setUmiLowerThreshold={setScoreLowerThreshold} 
+                        setUmiUpperThreshold={setScoreUpperThreshold}>
+            </DualSlider>
+          </Col>
+          <Col xs="1">
+            Max: {Math.round(maxScoreThreshold* 1000) / 1000}
+          </Col>
+          {chosenCell2.length>0?<>
+          <Col xs="1">
+            <DualSlider upperThreshold={maxScoreThreshold2}
+                        lowerThreshold={scoreLowerThreshold2}
+                        setUmiLowerThreshold={setScoreLowerThreshold2} 
+                        setUmiUpperThreshold={setScoreUpperThreshold2}>
+            </DualSlider>
+          </Col>
+          <Col xs="1">
+            Max: {Math.round(maxScoreThreshold2* 1000) / 1000}
+          </Col>
+          </>:<Col xs="2"/>}
+          <Col xs="1">
+            {/* <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" onlabel="R" offlabel="P" onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/> */}
+          </Col>
+          <Col xs="4">
+            {/* <FrequencyBars */}
+            {/* setPuckidAndLoadStatus={setPuckidAndLoadStatus} */}
+            {/* data={fbarsData} */}
+            {/* /> */}
+          </Col>
+        </FormGroup>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
             Opacity proportion

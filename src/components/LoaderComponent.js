@@ -534,7 +534,8 @@ function Loader({dataConfig}){
             UMI Count Threshold
           </Form.Label>
           <Col xs="1">
-            <DualSlider maxUmiThreshold={maxUmiThreshold}
+            <DualSlider upperThreshold={maxUmiThreshold}
+                        lowerThreshold={umiLowerThreshold}
                         setUmiLowerThreshold={setUmiLowerThreshold} 
                         setUmiUpperThreshold={setUmiUpperThreshold}>
             </DualSlider>
@@ -544,7 +545,8 @@ function Loader({dataConfig}){
           </Col>
           {chosenGene2.length>0?<>
           <Col xs="1">
-            <DualSlider maxUmiThreshold={maxUmiThreshold2}
+            <DualSlider upperThreshold={maxUmiThreshold2}
+                        lowerThreshold={umiLowerThreshold2}
                         setUmiLowerThreshold={setUmiLowerThreshold2} 
                         setUmiUpperThreshold={setUmiUpperThreshold2}>
             </DualSlider>
