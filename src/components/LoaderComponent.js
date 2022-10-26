@@ -12,7 +12,7 @@ import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {getUrl, pidToSrno} from "../shared/common"
+import {getUrl, pidToSrno, pad} from "../shared/common"
 import BcdCarousel from "./BcdCarouselComponent"
 import FrequencyBars from "./FrequencyBarsComponent"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
@@ -20,11 +20,6 @@ import Dendrogram from './DendrogramComponent'
 import DualSlider from './DualSliderComponent'
 import Breadcrumbs from './BreadcrumbsComponent'
 import RegEnrich from "./RegEnrichComponent"
-
-function pad(num, size) {
-    var s = "000000000" + num;
-    return s.substr(s.length-size);
-}
 
 function Loader({dataConfig}){
 

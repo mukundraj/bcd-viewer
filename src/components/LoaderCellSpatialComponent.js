@@ -4,13 +4,15 @@ import {useCSComponentStore} from '../store/CSComponentStore'
 import Breadcrumbs from './BreadcrumbsComponent'
 import {Form, FormGroup, Col, Row, ProgressBar} from 'react-bootstrap'
 import BcdCarousel from "./BcdCarouselComponent"
-import {getUrl, pidToSrno} from "../shared/common"
+import {getUrl, pidToSrno, pad} from "../shared/common"
 import RangeSlider from 'react-bootstrap-range-slider';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
+import {load} from '@loaders.gl/core';
+import {CSVLoader} from '@loaders.gl/csv';
 
 function LoaderCellSpatial({dataConfig}){
 
-  const {prefix, maxCountMetadataKey, title, relativePath, freqBarsDataPath} = dataConfig;
+  const {prefix, maxCountMetadataKey, title, basePath, relativePath, freqBarsDataPath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
   const chosenPuckid = useStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
@@ -30,6 +32,9 @@ function LoaderCellSpatial({dataConfig}){
   
   const cellOptions = useCSComponentStore(state => state.cellOptions);
   const setCellOptions = useCSComponentStore(state => state.setCellOptions);
+  const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
+  const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
 
 
   let setPuckidAndLoadStatus = (x)=>{
@@ -39,6 +44,80 @@ function LoaderCellSpatial({dataConfig}){
       setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);
     };
   }
+
+
+  // // determine percentage of data loaded when dataLoadStatus changes
+  // useEffect(()=>{
+
+  //   // 100% -> puck 4; gene 1; metadata 1;
+  //   setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
+  // }, [dataLoadStatus]);
+
+  // loading background image data and coords on puck change
+  useEffect(()=>{
+
+    // create full coords path
+    // console.log("coordsPath ", coordsPath);
+
+    // read coords data
+    const fetchData = async () => {
+      // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
+      let coordsUrl = `${basePath}${relativePath}/puck${chosenPuckid}/coords.csv`
+      // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
+
+      setCoordsData(readData);
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+    }
+    fetchData();
+
+    const fetchNissl = async () => {
+      let nis_url = `${basePath}${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`
+
+      setCurNisslUrl(nis_url);
+      // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+    }
+
+    const fetchAtlas = async () => {
+      let atlas_url = `${basePath}${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`;
+
+      setCurAtlasUrl(atlas_url);
+      // setDataLoadStatus(dataLoadStatus+1);
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+
+    }
+
+    fetchNissl();
+    fetchAtlas();
+
+    const fetchCellOptions = async () => {
+      let cellOptionsUrl = `${basePath}${relativePath}/puck${chosenPuckid}/cellOptions.json`
+      // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      fetch(cellOptionsUrl
+      // ,{
+      //   headers : { 
+      //     'Content-Type': 'application/json',
+      //     'Accept': 'application/json'
+      //    }
+      // }
+      )
+        .then(function(response){
+          // console.log(response)
+          return response.json();
+        })
+        .then(function(myJson) {
+          // console.log(myJson.geneOptions, dataLoadStatus);
+          // setData(myJson)
+          setCellOptions(myJson.cellOptions);
+          setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+        });
+    }
+
+    fetchCellOptions();
+    console.log("puck update initiated..");
+
+  },[chosenPuckid]);
 
   return(
     <div>
@@ -60,7 +139,7 @@ function LoaderCellSpatial({dataConfig}){
               labelKey="name"
               onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenCell(x)}}
               options={cellOptions}
-              placeholder="Choose a gene..."
+              placeholder="Choose a cell..."
               // defaultInputValue={geneOptions[0]}
               selected={chosenCell}
               filterBy={(option, props) => {
@@ -75,7 +154,7 @@ function LoaderCellSpatial({dataConfig}){
               labelKey="name"
               onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenCell2(x)}}
               options={cellOptions}
-              placeholder="Choose another gene..."
+              placeholder="Choose another cell..."
               // defaultInputValue={geneOptions[0]}
               selected={chosenCell2}
               filterBy={(option, props) => {

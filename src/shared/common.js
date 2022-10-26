@@ -1,6 +1,11 @@
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
+export function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
 export  async function getUrl(pathInBucket){
     // console.log('pathInBucket', pathInBucket);
       const storage = getStorage();

@@ -11,17 +11,17 @@ export const DATACONFIGS =
       freqBarsDataPath:"test_data2/gene_jsons_s9e"
     },
     {
-      id: 0,
-      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_jsons",
+      id: 1,
+      basePath: "https://storage.googleapis.com/bcdportaldata",
       prefix:"cell_",
       cellOptions: [],
       maxCountMetadataKey: "maxCount",
       title: "Cell Score",
-      relativePath: "test_data2/gene_jsons",
+      relativePath: "/cellspatial_data",
       freqBarsDataPath:"test_data2/gene_jsons_s9e"
     },
     {
-      id: 1,
+      id: 2,
       basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
       prefix: "rc_",
       geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
@@ -30,7 +30,7 @@ export const DATACONFIGS =
       relativePath: "test_data2/gene_csvs"
     },
     {
-      id: 2,
+      id: 3,
       basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
       prefix: "rnc_",
       geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
@@ -39,7 +39,7 @@ export const DATACONFIGS =
       relativePath: "test_data2/gene_csvs"
     },
     {
-      id: 3,
+      id: 4,
       basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
       prefix: "gene_",
       geneOptions: [''],
