@@ -23,7 +23,7 @@ import RegEnrich from "./RegEnrichComponent"
 
 function Loader({dataConfig}){
 
-  const {prefix, maxCountMetadataKey, title, relativePath, freqBarsDataPath} = dataConfig;
+  const {prefix, maxCountMetadataKey, title, basePath, relativePath, freqBarsDataPath} = dataConfig;
 
   const carouselRef = useStore(state => state.carouselRef);
 
@@ -152,16 +152,16 @@ function Loader({dataConfig}){
     fetchData();
 
     const fetchNissl = async () => {
-      let nis_url = await getUrl(`${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`)
-
+      // todo: remove hardcoding below by updating basePath and relativePath
+      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`
       setCurNisslUrl(nis_url);
       // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
       setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
     }
 
     const fetchAtlas = async () => {
-      // let atlas_url = await getUrl(`${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
-      let atlas_url = await getUrl(`test_data2/common/wireframe_trans_bg/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`)
+      // todo: remove hardcoding below by updating basePath and relativePath
+      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -606,13 +606,14 @@ function Loader({dataConfig}){
       <div className="add-border floater" >
         <Scatterplot id={'left_splot'} 
           unidata={unifiedData} 
-          umiLowerThreshold={umiLowerThreshold} umiUpperThreshold={umiUpperThreshold}
-          umiLowerThreshold2={umiLowerThreshold2} umiUpperThreshold2={umiUpperThreshold2}
+          lowerThreshold={umiLowerThreshold} upperThreshold={umiUpperThreshold} maxThreshold={maxUmiThreshold}
+          lowerThreshold2={umiLowerThreshold2} upperThreshold2={umiUpperThreshold2} maxThreshold2={maxUmiThreshold2}
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
+          chosenItem2={chosenGene2}
         />
       </div>
       <div className="floater">

@@ -12,9 +12,9 @@ import {getUrl} from "../shared/common"
 import * as d3 from 'd3';
 
 function Scatterplot({id, unidata, 
-  umiLowerThreshold, umiUpperThreshold, 
-  umiLowerThreshold2, umiUpperThreshold2, 
-  opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl}) {
+  lowerThreshold, upperThreshold, maxThreshold,
+  lowerThreshold2, upperThreshold2, maxThreshold2,
+  opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl, chosenItem2}) {
   /**
    * Data format:
    * [
@@ -25,8 +25,8 @@ function Scatterplot({id, unidata,
 
   const hoverInfo = useStore(state => state.hoverInfo);
   const setHoverInfo = useStore(state => state.setHoverInfo);
-  const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
-  const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
+  // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
+  // const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
   const selectedRegions = useStore(state => state.selectedRegions);
 
   const currentColorMap = useStore(state => state.currentColorMap);
@@ -49,8 +49,8 @@ function Scatterplot({id, unidata,
   // const [opacityNissl, setOpacityNissl] = useState(0);
   // const [opacitySS, setOpacitySS] = useState(1);
   // const [opacityAtlas, setOpacityAtlas] = useState(0);
-  const chosenGene = useStore(state => state.chosenGene);
-  const chosenGene2 = useStore(state => state.chosenGene2);
+  // const chosenGene = useStore(state => state.chosenGene);
+  // const chosenGene2 = useStore(state => state.chosenGene2);
   const generalColormap = useStore(state => state.generalColormap);
   const setGeneralColormap = useStore(state => state.setGeneralColormap);
 
@@ -58,9 +58,9 @@ function Scatterplot({id, unidata,
   let coeff = 2;
   const logScale = d3.scaleLog().base(10).domain([1, 1+coeff*1]);
   // console.log('logScale', logScale(1)/logScale(coeff*1 + 1), logScale(coeff*0.5+1)/logScale(coeff*1+1), logScale(coeff*1+1)/logScale(coeff*1+1));
-  // a closure for generating a general colormap based on whether a chosenGene2 is present
+  // a closure for generating a general colormap based on whether a chosenItem2 is present
   useEffect(()=>{
-    function getGeneralColormap(chosenGene2){ 
+    function getGeneralColormap(chosenItem2){ 
 
       function getRGB1(count){ // initially
         // return toRGBArray(currentColorMap(count));
@@ -130,17 +130,17 @@ function Scatterplot({id, unidata,
         return rgbColor;
       }
 
-      if (chosenGene2.length > 0){
+      if (chosenItem2.length > 0){
         return getRGB2;
       }else{
         return getRGB1;
       }
     }
 
-    let colormap = getGeneralColormap(chosenGene2, currentColorMap);
+    let colormap = getGeneralColormap(chosenItem2, currentColorMap);
     setGeneralColormap(colormap);
 
-  }, [chosenGene2.length, data, maxUmiThreshold, maxUmiThreshold2]);
+  }, [chosenItem2.length, data, maxThreshold, maxThreshold2]);
 
   // console.log(unidata);
   const layer = new ScatterplotLayer({
@@ -157,7 +157,7 @@ function Scatterplot({id, unidata,
     // getPosition: d => d.coordinates,
     getPosition: d => [d.x,d.y],
     getRadius: d => 0.15,
-    getFillColor: d => chosenGene2.length>0?generalColormap(d.logcnt1, d.logcnt2):generalColormap(d.count),
+    getFillColor: d => chosenItem2.length>0?generalColormap(d.logcnt1, d.logcnt2):generalColormap(d.count),
     getLineColor: d => [0, 0, 0],
     lineWidthScale : 0.001,
     onHover: info => setHoverInfo(info),
@@ -192,10 +192,10 @@ function Scatterplot({id, unidata,
   useEffect(()=>{
 
     let data_tmp = null;
-    if (chosenGene2.length>0){
-      data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold && bead['count2']>=umiLowerThreshold2 && bead['count2']<=umiUpperThreshold2);
+    if (chosenItem2.length>0){
+      data_tmp = unidata.filter(bead => bead['count']>=lowerThreshold && bead['count']<=upperThreshold && bead['count2']>=lowerThreshold2 && bead['count2']<=upperThreshold2);
     }else{
-      data_tmp = unidata.filter(bead => bead['count']>=umiLowerThreshold && bead['count']<=umiUpperThreshold);
+      data_tmp = unidata.filter(bead => bead['count']>=lowerThreshold && bead['count']<=upperThreshold);
     }
 
     if(regionTree && selectedRegions.length>0){
@@ -217,7 +217,7 @@ function Scatterplot({id, unidata,
       setData(data);
      }
 
-  }, [maxUmiThreshold, umiLowerThreshold, umiUpperThreshold, umiLowerThreshold2, umiUpperThreshold2, unidata, selectedRegions]);
+  }, [maxThreshold, lowerThreshold, upperThreshold, lowerThreshold2, upperThreshold2, unidata, selectedRegions]);
 
   let bitmap_layer=null;
   let wireframe_bitmap_layer = null;

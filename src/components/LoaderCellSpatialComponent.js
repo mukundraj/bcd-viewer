@@ -220,8 +220,6 @@ function LoaderCellSpatial({dataConfig}){
         let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
         setCurPuckMaxScores(locMaxScores);
 
-
-
         let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
         console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
@@ -235,9 +233,9 @@ function LoaderCellSpatial({dataConfig}){
         readData = coordsData.map((obj, index) => ({
           ...obj,
           count:cellData[index], 
-          // count2: 0,
-          // logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
-          // logcnt2: 1
+          count2: 0,
+          logcnt1: Math.log(cellData[index].count + 1)/Math.log(locMaxScoreThreshold+1),
+          logcnt2: 1
         }));
       }       
       console.log("readData", readData);
@@ -251,6 +249,81 @@ function LoaderCellSpatial({dataConfig}){
 
 
   }, [coordsData]);
+
+
+  // loading new counts on new cell selection
+  useEffect(()=>{
+    // console.log("new chosen gene ", chosenGene);
+
+    if (cellOptions.includes(chosenCell[0])){
+      // create filename string using gene name and puckid
+
+      // read cell data
+      const fetchData = async () => {
+
+      let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+      let zloader = new ZarrLoader({zarrPathInBucket});
+      let rowIdx = cellNameToIdx[chosenCell[0]];
+      const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
+
+      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      // let geneDataUrl = await getUrl(geneDataPath);
+      //   const geneData = await load(geneDataUrl, [CSVLoader]);
+
+        // load metadata for cell1
+        // let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        // let metaDataUrl1 = await getUrl(meta_data_path1);
+        // let metaData = await fetch(metaDataUrl1).then(response => response.json());
+        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
+        // locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
+        // setMaxUmiThreshold(locMaxUmiThreshold);
+        // setUmiUpperThreshold(locMaxUmiThreshold);
+
+        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+        // setCurPuckMaxScores(locMaxScores);
+
+        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
+        locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
+        console.log("locMaxScoreThreshold", locMaxScoreThreshold);
+        setMaxScoreThreshold(locMaxScoreThreshold);
+        setScoreUpperThreshold(locMaxScoreThreshold);
+
+        // create unifiedData
+        let readData = null;
+        if(chosenCell2.length>0){ // if a comparison gene is also selected
+          alert("Path not implemented yet");
+          // readData = coordsData.map((obj, index) => ({
+          //   ...obj,
+          //   ...geneData[index], 
+          //   count2: unifiedData[index].count2,
+          //   logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+          //   logcnt2: unifiedData[index].logcnt2,
+          // }));
+        }else{ // when no comparison gene is selected
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            count:cellData[index], 
+            logcnt1: Math.log(cellData[index].count + 1)/Math.log(locMaxScoreThreshold+1),
+            count2: 0,
+            logcnt2: 1
+          }));
+         }
+        // update state of unifiedData
+        setUnifiedData(readData);
+
+        // let maxVal = Math.max(...unifiedData.map(o => o.count));
+        // console.log(unifiedData);
+
+        if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+        }
+      }
+      fetchData();
+    }else{
+      console.log("chosen cell not included", chosenCell);
+    }
+      
+  }, [chosenCell]);
 
   const [viewState, setViewState] = useState({
     // target: [228, 160, 0],
@@ -403,13 +476,14 @@ function LoaderCellSpatial({dataConfig}){
       <div className="add-border floater" >
         <Scatterplot id={'left_splot'} 
           unidata={unifiedData} 
-          umiLowerThreshold={scoreLowerThreshold} umiUpperThreshold={scoreUpperThreshold}
-          umiLowerThreshold2={scoreLowerThreshold2} umiUpperThreshold2={scoreUpperThreshold2}
+          lowerThreshold={scoreLowerThreshold} upperThreshold={scoreUpperThreshold} maxThreshold={maxScoreThreshold}
+          lowerThreshold2={scoreLowerThreshold2} upperThreshold2={scoreUpperThreshold2} maxThreshold2={maxScoreThreshold2}
           opacityVal={opacityVal}
           viewState={viewState}
           onViewStateChange={onViewStateChange}
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
+          chosenItem2={chosenCell2}
         />
       </div>
     </div>
