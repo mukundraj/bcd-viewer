@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
+import Scatterplot from './ScatterplotComponent';
 import {useStore} from '../store/store'
 import {useCSComponentStore} from '../store/CSComponentStore'
 import Breadcrumbs from './BreadcrumbsComponent'
@@ -12,11 +13,15 @@ import {CSVLoader} from '@loaders.gl/csv';
 import ZarrLoader from "../loaders/ZarrLoader"
 import DualSlider from './DualSliderComponent'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
+import Colorbar from '../components/ColorbarComponent'
+import ColorSquare from '../components/ColorSquareComponent'
 
 function LoaderCellSpatial({dataConfig}){
 
   const {prefix, maxCountMetadataKey, title, basePath, relativePath, freqBarsDataPath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
+  
+  const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
 
 
   const maxScoreThreshold = useCSComponentStore(state => state.maxScoreThreshold);
@@ -59,14 +64,6 @@ function LoaderCellSpatial({dataConfig}){
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
 
 
-  let setPuckidAndLoadStatus = (x)=>{
-    if (x===chosenPuckid){
-      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
-    }else{
-      setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid(x);
-    };
-  }
-
 
   // determine percentage of data loaded when dataLoadStatus changes
   useEffect(()=>{
@@ -97,6 +94,7 @@ function LoaderCellSpatial({dataConfig}){
 
     const fetchNissl = async () => {
       let nis_url = `${basePath}${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`
+      console.log("nis_url: ", nis_url);
 
       setCurNisslUrl(nis_url);
       // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
@@ -254,6 +252,26 @@ function LoaderCellSpatial({dataConfig}){
 
   }, [coordsData]);
 
+  const [viewState, setViewState] = useState({
+    // target: [228, 160, 0],
+    target: [2048, 1802.5, 0],
+    zoom: -3
+  });
+
+  const onViewStateChange = useCallback(({viewState}) => {
+    // Manipulate view state
+    // viewState.target[0] = Math.min(viewState.target[0], 10);
+    // Save the view state and trigger rerender
+    setViewState(viewState);
+  }, []);
+  
+  let setPuckidAndLoadStatus = (x)=>{
+    if (x===chosenPuckid){
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+    }else{
+      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);};
+  }
+
   return(
     <div>
       <Breadcrumbs/>
@@ -378,10 +396,22 @@ function LoaderCellSpatial({dataConfig}){
           />
           </Col>
           <Col xs="4" className="align-items-center">
-            {/* {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>} */}
+            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
           </Col>
         </FormGroup>
       </Form>
+      <div className="add-border floater" >
+        <Scatterplot id={'left_splot'} 
+          unidata={unifiedData} 
+          umiLowerThreshold={scoreLowerThreshold} umiUpperThreshold={scoreUpperThreshold}
+          umiLowerThreshold2={scoreLowerThreshold2} umiUpperThreshold2={scoreUpperThreshold2}
+          opacityVal={opacityVal}
+          viewState={viewState}
+          onViewStateChange={onViewStateChange}
+          curNisslUrl={curNisslUrl}
+          curAtlasUrl={curAtlasUrl}
+        />
+      </div>
     </div>
   );
 }
