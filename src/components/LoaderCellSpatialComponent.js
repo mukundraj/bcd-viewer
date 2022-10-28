@@ -115,7 +115,7 @@ function LoaderCellSpatial({dataConfig}){
 
     const fetchCellOptions = async () => {
       let cellOptionsUrl = `${basePath}${relativePath}/puck${chosenPuckid}/cellOptions.json`
-      // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      // const cellOptions = await load(cellOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
       fetch(cellOptionsUrl
       // ,{
       //   headers : { 
@@ -129,7 +129,7 @@ function LoaderCellSpatial({dataConfig}){
           return response.json();
         })
         .then(function(myJson) {
-          // console.log(myJson.geneOptions, dataLoadStatus);
+          // console.log(myJson.cellOptions, dataLoadStatus);
           // setData(myJson)
           setCellOptions(myJson.cellOptions);
           setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
@@ -152,84 +152,60 @@ function LoaderCellSpatial({dataConfig}){
   },[chosenPuckid]);
 
 
-  // when puck changes, reload both cell data
+  // when puck changes and coords loaded, load both cells' metadata (maxScores)
   useEffect(()=>{
-    // read gene data
+
+    // read cell data
     const fetchData = async () => {
-      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenCell[0]}.csv`
-      // let geneDataUrl = await getUrl(geneDataPath);
-      // const geneData = await load(geneDataUrl, [CSVLoader]);
 
       let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
       console.log("zarrPathInBucket ", zarrPathInBucket);
       let zloader = new ZarrLoader({zarrPathInBucket});
       let rowIdx = cellNameToIdx[chosenCell[0]];
-      const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
       let readData = null;
-      if (chosenCell2.length > 0){ // fetch and update both geneData1 and geneData2
-        
-        // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
-        // let geneDataUrl = await getUrl(geneDataPath);
-
-        // // load metadata for gene1 and gene2
-        // let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
-        // let metaDataUrl1 = await getUrl(meta_data_path1);
-        // let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
-        // let metaDataUrl2 = await getUrl(meta_data_path2);
-
-        // let [metaData, metaData2] = await Promise.all([
-        //                             fetch(metaDataUrl1).then(response => response.json()), 
-        //                             fetch(metaDataUrl2).then(response => response.json())]);
-
-        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        // locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
-        // setMaxUmiThreshold(locMaxUmiThreshold);
-        // setUmiUpperThreshold(locMaxUmiThreshold);
-
-        // let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
-        // locMaxUmiThreshold2 = locMaxUmiThreshold2>0 ? locMaxUmiThreshold2 : 0.1;
-        // setMaxUmiThreshold2(locMaxUmiThreshold2);
-        // setUmiUpperThreshold2(locMaxUmiThreshold2);
-
-        // const geneData2= await load(geneDataUrl, [CSVLoader]);
-        //   readData = coordsData.map((obj, index) => ({
-        //     ...obj,
-        //     ...geneData[index], 
-        //     count2: geneData2[index].count,
-        //     logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
-        //     logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
-        //   }));
-
-      }else{ // just fetch and update geneData1
-
-        // load metadata for gene1
-        // let metaDataUrl = `${basePath}${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenCell[0]}.json`
-        // // let metaDataUrl1 = await getUrl(meta_data_path1);
-        // let metaData = await fetch(metaDataUrl)
-        //   .then(response => response.json());
-
-        // console.log('metaData', metaData);
-
-        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        // locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
-        // setMaxUmiThreshold(locMaxUmiThreshold);
-        // setUmiUpperThreshold(locMaxUmiThreshold);
-        //
+      if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
 
         let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
         setCurPuckMaxScores(locMaxScores);
 
         let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
-        console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
+        setMaxScoreThreshold(locMaxScoreThreshold);
+        setScoreUpperThreshold(locMaxScoreThreshold);
+        // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
+        let rowIdx2 = cellNameToIdx[chosenCell2[0]];
+        let locMaxScoreThreshold2 = parseFloat(locMaxScores[rowIdx2]);
+        locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
+        setMaxScoreThreshold2(locMaxScoreThreshold2);
+        setScoreUpperThreshold2(locMaxScoreThreshold2);
+
+        const [cellData, cellData2] = await Promise.all([
+          zloader.getDataRow("cellxbead.zarr/X", rowIdx),
+          zloader.getDataRow("cellxbead.zarr/X", rowIdx2)]); 
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            count: cellData[index], 
+            count2: cellData2[index],
+            logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
+            logcnt2: Math.log(cellData2[index] + 1)/Math.log(locMaxScoreThreshold2+1),
+          }));
+
+
+      }else{ // just fetch and update cellData1
+
+        const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx); 
+
+        let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+        setCurPuckMaxScores(locMaxScores);
+
+        let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
+        locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
+        // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
         setMaxScoreThreshold(locMaxScoreThreshold);
         setScoreUpperThreshold(locMaxScoreThreshold);
         console.log("scoreLowerThreshold", scoreLowerThreshold);
 
-        // console.log("coordsData", coordsData);
-        // console.log("cellData", cellData);
-        
         readData = coordsData.map((obj, index) => ({
           ...obj,
           count:cellData[index], 
@@ -238,7 +214,6 @@ function LoaderCellSpatial({dataConfig}){
           logcnt2: 1
         }));
       }       
-      console.log("readData", readData);
 
       setUnifiedData(readData);
       if (coordsData.length>1)
@@ -247,40 +222,21 @@ function LoaderCellSpatial({dataConfig}){
 
     fetchData();
 
-
   }, [coordsData]);
 
 
   // loading new counts on new cell selection
   useEffect(()=>{
-    // console.log("new chosen gene ", chosenGene);
 
     if (cellOptions.includes(chosenCell[0])){
-      // create filename string using gene name and puckid
 
       // read cell data
       const fetchData = async () => {
 
-      let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
-      let zloader = new ZarrLoader({zarrPathInBucket});
-      let rowIdx = cellNameToIdx[chosenCell[0]];
-      const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
-
-      // let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
-      // let geneDataUrl = await getUrl(geneDataPath);
-      //   const geneData = await load(geneDataUrl, [CSVLoader]);
-
-        // load metadata for cell1
-        // let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
-        // let metaDataUrl1 = await getUrl(meta_data_path1);
-        // let metaData = await fetch(metaDataUrl1).then(response => response.json());
-        // let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
-        // locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
-        // setMaxUmiThreshold(locMaxUmiThreshold);
-        // setUmiUpperThreshold(locMaxUmiThreshold);
-
-        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        // setCurPuckMaxScores(locMaxScores);
+        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+        let zloader = new ZarrLoader({zarrPathInBucket});
+        let rowIdx = cellNameToIdx[chosenCell[0]];
+        const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
         let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
@@ -290,20 +246,19 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if(chosenCell2.length>0){ // if a comparison gene is also selected
-          alert("Path not implemented yet");
-          // readData = coordsData.map((obj, index) => ({
-          //   ...obj,
-          //   ...geneData[index], 
-          //   count2: unifiedData[index].count2,
-          //   logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
-          //   logcnt2: unifiedData[index].logcnt2,
-          // }));
-        }else{ // when no comparison gene is selected
+        if(chosenCell2.length>0){ // if a comparison cell is also selected
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            count:  cellData[index], 
+            count2: unifiedData[index].count2,
+            logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
+            logcnt2: unifiedData[index].logcnt2,
+          }));
+        }else{ // when no comparison cell is selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
             count:cellData[index], 
-            logcnt1: Math.log(cellData[index].count + 1)/Math.log(locMaxScoreThreshold+1),
+            logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
             count2: 0,
             logcnt2: 1
           }));
@@ -315,7 +270,7 @@ function LoaderCellSpatial({dataConfig}){
         // console.log(unifiedData);
 
         if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+          setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
         }
       }
       fetchData();
@@ -324,6 +279,65 @@ function LoaderCellSpatial({dataConfig}){
     }
       
   }, [chosenCell]);
+
+
+  // loading new scores on chosenCell2 selection
+  useEffect(()=>{
+
+    if (cellOptions.includes(chosenCell2[0])){
+
+      // read cell data
+      const fetchData = async () => {
+
+        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+        let zloader = new ZarrLoader({zarrPathInBucket});
+        let rowIdx = cellNameToIdx[chosenCell2[0]];
+        const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
+
+        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx]);
+        locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
+        console.log("locMaxScoreThreshold2", locMaxScoreThreshold2);
+        setMaxScoreThreshold2(locMaxScoreThreshold2);
+        setScoreUpperThreshold2(locMaxScoreThreshold2);
+
+        // create unifiedData
+        let readData = null;
+        if(chosenCell2.length>0){ // if a comparison cell is also selected
+          readData = unifiedData.map((obj, index) => ({
+            ...obj,
+            count2: cell2Data[index], 
+            logcnt1: unifiedData[index].logcnt1,
+            logcnt2: Math.log(cell2Data[index] + 1)/Math.log(locMaxScoreThreshold2+1),
+          }));
+        }        
+
+        // update state of unifiedData
+        setUnifiedData(readData);
+
+        setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
+
+      }
+      fetchData();
+
+    }else{
+        // create unifiedData
+        let readData = unifiedData.map((obj, index) => ({
+          ...obj,
+          count2:0,
+          logcnt2: 1, 
+        }));
+
+        // update state of unifiedData
+        setUnifiedData(readData);
+      console.log("chosenCell2 not included", chosenCell2, dataLoadStatus);
+      if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+        setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
+      }
+
+    }
+
+
+  }, [chosenCell2]);
 
   const [viewState, setViewState] = useState({
     // target: [228, 160, 0],
@@ -342,7 +356,7 @@ function LoaderCellSpatial({dataConfig}){
     if (x===chosenPuckid){
       alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
     }else{
-      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);};
+      setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid(x);};
   }
 
   return(
@@ -363,10 +377,10 @@ function LoaderCellSpatial({dataConfig}){
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenCell(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCell(x)}}
               options={cellOptions}
               placeholder="Choose a cell..."
-              // defaultInputValue={geneOptions[0]}
+              // defaultInputValue={cell[0]}
               selected={chosenCell}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
@@ -378,10 +392,10 @@ function LoaderCellSpatial({dataConfig}){
             <Typeahead
               id="basic-typeahead-single2"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenCell2(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCell2(x)}}
               options={cellOptions}
               placeholder="Choose another cell..."
-              // defaultInputValue={geneOptions[0]}
+              // defaultInputValue={cell[0]}
               selected={chosenCell2}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */

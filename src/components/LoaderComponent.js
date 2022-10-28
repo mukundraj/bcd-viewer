@@ -202,7 +202,7 @@ function Loader({dataConfig}){
 
   },[relativePath, chosenPuckid]);
 
-  // when puck changes, reload both gene data
+  // when puck changes and coords loaded, load both gene metadata (maxCounts)
   useEffect(()=>{
     // read gene data
     const fetchData = async () => {
@@ -395,7 +395,7 @@ function Loader({dataConfig}){
 
   }, [chosenGene2])
 
-  // recreate unifiedData on change of umiUpperThreshold or umiLowerThreshold
+  // recreate unifiedData on change of umiUpperThreshold or umiLowerThreshold for matching the colormap to active range
   useEffect(()=>{
 
     if (chosenGene2.length>0){
@@ -408,7 +408,7 @@ function Loader({dataConfig}){
 
   }, [umiLowerThreshold, umiUpperThreshold]);
 
-  // recreate unifiedData on change of umiUpperThreshold2 or umiLowerThreshold2
+  // recreate unifiedData on change of umiUpperThreshold2 or umiLowerThreshold2 for matching the colormap to active range
   useEffect(()=>{
     if (chosenGene2.length>0){
       let readData = unifiedData.map((obj, index) => ({
