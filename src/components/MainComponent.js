@@ -13,6 +13,7 @@ import RequireAuth from './RequireAuthComponent'
 import SingleCell from './SingleCellComponent'
 import LoaderCellSpatial from './LoaderCellSpatialComponent';
 import Loader from './LoaderComponent';
+import NphHome from './nph/NphHomeComponent'
 
 function Main(props){
 
@@ -57,6 +58,7 @@ function Main(props){
               {/*   <Route path="heatmap" element={<Heatmap />} /> */}
               {/* </Route> */}
             </Route>
+            <Route path="/nph" element={<NphHome/>} />
           </Routes>
         </Container>
       </BrowserRouter>
