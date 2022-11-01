@@ -7,8 +7,8 @@ function NphHome(props){
   return(
     <>
       <div className='d-flex' style={{flexDirection:'row', justifyContent:'space-between'}}>
-        <div><img src={stanleylogo} style={{width:'25vw', alignSelf:'center'}} alt="Stanley Logo" /> </div>
-        <div style={{ alignSelf:'center'}}><img src={mlablogo} style={{width:'10vw'}} alt="Macosko Lab Logo"/></div>
+        <img className="item" src={stanleylogo} style={{width:'20em', height:"13.24em", alignSelf:'flex-end'}} alt="Stanley Logo" /> 
+        <img src={mlablogo} style={{maxWidth:'8em', height:'8em', alignSelf:'center'}} alt="Macosko Lab Logo"/>
       </div>
       
       <h4>NPH Integrative Analysis</h4>
