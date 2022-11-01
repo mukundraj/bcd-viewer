@@ -1,16 +1,18 @@
 import stanleylogo from '../../images/nph/stanleylogo.gif';
 import mlablogo from '../../images/nph/mlab2.JPG';
 import nphflow from '../../images/nph/nph_flowchart.png';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 function NphHome(props){
 
   return(
-    <div style={{backgroundColor:'white', background:'white'}}>
+    <div style={{backgroundColor:'white', background:'white', scrollBehavior:'smooth'}}>
       <div className='d-flex' style={{background:'white', backgroundColor: 'white', flexDirection:'row', justifyContent:'space-between'}}>
         <img className="item" src={stanleylogo} style={{width:'20em', height:"13.24em", alignSelf:'flex-end'}} alt="Stanley Logo" /> 
         <img src={mlablogo} style={{maxWidth:'8em', height:'8em', alignSelf:'center'}} alt="Macosko Lab Logo"/>
       </div>
       
+      <Scrollbars style={{height:600}}>
       <h4>NPH Integrative Analysis</h4>
 
       <p style={{textAlign:"justify"}}>
@@ -46,6 +48,7 @@ marker analysis across all of the datasets, and exploring differentially express
         logged in Terra. </p>
       <h4>Contact</h4>
       For questions and comments, please contact Vahid H Gazestani [vgazesta at broadinstitute org]
+    </Scrollbars>
       </div>
   );
 }
