@@ -1,4 +1,4 @@
-import stanleylogo from '../../images/nph/stanleylogo.png';
+import stanleylogo from '../../images/nph/stanleylogo.gif';
 import mlablogo from '../../images/nph/mlab2.JPG';
 import nphflow from '../../images/nph/nph_flowchart.png';
 
