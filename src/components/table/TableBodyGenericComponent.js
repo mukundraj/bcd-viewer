@@ -1,29 +1,20 @@
 import {useStore} from '../../store/store'
+import {pidToSrno} from "../../shared/common"
 import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
 
-const TableBodyGeneric = ({columns, tableDataSorted, setChosenGene}) => {
+const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus}) => {
 
-  // const maxColVals = useStore(state => state.maxColVals);
-  const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
-  const currentColorMap = useSCComponentStore(state => state.currentColorMap);
-  // const [zVal, setZVal] = useState(1); // normalizing demominator data in table
+  const setChosenPuckid = useStore(state => state.setChosenPuckid);
+  const carouselRef = useStore(state => state.carouselRef);
 
-  // update zVal if any of the maxColVals changes
-  // useEffect(()=>{
+  const updateChosenGene = (newGene, newPid) => {
+    console.log('chosenGene ', newGene, ' pid ', newPid);
 
-  //   let overallMaxVal = Math.max(...Object.values(maxColVals));
-  //   setZVal(parseFloat(overallMaxVal));
-  //   console.log("overallMaxVal", overallMaxVal);
+    setDataLoadStatus({gene:0, puck:0, metadata:0});
+    setChosenPuckid({pid:newPid, gene:newGene}); 
+    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
 
-  // }, [maxColVals]);
-
-
-  // const setChosenGene = useStore(state => state.setChosenGene);
-
-  function updateChosenGene(chosenGene){
-    console.log('chosenGene ', chosenGene);
-    setChosenGene([chosenGene]);
   }
 
   let tableDataInner = null;
@@ -33,7 +24,7 @@ const TableBodyGeneric = ({columns, tableDataSorted, setChosenGene}) => {
             <tr key={data.key}>
               {columns.map(({ accessor }) => {
                 if (accessor==='g')
-                  return <td key={accessor}><button onClick={()=>updateChosenGene(data[accessor])}>{data[accessor]}</button></td>;
+                  return <td key={accessor}><button onClick={()=>updateChosenGene(data[accessor], data['p'])}>{data[accessor]}</button></td>;
                 else
                   return <td key={accessor}>{data[accessor]}</td>;
               })}

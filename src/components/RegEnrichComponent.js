@@ -7,7 +7,7 @@ import useStore from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
-function RegEnrich({setChosenGene}){
+function RegEnrich({setDataLoadStatus}){
 
 
   const columns = [
@@ -51,6 +51,7 @@ function RegEnrich({setChosenGene}){
   const tableDataSorted = useStore(state => state.tableDataSorted);
 
   const chosenPuckid = useStore(state => state.chosenPuckid);
+  const setChosenPuckid = useStore(state => state.setChosenPuckid);
   const selectedRegIds = useStore(state => state.selectedRegIds);
   const chosenGene = useStore(state => state.chosenGene);
 
@@ -58,6 +59,7 @@ function RegEnrich({setChosenGene}){
   const [inFracs, setInFracs] = useState([]);
   const [outFracs, setOutFracs] = useState([]);
   const [geneNames, setGeneNames] = useState([]);
+  const [maxExprPids, setMaxExprPids] = useState([]);
   const [fullData, setFullData] = useState([]);
   const [minFrac, setMinFrac] = useState(0); // at least frac
   const [maxFrac, setMaxFrac] = useState(1); // at most frac
@@ -73,7 +75,8 @@ function RegEnrich({setChosenGene}){
 
     const fetchData = async (row_idx) => {
       // console.log("LLL");
-      let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+      // let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+      let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
@@ -81,8 +84,10 @@ function RegEnrich({setChosenGene}){
       // loop though selectedRegIds and get nz counts for each region
       if (selectedRegIds.length>0){ // create new array
         let row_idx = ridToIdx[selectedRegIds[0]];
-        let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), 
-          zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/Xout`, row_idx)]);
+            console.log('row_idx', row_idx);
+        // let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), 
+        let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/pall/X`, row_idx), 
+          zloader.getDataRow(`nz_aggr.zarr/pall/Xout`, row_idx)]);
 
         let inFracsTmp = dataRow; // for case with only one region selected
         let outFracsTmp = dataRowOut;
@@ -90,7 +95,7 @@ function RegEnrich({setChosenGene}){
         if (selectedRegIds.length>1){ // add to existing array for >1 region selected
           for (let i=1; i<selectedRegIds.length; i++){
             let row_idx = ridToIdx[selectedRegIds[i]];
-            let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/Xout`, row_idx)]);
+            let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/pall/X`, row_idx), zloader.getDataRow(`nz_aggr.zarr/pall/Xout`, row_idx)]);
             // console.log('dataRow', dataRow);
             if (!isNaN(dataRow[0]) && (!isNaN(dataRowOut[0]))){ // a lazy check too see if selected region/outRegion has no beads for current puck
               for (let j=0; j<dataRow.length; j++){
@@ -123,7 +128,7 @@ function RegEnrich({setChosenGene}){
 
     const fetchData = async (row_idx) => {
       // console.log("LLL");
-      let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+      let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
       let zloader = new ZarrLoader({zarrPathInBucket});
       let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
@@ -133,16 +138,17 @@ function RegEnrich({setChosenGene}){
       }
       setRidToIdx(ridToIdxTmp);
 
-      let geneNamesPath = `https://storage.googleapis.com/ml_portal/test_data/gene_names.json`
+      let geneInfoPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/gene_info.json`
       // let geneOptionsUrl = await getUrl(geneNamesPath);
-      console.log("geneOptionsUrl ", geneNamesPath);
+      console.log("geneOptionsUrl ", geneInfoPath);
       // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
-      fetch(geneNamesPath)
+      fetch(geneInfoPath)
         .then(function(response){
           return response.json();
         })
         .then(function(myJson) {
           setGeneNames(myJson.data)
+          setMaxExprPids(myJson.maxExprPuck)
         });
 
 
@@ -155,10 +161,10 @@ function RegEnrich({setChosenGene}){
     if (inFracs.length===outFracs.length && outFracs.length===geneNames.length){
       let fullDataTmp = [];
       for (let i=0; i<geneNames.length; i++){
-        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*1000)/1000, "-1": Math.round(outFracs[i]*1000)/1000})
+        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*1000)/1000, "-1": Math.round(outFracs[i]*1000)/1000, "p": parseInt(maxExprPids[i])});
       }
 
-      // console.log(fullDataTmp);
+      // console.log('fullDataTmp', fullDataTmp);
       setFullData(fullDataTmp);
 
     }else{
@@ -166,7 +172,7 @@ function RegEnrich({setChosenGene}){
     }
 
 
-  }, [geneNames, inFracs, outFracs]);
+  }, [geneNames, inFracs, outFracs, maxExprPids]);
 
 
   useEffect(()=>{
@@ -236,7 +242,7 @@ function RegEnrich({setChosenGene}){
             </Row>
           </Col>
           <Col xs="7">
-          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setChosenGene={setChosenGene}/>
+          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus}/>
           </Col>
         </Row>
     </>

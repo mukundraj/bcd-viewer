@@ -125,6 +125,7 @@ function Loader({dataConfig}){
 
   },[generalToggleFlag]);
 
+
   // determine percentage of data loaded when dataLoadStatus changes
   useEffect(()=>{
     console.log("dataLoadStatus", dataLoadStatus);
@@ -202,8 +203,9 @@ function Loader({dataConfig}){
 
   },[relativePath, chosenPuckid]);
 
-  // when puck changes and coords loaded, load both gene metadata (maxCounts)
+  // when puck changes and coords loaded, load both gene data and gene metadata (maxCounts)
   useEffect(()=>{
+
     // read gene data
     const fetchData = async () => {
       let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
@@ -272,13 +274,16 @@ function Loader({dataConfig}){
       if (coordsData.length>1)
         setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1})); 
     }
-
-    fetchData();
-
+    
+    if (chosenPuckid.gene === chosenGene[0]){
+      fetchData();
+    }else{
+      setChosenGene([chosenPuckid.gene]); // update gene to match the gene set by region enrichment component
+    }
 
   }, [coordsData]);
 
-  // loading new counts on new gene selection
+  // loading new gene data and gene metadata on new gene selection
   useEffect(()=>{
     // console.log("new chosen gene ", chosenGene);
 
@@ -621,7 +626,7 @@ function Loader({dataConfig}){
         <Dendrogram
           setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});}}
         />
-        <RegEnrich />
+        <RegEnrich setDataLoadStatus={setDataLoadStatus}/>
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 
