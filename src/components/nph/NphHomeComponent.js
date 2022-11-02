@@ -20,7 +20,7 @@ function NphHome(props){
         We have performed single-nuclei RNA-sequencing on 52 high-quality frontal cortex 
         biopsies (Brodmann Area 8 or 9) from individuals with suspected normal pressure 
         hydrocephalus (NPH) who have variable degrees of local amyloid and tau 
-        histopathology. Using our optimized protocol for nuclei extraction, we sampled over 
+        histopathology. Using our optimized protocol for nuclei extraction, we sampled 
         about 900k high quality nuclei from the human brain identifying 82 cell types, 
         unperturbed by death or agonal state. This empowered us to unbiasedly assess the 
         molecular changes associated with amyloid-beta and hyperphosphorylated tau across 
@@ -29,7 +29,7 @@ function NphHome(props){
         Parkinson’s disease, Multiple sclerosis, and Autism spectrum disorder) and mouse 
         model single cell datasets of AD, Amyotrophic lateral sclerosis (ALS), aging, myelination,
         and other conditions. The integrated data includes over 2.4M high quality cell profiles 
-        that are uniformly annotated across 36 datasets from 28 studies (some studies have 
+        that are uniformly annotated across 36 datasets from 28 studies (some studies contain
         more than one dataset).
       </p>
       <img src={nphflow} style={{width:'100%'}} alt="NPH flowchart" />
@@ -41,8 +41,8 @@ function NphHome(props){
         integrative analysis. We have also included functionality to perform several analyses in 
         a fast and efficient way, including: examination of the integration solutions, performing 
         marker analysis across all of the datasets, and exploring differentially expressed genes.
-        To access data, you need to register an account at www.Terra.bio. Once registered and 
-        logged in, you can access the workbook <a href="https://app.terra.bio/#workspaces/help-terra/International_Neuroimmune_Consortium_Workshop_2022/analysis/launch/integrative_analysis.ipynb">here</a>. Note that the link may not work properly if you have not 
+        To access data, you need to register an account at <a href="https://terra.bio/" target="_blank">Terra</a>. Once registered and 
+        logged in, you can access the workbook <a href="https://app.terra.bio/#workspaces/help-terra/International_Neuroimmune_Consortium_Workshop_2022/analysis/launch/integrative_analysis.ipynb" target="_blank">here</a>. Note that the link may not work properly if you have not 
         logged in Terra. </p>
       <h4>Contact</h4>
       <p style={{textAlign:"justify"}}>

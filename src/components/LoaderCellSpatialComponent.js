@@ -234,7 +234,7 @@ function LoaderCellSpatial({dataConfig}){
       // read cell data
       const fetchData = async () => {
 
-        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid.pid}/`;
+        let zarrPathInBucket = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
         let rowIdx = cellNameToIdx[chosenCell[0]];
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
