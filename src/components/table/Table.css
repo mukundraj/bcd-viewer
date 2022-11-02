@@ -122,3 +122,28 @@ th.down {
   width: 30%;
   text-align: center;
 }
+
+/* for tooltip as tooltip */
+
+.regexptooltip {
+  /* position: relative; */
+  display: inline-block;
+  /* border-bottom: 1px dotted black; */
+}
+.regexptooltip .regexptooltiptext {
+  visibility: hidden;
+  width: 80px;
+  background-color: eeeeee;
+  color: #606060;
+  text-align: center;
+  border-radius: 6px;
+  padding: 0 px 0px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.regexptooltip:hover .regexptooltiptext {
+  visibility: visible;
+}
