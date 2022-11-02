@@ -79,11 +79,12 @@ function LoaderCellSpatial({dataConfig}){
 
     // create full coords path
     // console.log("coordsPath ", coordsPath);
+    console.log("chosenPuckid", chosenPuckid);
 
     // read coords data
     const fetchData = async () => {
       // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
-      let coordsUrl = `${basePath}${relativePath}/puck${chosenPuckid}/coords.csv`
+      let coordsUrl = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/coords.csv`
       // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
@@ -93,7 +94,7 @@ function LoaderCellSpatial({dataConfig}){
     fetchData();
 
     const fetchNissl = async () => {
-      let nis_url = `${basePath}${relativePath}/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`
+      let nis_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
       console.log("nis_url: ", nis_url);
 
       setCurNisslUrl(nis_url);
@@ -102,7 +103,7 @@ function LoaderCellSpatial({dataConfig}){
     }
 
     const fetchAtlas = async () => {
-      let atlas_url = `${basePath}${relativePath}/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`;
+      let atlas_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid, 3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -114,7 +115,7 @@ function LoaderCellSpatial({dataConfig}){
     fetchAtlas();
 
     const fetchCellOptions = async () => {
-      let cellOptionsUrl = `${basePath}${relativePath}/puck${chosenPuckid}/cellOptions.json`
+      let cellOptionsUrl = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/cellOptions.json`
       // const cellOptions = await load(cellOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
       fetch(cellOptionsUrl
       // ,{
@@ -158,7 +159,7 @@ function LoaderCellSpatial({dataConfig}){
     // read cell data
     const fetchData = async () => {
 
-      let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+      let zarrPathInBucket = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/`;
       console.log("zarrPathInBucket ", zarrPathInBucket);
       let zloader = new ZarrLoader({zarrPathInBucket});
       let rowIdx = cellNameToIdx[chosenCell[0]];
@@ -233,7 +234,7 @@ function LoaderCellSpatial({dataConfig}){
       // read cell data
       const fetchData = async () => {
 
-        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
         let rowIdx = cellNameToIdx[chosenCell[0]];
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
@@ -289,7 +290,7 @@ function LoaderCellSpatial({dataConfig}){
       // read cell data
       const fetchData = async () => {
 
-        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid}/`;
+        let zarrPathInBucket = `${basePath}${relativePath}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
         let rowIdx = cellNameToIdx[chosenCell2[0]];
         const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
@@ -379,10 +380,10 @@ function LoaderCellSpatial({dataConfig}){
   }, []);
   
   let setPuckidAndLoadStatus = (x)=>{
-    if (x===chosenPuckid){
-      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+    if (x===chosenPuckid.pid){
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid]));
     }else{
-      setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid(x);};
+      setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
 
   return(
@@ -393,12 +394,12 @@ function LoaderCellSpatial({dataConfig}){
           Select Puck
         </Col>
         <Col xs="10">
-          <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid}></BcdCarousel>
+          <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid.pid}></BcdCarousel>
         </Col>
       </Row>
       <Form>
         <FormGroup as={Row} className="mt-4">
-          <Form.Label column sm="3">Select Gene(s)</Form.Label>
+          <Form.Label column sm="3">Select Cell(s)</Form.Label>
           <Col xs="2">
             <Typeahead
               id="basic-typeahead-single"
@@ -432,7 +433,7 @@ function LoaderCellSpatial({dataConfig}){
             />
           </Col>
           <Col xs="2">
-            for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid]}</span>
+            for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
           </Col>
           <Col xs="1">
             Loaded:

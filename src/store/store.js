@@ -15,7 +15,7 @@ export const useStore = create(set => ({
     setCurRoute: (val) => set({curRoute:val}),
     geneOptions: ['Pcp4'],
     setGeneOptions: (val) => set({geneOptions:val}),
-    chosenPuckid:1,
+    chosenPuckid:{'pid':1, 'gene':'Pcp4'},
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
     chosenGene:['Pcp4'],
     setChosenGene: (val)=>set({chosenGene:val}),

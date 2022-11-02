@@ -111,11 +111,11 @@ function Loader({dataConfig}){
   useEffect(()=>{
     console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);
     if (initialRender===false){
-      if (togglePid===chosenPuckid){
-        alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+      if (togglePid===chosenPuckid.pid){
+        alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid]));
       }else{
         setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));
-        setChosenPuckid(togglePid);
+        setChosenPuckid({...chosenPuckid, pid:togglePid});
         carouselRef.current.goToSlide(parseInt(pidToSrno[togglePid]-1));
       }
     }else{
@@ -127,7 +127,7 @@ function Loader({dataConfig}){
 
   // determine percentage of data loaded when dataLoadStatus changes
   useEffect(()=>{
-
+    console.log("dataLoadStatus", dataLoadStatus);
     // 100% -> puck 4; gene 1; metadata 1;
     setDataLoadPercent((Math.round(100*(dataLoadStatus.puck+dataLoadStatus.gene+dataLoadStatus.metadata)/6)));
   }, [dataLoadStatus]);
@@ -140,7 +140,7 @@ function Loader({dataConfig}){
 
     // read coords data
     const fetchData = async () => {
-      let coordsPath = `${relativePath}/puck${chosenPuckid}/coords.csv`
+      let coordsPath = `${relativePath}/puck${chosenPuckid.pid}/coords.csv`
       let coordsUrl = await getUrl(coordsPath);
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
@@ -153,7 +153,7 @@ function Loader({dataConfig}){
 
     const fetchNissl = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck${chosenPuckid}/nis_${pad(chosenPuckid, 3)}.png`
+      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/genexp/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
       setCurNisslUrl(nis_url);
       // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
       setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
@@ -161,7 +161,7 @@ function Loader({dataConfig}){
 
     const fetchAtlas = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck${chosenPuckid}/chuck_sp_wireframe_${pad(chosenPuckid,3)}.png`;
+      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/genexp/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid,3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -173,7 +173,7 @@ function Loader({dataConfig}){
     fetchAtlas();
 
     const fetchGeneOptions = async () => {
-      let geneOptionsPath = `${relativePath}/puck${chosenPuckid}/geneOptions.json`
+      let geneOptionsPath = `${relativePath}/puck${chosenPuckid.pid}/geneOptions.json`
       let geneOptionsUrl = await getUrl(geneOptionsPath);
       // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
       fetch(geneOptionsUrl
@@ -206,20 +206,20 @@ function Loader({dataConfig}){
   useEffect(()=>{
     // read gene data
     const fetchData = async () => {
-      let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
       let geneDataUrl = await getUrl(geneDataPath);
       const geneData = await load(geneDataUrl, [CSVLoader]);
 
       let readData = null;
       if (chosenGene2.length > 0){ // fetch and update both geneData1 and geneData2
         
-        let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
+        let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
         let geneDataUrl = await getUrl(geneDataPath);
 
         // load metadata for gene1 and gene2
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
         let metaDataUrl1 = await getUrl(meta_data_path1);
-        let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
+        let meta_data_path2 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
         let metaDataUrl2 = await getUrl(meta_data_path2);
 
         let [metaData, metaData2] = await Promise.all([
@@ -250,7 +250,7 @@ function Loader({dataConfig}){
       }else{ // just fetch and update geneData1
 
         // load metadata for gene1
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
         let metaDataUrl1 = await getUrl(meta_data_path1);
         let metaData = await fetch(metaDataUrl1)
           .then(response => response.json());
@@ -287,12 +287,12 @@ function Loader({dataConfig}){
 
       // read gene data
       const fetchData = async () => {
-      let geneDataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene[0]}.csv`
+      let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
       let geneDataUrl = await getUrl(geneDataPath);
         const geneData = await load(geneDataUrl, [CSVLoader]);
 
         // load metadata for gene1
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene[0]}.json`
+        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
         let metaDataUrl1 = await getUrl(meta_data_path1);
         let metaData = await fetch(metaDataUrl1).then(response => response.json());
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
@@ -314,6 +314,7 @@ function Loader({dataConfig}){
             logcnt2: unifiedData[index].logcnt2,
           }));
         }else{ // when no comparison gene is selected
+        console.log('geneData', geneData);
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], // stores count
@@ -346,12 +347,12 @@ function Loader({dataConfig}){
 
       // read gene data
       const fetchData = async () => {
-        let gene2DataPath = `${relativePath}/puck${chosenPuckid}/${prefix}${chosenGene2[0]}.csv`
+        let gene2DataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
         let gene2DataUrl = await getUrl(gene2DataPath);
         const gene2Data = await load(gene2DataUrl, [CSVLoader]);
 
         // load metadata for gene2
-        let meta_data_path2 = `${relativePath}/puck${chosenPuckid}/metadata_gene_${chosenGene2[0]}.json`
+        let meta_data_path2 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
         let metaDataUrl2 = await getUrl(meta_data_path2);
         let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
@@ -466,10 +467,10 @@ function Loader({dataConfig}){
   }, []);
   
   let setPuckidAndLoadStatus = (x)=>{
-    if (x===chosenPuckid){
-      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid]));
+    if (x===chosenPuckid.pid){
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid]));
     }else{
-      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);};
+      setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
 
   return(
@@ -481,7 +482,7 @@ function Loader({dataConfig}){
           Select Puck
         </Col>
           <Col xs="10">
-            <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid}></BcdCarousel>
+            <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid.pid}></BcdCarousel>
           </Col>
         </Row>
       <Form>
@@ -520,7 +521,7 @@ function Loader({dataConfig}){
             />
           </Col>
           <Col xs="2">
-            for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid]}</span>
+            for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
           </Col>
           <Col xs="1">
             Loaded:
@@ -618,10 +619,9 @@ function Loader({dataConfig}){
       </div>
       <div className="floater">
         <Dendrogram
-          setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid(x);}}
+          setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});}}
         />
-        <RegEnrich setChosenGene={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
-/>
+        <RegEnrich />
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 
