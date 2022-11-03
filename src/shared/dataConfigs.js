@@ -18,7 +18,6 @@ export const DATACONFIGS =
       maxCountMetadataKey: "maxCount",
       title: "Cell Score",
       relativePath: "/cellspatial_data",
-      freqBarsDataPath:"test_data2/gene_jsons_s9e"
     },
     {
       id: 2,

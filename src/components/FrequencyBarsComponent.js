@@ -8,13 +8,14 @@ import {pidToSrno} from "../shared/common"
 
 function FrequencyBars(props) {
 
-  const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
-  const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
-  const chosenPuckid = useStore(state => state.chosenPuckid);
+  // const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
+  // const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
+  const fbarActiveDataName = props.fbarActiveDataName;
+  // const chosenPuckid = useStore(state => state.chosenPuckid);
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
   const setTogglePid = useStore(state => state.setTogglePid);
 
-  const carouselRef = useStore(state => state.carouselRef);
+  // const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
     // alert("test"+event+" "+d.sr+" "+d.key[0]);
     // console.log("chosen ", chosenPuckid);

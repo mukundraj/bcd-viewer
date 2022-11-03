@@ -570,6 +570,7 @@ function Loader({dataConfig}){
             <FrequencyBars
             setPuckidAndLoadStatus={setPuckidAndLoadStatus}
             data={fbarsData}
+            fbarActiveDataName={fbarActiveDataName}
             />
           </Col>
         </FormGroup>
