@@ -15,11 +15,15 @@ import DualSlider from './DualSliderComponent'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
+import FrequencyBars from "./FrequencyBarsComponent"
 
 function LoaderCellSpatial({dataConfig}){
 
-  const {prefix, maxCountMetadataKey, title, basePath, relativePath, freqBarsDataPath} = dataConfig;
+  const {prefix, maxCountMetadataKey, title, basePath, relativePath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
+  const generalToggleFlag = useStore(state => state.generalToggleFlag);
+  const togglePid = useStore(state => state.togglePid);
+  const [initialRender, setInitialRender] = useState(true);
   
   const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
 
@@ -34,7 +38,11 @@ function LoaderCellSpatial({dataConfig}){
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, cell:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
 
+  const fbarActiveDataName = useStore(state => state.fbarActiveDataName);
+  const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
+
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
+  const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   const [scoreLowerThreshold, setScoreLowerThreshold ] = useState(0.0001);
   const [scoreUpperThreshold, setScoreUpperThreshold ] = useState(0.0001);
@@ -64,6 +72,23 @@ function LoaderCellSpatial({dataConfig}){
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
 
 
+  // generalToggleFlag gets toggled when the user clicks on frequency bar or dendro bar
+  useEffect(()=>{
+    console.log("generalToggleFlag ", generalToggleFlag, ", dendroPid ", togglePid);
+    if (initialRender===false){
+      if (togglePid===chosenPuckid.pid){
+        alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid]));
+      }else{
+        setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));
+        setChosenPuckid({...chosenPuckid, pid:togglePid});
+        carouselRef.current.goToSlide(parseInt(pidToSrno[togglePid]-1));
+      }
+    }else{
+      setInitialRender(false);
+    }    
+
+
+  },[generalToggleFlag]);
 
   // determine percentage of data loaded when dataLoadStatus changes
   useEffect(()=>{
@@ -366,6 +391,23 @@ function LoaderCellSpatial({dataConfig}){
 
   }, [scoreLowerThreshold2, scoreUpperThreshold2]);
 
+  // loading frequency bar plot data on change of chosenCell
+  useEffect(()=>{
+    
+    const fetchData = async () => {
+      let fbarsDataUrl = `${basePath}${relativePath}/freqbars/cell_jsons_s2c/${chosenCell[0]}.json`
+      const readData = await fetch(fbarsDataUrl)
+       .then(response => response.json());
+        // .then(data_str => JSON.parse(data_str));
+      // console.log(readData);
+      setFbarsData(readData);
+    }
+    fetchData();
+    
+    console.log(fbarsData);
+
+  },[chosenCell]);
+
   const [viewState, setViewState] = useState({
     // target: [228, 160, 0],
     target: [2048, 1802.5, 0],
@@ -469,13 +511,14 @@ function LoaderCellSpatial({dataConfig}){
           </Col>
           </>:<Col xs="2"/>}
           <Col xs="1">
-            {/* <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" onlabel="R" offlabel="P" onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/> */}
+            <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" onlabel="R" offlabel="P" onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
           </Col>
           <Col xs="4">
-            {/* <FrequencyBars */}
-            {/* setPuckidAndLoadStatus={setPuckidAndLoadStatus} */}
-            {/* data={fbarsData} */}
-            {/* /> */}
+            <FrequencyBars
+             setPuckidAndLoadStatus={setPuckidAndLoadStatus}
+             data={fbarsData}
+            fbarActiveDataName={fbarActiveDataName}
+            /> 
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
