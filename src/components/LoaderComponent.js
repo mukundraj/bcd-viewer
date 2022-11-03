@@ -201,7 +201,7 @@ function Loader({dataConfig}){
     fetchGeneOptions();
 
 
-  },[relativePath, chosenPuckid]);
+  },[relativePath, chosenPuckid.pid]);
 
   // when puck changes and coords loaded, load both gene data and gene metadata (maxCounts)
   useEffect(()=>{
@@ -497,7 +497,7 @@ function Loader({dataConfig}){
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));setChosenGene(x); setChosenPuckid({...chosenPuckid, gene:x[0]});}}
               options={geneOptions}
               placeholder="Choose a gene..."
               // defaultInputValue={geneOptions[0]}
