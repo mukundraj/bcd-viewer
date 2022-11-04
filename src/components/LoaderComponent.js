@@ -433,8 +433,10 @@ function Loader({dataConfig}){
     
 
     const fetchData = async () => {
-      let fbars_data_path = `${freqBarsDataPath}/${chosenGene}.json`
-      let fbarsDataUrl = await getUrl(fbars_data_path);
+      // let fbars_data_path = `${freqBarsDataPath}/${chosenGene}.json`
+      // let fbarsDataUrl = await getUrl(fbars_data_path);
+      let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/genexp_data/freqbars/gene_jsons_s9e/${chosenGene[0]}.json`
+      console.log('fbarsDataUrl', fbarsDataUrl);
       // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
       // console.log('meta_data_path ', meta_data_path);
       // console.log('meta_data_path ', meta_data_path2);

@@ -49,7 +49,7 @@ function FrequencyBars(props) {
 
       const y1 = d3
         .scaleLinear()
-        .domain([0, d3.max(props.data[fbarActiveDataName], (d) => parseInt(d.cnt))])
+        .domain([0, d3.max(props.data[fbarActiveDataName], (d) => d.cnt)])
         .rangeRound([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
