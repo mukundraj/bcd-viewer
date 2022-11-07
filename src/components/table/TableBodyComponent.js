@@ -30,7 +30,13 @@ const TableBody = ({columns, tableDataSorted}) => {
               {columns.map(({ accessor }) => {
                 const tData = data[accessor]/maxProportionalVal;
                 const rFactor = isNaN(tData)?0:tData;
-                return <td key={accessor}>{isNaN(tData)?data[accessor]:tData===0?"-":""}<span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(data[-accessor])}} className="dot sctooltip"><span className="sctooltiptext">{Math.round(data[-accessor]*100)/100}, {Math.round(data[accessor]*100)}%</span></span></td>;
+                return <td key={accessor}>
+                  {isNaN(tData)?
+                    <span>{data[accessor]} <span style={{color:'#8E44AD'}}>{data.cc}</span>, <span style={{color:'#BB8FCE'}}>{data.pct}%</span></span>:tData===0?"-":""}
+                  <span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(data[-accessor])}} className="dot sctooltip">
+                    <span className="sctooltiptext">{Math.round(data[-accessor]*100)/100}, {Math.round(data[accessor]*100)}%</span>
+                  </span>
+                  </td>;
               })}
             </tr>
           );

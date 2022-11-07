@@ -40,7 +40,7 @@ const Table = ({columns, tableDataSorted, maxCellTypes, width, handleSorting}) =
  return (
   <>
     <div className="add-border floater" style={tableStyle(width)} ref={target}>
-      <Scrollbars style={{ width: size?size.width:300, height: size?size.height:100}}
+      <Scrollbars style={{ width: size?size.width:600, height: size?size.height:100}}
         // Runs inside the animation frame. Passes some handy values about the current scroll position
         onScrollFrame={handleScrollFrame}
         ref={scrollbarElement}

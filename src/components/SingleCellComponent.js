@@ -37,9 +37,8 @@ function SingleCell(props){
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
-  // const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
-  const cellTypeColumn = [{"label":"celltype                                   ", "accessor":"ct"}]
+  const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -70,8 +69,12 @@ function SingleCell(props){
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let dataGenes = await zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes");
-      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters");
+      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct] = await Promise.all(
+        [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
+          zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts")]); // pct contribution from majority contributing cell class
+
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
       // console.log(dataGenes);
       // console.log(dataCellTypesRaw);
@@ -79,9 +82,8 @@ function SingleCell(props){
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
-      // setCellTypes(dataCellTypes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i]}});
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":dataMaxPct[i]}})
       setTableData(initTableData);
       setTableDataSorted(initTableData);
 
