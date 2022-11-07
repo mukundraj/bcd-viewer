@@ -37,7 +37,7 @@ function SingleCell(props){
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
-  const [cellTypes, setCellTypes] = useState([]);
+  // const [cellTypes, setCellTypes] = useState([]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype                                   ", "accessor":"ct"}]
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
@@ -51,7 +51,7 @@ function SingleCell(props){
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
-  let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
+  let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/singlecell_data`
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
@@ -70,8 +70,8 @@ function SingleCell(props){
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let dataGenes = await zloader.getFlatArrDecompressed("scZarr.zarr/var/genes");
-      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
+      let dataGenes = await zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes");
+      let dataCellTypesRaw = await zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters");
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
       // console.log(dataGenes);
       // console.log(dataCellTypesRaw);
@@ -79,7 +79,7 @@ function SingleCell(props){
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
-      setCellTypes(dataCellTypes);
+      // setCellTypes(dataCellTypes);
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i]}});
       setTableData(initTableData);
@@ -104,8 +104,8 @@ function SingleCell(props){
       // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
       // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
       //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
-      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("scZarr.zarr/nz/X", col_idx),
-                                                  zloader.getDataColumn("scZarr.zarr/avg/X", col_idx)]);
+      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("/scZarr.zarr/nz/X", col_idx),
+                                                  zloader.getDataColumn("/scZarr.zarr/avg/X", col_idx)]);
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[col_idx] = dataCol[i];
         draft[-col_idx] = avgDataCol[i];
