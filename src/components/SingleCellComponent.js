@@ -215,30 +215,30 @@ function SingleCell(props){
     <>
       <Breadcrumbs/>
       <div className="d-flex" style={{flexDirection:"column", flexGrow:1}}>
-      <Row>
-        <Col xs="2">Select genes:</Col>
-        <Col xs="6">
-          <Typeahead
-            id="basic-typeahead-multiple"
-            labelKey="name"
-            multiple
-            onChange={setMultiSelections}
-            options={geneOptions}
-            placeholder="Click here to select genes..."
-            selected={multiSelections}
-          />
-        </Col>
-        <Col xs="2">Max #celltypes:</Col>
-        <Col xs="2">
-          <RangeSlider
-            value={maxCellTypes}
-            onChange={e => setMaxCellTypes(e.target.value)}
-            min={0}
-            max={100}
-            step={1}
-          />
-        </Col>
-      </Row>
+        <Row>
+          <Col xs="2">Select genes:</Col>
+          <Col xs="6">
+            <Typeahead
+              id="basic-typeahead-multiple"
+              labelKey="name"
+              multiple
+              onChange={setMultiSelections}
+              options={geneOptions}
+              placeholder="Click here to select genes..."
+              selected={multiSelections}
+            />
+          </Col>
+          <Col xs="2">Max #celltypes:</Col>
+          <Col xs="2">
+            <RangeSlider
+              value={maxCellTypes}
+              onChange={e => setMaxCellTypes(e.target.value)}
+              min={0}
+              max={100}
+              step={1}
+            />
+          </Col>
+        </Row>
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
           <Col className="" xs="10">
             {columns.length>0?
@@ -248,19 +248,19 @@ function SingleCell(props){
               </>:null}
           </Col>
           <Col xs="2">
-          <Row style={{marginTop:"10px"}}>
-            {columns.length>0?<>
-                  <Form.Check
-                    value="sortbyavgexp"
-                    type="radio"
-                    aria-label="sort by avg exp"
-                    label="Sort by AvgExpression"
-                    onChange={toggleSortByToggleVal}
-                    checked={sortByToggleVal===1}
-                  />
+            <Row style={{marginTop:"10px"}}>
+              {columns.length>0?<>
+                <Form.Check
+                  value="sortbyavgexp"
+                  type="radio"
+                  aria-label="sort by avg exp"
+                  label="Sort by AvgExpression"
+                  onChange={toggleSortByToggleVal}
+                  checked={sortByToggleVal===1}
+                />
                 <Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} /></>:null
-            }
-          </Row>
+              }
+            </Row>
             <Row style={{marginTop:"25px"}}>
               {maxProportionalVal>0? 
                 <>
@@ -273,12 +273,12 @@ function SingleCell(props){
                     checked={sortByToggleVal===-1}
                   />
                   <div style={{marginTop:"5px"}}>
-                  <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
-                <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
-                <div><span className="dotlegend"><span className="dot" style={{width:"8px", height:"8px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
-                  <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"4px", height:"4px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
+                    <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
+                    <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
+                    <div><span className="dotlegend"><span className="dot" style={{width:"8px", height:"8px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
+                    <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"4px", height:"4px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
                   </div>
-                  </>:null
+                </>:null
               }
             </Row>
           </Col>
