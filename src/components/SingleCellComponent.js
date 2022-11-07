@@ -33,10 +33,13 @@ function SingleCell(props){
   });
 
   const [maxCellTypes, setMaxCellTypes] = useState(10);
+  const [minCompoPct, setMinCompoPct] = useState(0);
   const [multiSelections, setMultiSelections] = useState([]);
+  const [cellClassSelection, setCellClassSelection] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
+  const [cellClassOptions, setCellClassOptions] = useState([]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
@@ -45,6 +48,8 @@ function SingleCell(props){
   const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
   const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
   const toggleSortByToggleVal = useSCComponentStore(state => state.toggleSortByToggleVal);
+  const tableDataFiltered = useSCComponentStore(state => state.tableDataFiltered);
+  const setTableDataFiltered = useSCComponentStore(state => state.setTableDataFiltered);
 
 
   const maxColVals = useStore(state => state.maxColVals);
@@ -69,21 +74,23 @@ function SingleCell(props){
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct] = await Promise.all(
+      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses] = await Promise.all(
         [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
           zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts")]); // pct contribution from majority contributing cell class
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts"), // pct contribution from majority contributing cell class
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/uniqcellclasses"), 
+          ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
       // console.log(dataGenes);
-      // console.log(dataCellTypesRaw);
+      setCellClassOptions(dataUniqCellClasses);
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":dataMaxPct[i]}})
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i])}})
       setTableData(initTableData);
       setTableDataSorted(initTableData);
 
@@ -179,6 +186,23 @@ function SingleCell(props){
     prevMultiSelections.current=multiSelections;
 
   },[multiSelections]);
+
+  const tableDataSorted = useStore(state => state.tableDataSorted);
+
+  // filter tableDataSorted based on cellClassSelection
+  useEffect(()=>{
+    console.log('cellClassSelection ', cellClassSelection, 'tableData');
+    if (cellClassSelection.length>0){
+      let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0] && x.pct>minCompoPct);
+      setTableDataFiltered(tableDataFilteredTmp);
+    }else{
+
+      let tableDataFilteredTmp = tableDataSorted.filter(x => x.pct>minCompoPct);
+      setTableDataFiltered(tableDataFilteredTmp);
+    }
+
+  }, [tableDataSorted, cellClassSelection, minCompoPct]);
+
  
   const [handleSorting] = useSortableTable(tableData);
   // const tableDataSorted = useStore(state => state.tableDataSorted);
@@ -187,13 +211,12 @@ function SingleCell(props){
     console.log("sortByToggleVal ", sortByToggleVal);
   }, [sortField, order, tableData, sortByToggleVal])
  
-  const tableDataSorted = useStore(state => state.tableDataSorted);
 
   // compute and set normalizer Z
   useEffect(()=>{
 
     let proportionVals = [], avgVals = [];
-    let curShown = tableDataSorted.slice(0, maxCellTypes);
+    let curShown = tableDataFiltered.slice(0, maxCellTypes);
     curShown.map(x=>{
     let curAccessors = columns.map(c=>c.accessor);
       for (let i=0; i<curAccessors.length;i++){
@@ -208,7 +231,7 @@ function SingleCell(props){
     setMaxAvgVal(Math.max(...avgVals));
     
 
-  }, [tableDataSorted, columns, maxCellTypes]);
+  }, [tableDataFiltered, columns, maxCellTypes]);
 
 
   return(
@@ -236,15 +259,40 @@ function SingleCell(props){
               min={0}
               max={100}
               step={1}
+              tooltipPlacement="top"
             />
           </Col>
         </Row>
+        {columns.length>0?
+        <Row className="mt-2">
+          <Col xs="2">Select a cell class:</Col>
+          <Col xs="6">
+            <Typeahead
+              id="cellclass-typeahead"
+              labelKey="name"
+              onChange={setCellClassSelection}
+              options={cellClassOptions}
+              placeholder="Currently showing all cell classes..."
+              selected={cellClassSelection}
+            />
+          </Col>
+          <Col xs="2">Min composition %:</Col>
+          <Col xs="2">
+            <RangeSlider
+              value={minCompoPct}
+              onChange={e => setMinCompoPct(e.target.value)}
+              min={0}
+              max={100}
+              step={1}
+            />
+          </Col>
+        </Row>:null}
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
           <Col className="" xs="10">
             {columns.length>0?
               <>
-                <Table columns={cellTypeColumn} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={24} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataSorted} maxCellTypes={maxCellTypes} width={72} handleSorting={handleSorting}/>
+                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={24} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={72} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="2">

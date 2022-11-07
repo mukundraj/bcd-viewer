@@ -10,6 +10,8 @@ export const useSCComponentStore = create(set => ({
         setMaxProportionalVal: (val)=>set({maxProportionalVal:val}),
         sortByToggleVal:1,
         toggleSortByToggleVal: () => set((state)=>({sortByToggleVal:-1*state.sortByToggleVal})),
+        tableDataFiltered:[], 
+        setTableDataFiltered: (val)=>set({tableDataFiltered:val}),
     }));
 
 
