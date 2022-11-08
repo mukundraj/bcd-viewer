@@ -16,6 +16,7 @@ import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
 import FrequencyBars from "./FrequencyBarsComponent"
+import {useLocation} from 'react-router-dom';
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -70,6 +71,17 @@ function LoaderCellSpatial({dataConfig}){
 
   const curPuckMaxScores = useCSComponentStore(state => state.curPuckMaxScores);
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
+  const location = useLocation();
+
+  useEffect(() => {
+
+    console.log('location', location);
+
+    window.history.replaceState({}, document.title); // https://stackoverflow.com/questions/40099431/how-do-i-clear-location-state-in-react-router-on-page-reload
+    },[location]);
+
+
+
 
 
   // generalToggleFlag gets toggled when the user clicks on frequency bar or dendro bar

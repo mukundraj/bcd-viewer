@@ -1,6 +1,7 @@
 import {useStore} from '../../store/store'
 import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
+import {useNavigate} from 'react-router-dom'
 
 const TableBody = ({columns, tableDataSorted}) => {
 
@@ -17,6 +18,13 @@ const TableBody = ({columns, tableDataSorted}) => {
   //   console.log("overallMaxVal", overallMaxVal);
 
   // }, [maxColVals]);
+  //
+  const navigate = useNavigate();
+
+  const toCellSpatial = (celltype) => {
+    console.log("toCellSpatial");
+    navigate('/cellspatial', {state:{celltype:celltype}});
+  }
 
   let radius = 15;
 
@@ -32,7 +40,7 @@ const TableBody = ({columns, tableDataSorted}) => {
                 const rFactor = isNaN(tData)?0:tData;
                 return <td key={accessor}>
                   {isNaN(tData)?
-                    <span>{data[accessor]} <span style={{color:'#8E44AD'}}>{data.cc}</span>, <span style={{color:'#BB8FCE'}}>{data.pct}%</span></span>:tData===0?"-":""}
+                    <><button className="btn btn-light btn-sm py-0" style={{borderWidth:"0"}} onClick={()=>{toCellSpatial(data[accessor])}}>{data[accessor]}</button>, <span style={{color:'#8E44AD'}}>{data.cc}</span>, <span style={{color:'#BB8FCE'}}>{data.pct}%</span></>:tData===0?"-":""}
                   <span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(data[-accessor])}} className="dot sctooltip">
                     <span className="sctooltiptext">{Math.round(data[-accessor]*100)/100}, {Math.round(data[accessor]*100)}%</span>
                   </span>
