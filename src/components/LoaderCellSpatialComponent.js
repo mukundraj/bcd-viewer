@@ -458,6 +458,13 @@ function LoaderCellSpatial({dataConfig}){
     }else{
       setDataLoadStatus((p)=>({cell:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
+  
+  const handleCellChange = (cell) => {
+    if (cell.length>0){
+      setChosenPuckid({...chosenPuckid, cell:cell[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+    }
+    setChosenCell(cell);
+  }
 
   return(
     <div>
@@ -477,7 +484,7 @@ function LoaderCellSpatial({dataConfig}){
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCell(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));handleCellChange(x);}}
               options={cellOptions}
               placeholder="Choose a cell..."
               // defaultInputValue={cell[0]}

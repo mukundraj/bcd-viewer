@@ -56,7 +56,7 @@ export const useStore = create(set => ({
     }));
 
 export const usePersistStore = create(persist( set => ({
-    chosenPuckid:{'pid':1, 'gene':'Pcp4', cell:'Inh_Lhx6_Nmu_1'},
+    chosenPuckid:{'pid':1, 'gene':'Pcp4', 'cell':'Inh_Lhx6_Nmu_1'},
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
 }),
     {
