@@ -149,7 +149,7 @@ function LoaderCellSpatial({dataConfig}){
         });
     }
     console.log("chosenPuckid changed to: ", chosenPuckid, "initialRender", initialRender);
-    if (initialRender===false){
+    if (initialRender===false || cellOptions.length===1){
       fetchCellOptions();
     }
     setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
