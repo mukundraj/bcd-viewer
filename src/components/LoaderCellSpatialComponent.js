@@ -148,14 +148,14 @@ function LoaderCellSpatial({dataConfig}){
           setCellNameToIdx(cellNameToIdx);
         });
     }
-    console.log("chosenPuckid changed to: ", chosenPuckid, "initialRender", initialRender);
+    // console.log("chosenPuckid changed to: ", chosenPuckid, "initialRender", initialRender, location);
     if (initialRender===false || cellOptions.length===1){
       fetchCellOptions();
     }
     setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
       
 
-  }, [chosenPuckid.pid, location]);
+  }, [chosenPuckid.pid, location.pathname]);
   
   // loading background image data and coords on puck change
   useEffect(()=>{
