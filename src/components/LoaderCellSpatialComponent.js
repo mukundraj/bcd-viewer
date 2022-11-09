@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Scatterplot from './ScatterplotComponent';
-import {useStore} from '../store/store'
-import {useCSComponentStore} from '../store/CSComponentStore'
+import {useStore, usePersistStore} from '../store/store'
+import {useCSComponentStore, useCSCPersistStore} from '../store/CSComponentStore'
 import Breadcrumbs from './BreadcrumbsComponent'
 import {Form, FormGroup, Col, Row, ProgressBar} from 'react-bootstrap'
 import BcdCarousel from "./BcdCarouselComponent"
@@ -34,8 +34,8 @@ function LoaderCellSpatial({dataConfig}){
   const maxScoreThreshold2 = useCSComponentStore(state => state.maxScoreThreshold2);
   const setMaxScoreThreshold2 = useCSComponentStore(state => state.setMaxScoreThreshold2);
 
-  const chosenPuckid = useStore(state => state.chosenPuckid);
-  const setChosenPuckid = useStore(state => state.setChosenPuckid);
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, cell:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
 
@@ -56,8 +56,8 @@ function LoaderCellSpatial({dataConfig}){
   const nisslStatus = useStore(state => state.nisslStatus);
   const setNisslStatus = useStore(state => state.setNisslStatus);
 
-  const chosenCell = useCSComponentStore(state => state.chosenCell);
-  const setChosenCell = useCSComponentStore(state => state.setChosenCell);
+  const chosenCell = useCSCPersistStore(state => state.chosenCell);
+  const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
   const chosenCell2 = useCSComponentStore(state => state.chosenCell2);
   const setChosenCell2 = useCSComponentStore(state => state.setChosenCell2);
   
@@ -67,18 +67,20 @@ function LoaderCellSpatial({dataConfig}){
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
 
-  const [cellNameToIdx, setCellNameToIdx] = useState({'Inh_Lhx6_Nmu_1':560 });
+  // const [cellNameToIdx, setCellNameToIdx] = useState({'Inh_Lhx6_Nmu_1':560 });
+  const cellNameToIdx = useCSCPersistStore(state => state.cellNameToIdx);
+  const setCellNameToIdx = useCSCPersistStore(state => state.setCellNameToIdx);
 
   const curPuckMaxScores = useCSComponentStore(state => state.curPuckMaxScores);
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
   const location = useLocation();
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    console.log('location', location);
+  //   console.log('location', location);
 
-    window.history.replaceState({}, document.title); // https://stackoverflow.com/questions/40099431/how-do-i-clear-location-state-in-react-router-on-page-reload
-    },[location]);
+  //   window.history.replaceState({}, document.title); // https://stackoverflow.com/questions/40099431/how-do-i-clear-location-state-in-react-router-on-page-reload
+  // },[location]);
 
 
 
@@ -111,45 +113,8 @@ function LoaderCellSpatial({dataConfig}){
     console.log("dataLoadStatus changed to: ", dataLoadStatus);
   }, [dataLoadStatus]);
 
-  // loading background image data and coords on puck change
+  // On puckid change, load cellOptions data and set cellNameToIdx
   useEffect(()=>{
-
-    // create full coords path
-    // console.log("coordsPath ", coordsPath);
-    console.log("chosenPuckid", chosenPuckid);
-
-    // read coords data
-    const fetchData = async () => {
-      // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
-      let coordsUrl = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/coords.csv`
-      // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
-      const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
-
-      setCoordsData(readData);
-      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
-    }
-    fetchData();
-
-    const fetchNissl = async () => {
-      let nis_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
-      console.log("nis_url: ", nis_url);
-
-      setCurNisslUrl(nis_url);
-      // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
-      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
-    }
-
-    const fetchAtlas = async () => {
-      let atlas_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid, 3)}.png`;
-
-      setCurAtlasUrl(atlas_url);
-      // setDataLoadStatus(dataLoadStatus+1);
-      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
-
-    }
-
-    fetchNissl();
-    fetchAtlas();
 
     const fetchCellOptions = async () => {
       let cellOptionsUrl = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/cellOptions.json`
@@ -170,9 +135,8 @@ function LoaderCellSpatial({dataConfig}){
           // console.log(myJson.cellOptions, dataLoadStatus);
           // setData(myJson)
           setCellOptions(myJson.cellOptions);
-          setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
 
-          console.log("cellOptions", myJson.cellOptions[560]);
+          // console.log("cellOptions", myJson.cellOptions);
 
           // create cellNameToIdx
           let cellNameToIdx = {};
@@ -180,14 +144,64 @@ function LoaderCellSpatial({dataConfig}){
             cellNameToIdx[cell] = idx;
           }
           );
-          setCellNameToIdx(()=>cellNameToIdx);
+          // setCellNameToIdx(()=>cellNameToIdx);
+          setCellNameToIdx(cellNameToIdx);
         });
     }
+    console.log("chosenPuckid changed to: ", chosenPuckid, "initialRender", initialRender);
+    if (initialRender===false){
+      fetchCellOptions();
+    }
+    setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+      
 
-    fetchCellOptions();
+  }, [chosenPuckid.pid, location]);
+  
+  // loading background image data and coords on puck change
+  useEffect(()=>{
+
+    // create full coords path
+    // console.log("coordsPath ", coordsPath);
+    console.log("chosenPuckid", chosenPuckid);
+
+
+    // read coords data
+    const fetchData = async () => {
+      // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
+      let coordsUrl = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/coords.csv`
+      // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
+      const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
+
+      setCoordsData(readData);
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+    }
+
+    const fetchNissl = async () => {
+      let nis_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
+      console.log("nis_url: ", nis_url);
+
+      setCurNisslUrl(nis_url);
+      // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+    }
+
+    const fetchAtlas = async () => {
+      let atlas_url = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid, 3)}.png`;
+
+      setCurAtlasUrl(atlas_url);
+      // setDataLoadStatus(dataLoadStatus+1);
+      setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
+
+    }
+
+    fetchData();
+    fetchNissl();
+    fetchAtlas();
+
+
     console.log("puck update initiated..");
 
-  },[chosenPuckid]);
+  },[cellNameToIdx]);
 
 
   // when puck changes and coords loaded, load both cells' metadata (maxScores)
@@ -197,9 +211,9 @@ function LoaderCellSpatial({dataConfig}){
     const fetchData = async () => {
 
       let zarrPathInBucket = `${basePath}${relativePath}/genexp/puck${chosenPuckid.pid}/`;
-      console.log("zarrPathInBucket ", zarrPathInBucket);
       let zloader = new ZarrLoader({zarrPathInBucket});
       let rowIdx = cellNameToIdx[chosenCell[0]];
+      // console.log("zarrPathInBucket ", zarrPathInBucket, 'chosenPuckid', chosenPuckid, 'rowIdx', rowIdx, cellNameToIdx);
 
       let readData = null;
       if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
@@ -258,7 +272,12 @@ function LoaderCellSpatial({dataConfig}){
         setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1})); 
     }
 
-    fetchData();
+    if (chosenPuckid.cell === chosenCell[0]){
+      fetchData();
+    }else{
+      console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCell", chosenCell);
+      setChosenCell([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
+    }    
 
   }, [coordsData]);
 

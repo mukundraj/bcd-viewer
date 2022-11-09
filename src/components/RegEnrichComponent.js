@@ -3,7 +3,7 @@ import {Col, Row} from 'react-bootstrap'
 import TableGeneric from './table/TableGenericComponent'
 import { useSortableTableGeneric } from "./table/hooks";
 import { useState, useEffect } from 'react';
-import useStore from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
@@ -50,7 +50,7 @@ function RegEnrich({setDataLoadStatus}){
   const sortField = useStore(state => state.sortField);
   const tableDataSorted = useStore(state => state.tableDataSorted);
 
-  const chosenPuckid = useStore(state => state.chosenPuckid);
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
   const selectedRegIds = useStore(state => state.selectedRegIds);
   const chosenGene = useStore(state => state.chosenGene);

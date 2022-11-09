@@ -7,7 +7,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import {Form, FormGroup, Col, Row, ProgressBar} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
-import {useStore,useAuthStore} from '../store/store'
+import {useStore,useAuthStore, usePersistStore} from '../store/store'
 import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -70,8 +70,8 @@ function Loader({dataConfig}){
   const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
   const setMaxUmiThreshold2 = useStore(state => state.setMaxUmiThreshold2);
 
-  const chosenPuckid = useStore(state => state.chosenPuckid);
-  const setChosenPuckid = useStore(state => state.setChosenPuckid);
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
 
   const geneOptions = useStore(state => state.geneOptions);
   const setGeneOptions = useStore(state => state.setGeneOptions);
@@ -201,6 +201,7 @@ function Loader({dataConfig}){
     fetchGeneOptions();
 
 
+  // },[relativePath, chosenPuckid.pid]);
   },[relativePath, chosenPuckid.pid]);
 
   // when puck changes and coords loaded, load both gene data and gene metadata (maxCounts)

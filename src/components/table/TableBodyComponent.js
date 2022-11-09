@@ -1,4 +1,4 @@
-import {useStore} from '../../store/store'
+import {useStore, usePersistStore} from '../../store/store'
 import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
 import {useNavigate} from 'react-router-dom'
@@ -8,6 +8,8 @@ const TableBody = ({columns, tableDataSorted}) => {
   // const maxColVals = useStore(state => state.maxColVals);
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const currentColorMap = useSCComponentStore(state => state.currentColorMap);
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
   // const [zVal, setZVal] = useState(1); // normalizing demominator data in table
 
   // update zVal if any of the maxColVals changes
@@ -22,8 +24,31 @@ const TableBody = ({columns, tableDataSorted}) => {
   const navigate = useNavigate();
 
   const toCellSpatial = (celltype) => {
-    console.log("toCellSpatial");
-    navigate('/cellspatial', {state:{celltype:celltype}});
+
+      // navigate('/cellspatial', {state:{celltype:celltype}});
+
+      // get freqBar data for this celltype to derminne maxima puckid
+      const fetchData = async (celltype) => {
+        let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
+        const readData = await fetch(fbarsDataUrl)
+         .then(response => response.json())
+          .catch(error => {
+            alert("Could not find spatial data for this cell type");
+            console.log(error);
+          });
+      
+        // find maxima pid
+        const counts = readData.sorted_puckwise_cnts.map(o => o.cnt);
+        const maxIdx = counts.indexOf(Math.max(...counts));
+        const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
+
+        setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype});
+        navigate('/cellspatial');
+      }
+
+      // get celltype freqbar data and set maxima pid
+      fetchData(celltype);
+
   }
 
   let radius = 15;

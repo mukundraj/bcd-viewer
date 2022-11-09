@@ -2,10 +2,14 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Image from 'react-bootstrap/Image'
 import { useEffect, useState, useRef} from 'react'
-import {useStore} from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import {pidToSrno} from '../shared/common'
+import {useLocation} from 'react-router-dom';
 
 function BcdCarousel(props){
+
+  const location = useLocation();
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -53,7 +57,11 @@ function BcdCarousel(props){
       setCarouselRef(carouselRef);
     }, []);
 
+  // programatically set carousel slide only if entering new location
+  useEffect(() => {
 
+      carouselRef.current.goToSlide(parseInt(pidToSrno[chosenPuckid.pid]-1));
+  },[location]);
 
   return (
     <>

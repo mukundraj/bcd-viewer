@@ -15,8 +15,6 @@ export const useStore = create(set => ({
     setCurRoute: (val) => set({curRoute:val}),
     geneOptions: ['Pcp4'],
     setGeneOptions: (val) => set({geneOptions:val}),
-    chosenPuckid:{'pid':1, 'gene':'Pcp4'},
-    setChosenPuckid: (val)=>set({chosenPuckid:val}),
     chosenGene:['Pcp4'],
     setChosenGene: (val)=>set({chosenGene:val}),
     chosenGene2:[],
@@ -56,6 +54,16 @@ export const useStore = create(set => ({
     generalColormap: ()=>[0, 0, 0],
     setGeneralColormap: (val)=>set({generalColormap:val}),
     }));
+
+export const usePersistStore = create(persist( set => ({
+    chosenPuckid:{'pid':1, 'gene':'Pcp4', cell:'Inh_Lhx6_Nmu_1'},
+    setChosenPuckid: (val)=>set({chosenPuckid:val}),
+}),
+    {
+        name: "main-persist-storage",
+        getStorage: ()=>sessionStorage,
+    })
+);
 
 export const useAuthStore = create(persist(set => ({
     isLoggedIn: false,
