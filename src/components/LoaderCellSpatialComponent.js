@@ -194,12 +194,15 @@ function LoaderCellSpatial({dataConfig}){
 
     }
 
-    fetchData();
-    fetchNissl();
-    fetchAtlas();
+    // console.log('initialRender', initialRender, location, dataLoadStatus);
+    if (dataLoadStatus.puck<=1 ){
+      fetchData();
+      fetchNissl();
+      fetchAtlas();
+      console.log("puck update initiated..");
+    }
 
 
-    console.log("puck update initiated..");
 
   },[cellNameToIdx]);
 
