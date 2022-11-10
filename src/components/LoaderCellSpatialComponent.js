@@ -265,7 +265,7 @@ function LoaderCellSpatial({dataConfig}){
           ...obj,
           count:cellData[index], 
           count2: 0,
-          logcnt1: Math.log(cellData[index].count + 1)/Math.log(locMaxScoreThreshold+1),
+          logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
           logcnt2: 1
         }));
       }       
