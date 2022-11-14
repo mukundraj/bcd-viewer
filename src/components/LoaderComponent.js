@@ -154,7 +154,7 @@ function Loader({dataConfig}){
 
     const fetchNissl = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/genexp/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
+      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/cellscores/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
       setCurNisslUrl(nis_url);
       // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
       setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
@@ -162,7 +162,7 @@ function Loader({dataConfig}){
 
     const fetchAtlas = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/genexp/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid,3)}.png`;
+      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/cellscores/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid,3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
