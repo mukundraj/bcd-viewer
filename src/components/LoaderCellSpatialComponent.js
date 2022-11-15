@@ -45,7 +45,7 @@ function LoaderCellSpatial({dataConfig}){
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
-  const [scoreLowerThreshold, setScoreLowerThreshold ] = useState(0.0001);
+  const [scoreLowerThreshold, setScoreLowerThreshold ] = useState(0.3); // formerly: 0.0001
   const [scoreUpperThreshold, setScoreUpperThreshold ] = useState(0.0001);
   const [scoreLowerThreshold2, setScoreLowerThreshold2 ] = useState(0.0001);
   const [scoreUpperThreshold2, setScoreUpperThreshold2 ] = useState(0.0001);
@@ -527,7 +527,7 @@ function LoaderCellSpatial({dataConfig}){
         </FormGroup>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
-            UMI Count Threshold
+            Score Threshold
           </Form.Label>
           <Col xs="1">
             <DualSlider upperThreshold={maxScoreThreshold}
