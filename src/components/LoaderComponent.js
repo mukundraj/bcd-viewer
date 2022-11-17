@@ -141,8 +141,8 @@ function Loader({dataConfig}){
 
     // read coords data
     const fetchData = async () => {
-      let coordsPath = `${relativePath}/puck${chosenPuckid.pid}/coords.csv`
-      let coordsUrl = await getUrl(coordsPath);
+      let coordsUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/coords.csv`
+      // let coordsUrl = await getUrl(coordsPath);
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
       setCoordsData(readData);
@@ -154,7 +154,7 @@ function Loader({dataConfig}){
 
     const fetchNissl = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let nis_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/cellscores/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
+      let nis_url = `https://storage.googleapis.com/bcdportaldata/genexp_data/gene_exprs/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
       setCurNisslUrl(nis_url);
       // setDataLoadStatus((p)=>{ console.log(p.dataLoadStatus); return (p.dataLoadStatus+1)});
       setDataLoadStatus((p)=>({...p, puck:p.puck+1}));
@@ -162,7 +162,7 @@ function Loader({dataConfig}){
 
     const fetchAtlas = async () => {
       // todo: remove hardcoding below by updating basePath and relativePath
-      let atlas_url = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/cellscores/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid,3)}.png`;
+      let atlas_url = `https://storage.googleapis.com/bcdportaldata/genexp_data/gene_exprs/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid,3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -174,8 +174,8 @@ function Loader({dataConfig}){
     fetchAtlas();
 
     const fetchGeneOptions = async () => {
-      let geneOptionsPath = `${relativePath}/puck${chosenPuckid.pid}/geneOptions.json`
-      let geneOptionsUrl = await getUrl(geneOptionsPath);
+      let geneOptionsUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/geneOptions.json`
+      // let geneOptionsUrl = await getUrl(geneOptionsPath);
       // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
       fetch(geneOptionsUrl
       // ,{
@@ -209,21 +209,21 @@ function Loader({dataConfig}){
 
     // read gene data
     const fetchData = async () => {
-      let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
-      let geneDataUrl = await getUrl(geneDataPath);
+      let geneDataUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
+      // let geneDataUrl = await getUrl(geneDataPath);
       const geneData = await load(geneDataUrl, [CSVLoader]);
 
       let readData = null;
       if (chosenGene2.length > 0){ // fetch and update both geneData1 and geneData2
         
-        let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
-        let geneDataUrl = await getUrl(geneDataPath);
+        let geneDataUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
+        // let geneDataUrl = await getUrl(geneDataPath);
 
         // load metadata for gene1 and gene2
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
-        let metaDataUrl1 = await getUrl(meta_data_path1);
-        let meta_data_path2 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
-        let metaDataUrl2 = await getUrl(meta_data_path2);
+        let metaDataUrl1 = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
+        // let metaDataUrl1 = await getUrl(meta_data_path1);
+        let metaDataUrl2 = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
+        // let metaDataUrl2 = await getUrl(meta_data_path2);
 
         let [metaData, metaData2] = await Promise.all([
                                     fetch(metaDataUrl1).then(response => response.json()), 
@@ -253,8 +253,8 @@ function Loader({dataConfig}){
       }else{ // just fetch and update geneData1
 
         // load metadata for gene1
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
-        let metaDataUrl1 = await getUrl(meta_data_path1);
+        let metaDataUrl1 = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
+        // let metaDataUrl1 = await getUrl(meta_data_path1);
         let metaData = await fetch(metaDataUrl1)
           .then(response => response.json());
 
@@ -293,13 +293,13 @@ function Loader({dataConfig}){
 
       // read gene data
       const fetchData = async () => {
-      let geneDataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
-      let geneDataUrl = await getUrl(geneDataPath);
+      let geneDataUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/${prefix}${chosenGene[0]}.csv`
+      // let geneDataUrl = await getUrl(geneDataPath);
         const geneData = await load(geneDataUrl, [CSVLoader]);
 
         // load metadata for gene1
-        let meta_data_path1 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
-        let metaDataUrl1 = await getUrl(meta_data_path1);
+        let metaDataUrl1 = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/metadata_gene_${chosenGene[0]}.json`
+        // let metaDataUrl1 = await getUrl(meta_data_path1);
         let metaData = await fetch(metaDataUrl1).then(response => response.json());
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
@@ -353,13 +353,13 @@ function Loader({dataConfig}){
 
       // read gene data
       const fetchData = async () => {
-        let gene2DataPath = `${relativePath}/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
-        let gene2DataUrl = await getUrl(gene2DataPath);
+        let gene2DataUrl = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/${prefix}${chosenGene2[0]}.csv`
+        // let gene2DataUrl = await getUrl(gene2DataPath);
         const gene2Data = await load(gene2DataUrl, [CSVLoader]);
 
         // load metadata for gene2
-        let meta_data_path2 = `${relativePath}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
-        let metaDataUrl2 = await getUrl(meta_data_path2);
+        let metaDataUrl2 = `${basePath}${relativePath}/gene_exprs/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
+        // let metaDataUrl2 = await getUrl(meta_data_path2);
         let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
         locMaxUmiThreshold2 = locMaxUmiThreshold2>0?locMaxUmiThreshold2:0.1;
