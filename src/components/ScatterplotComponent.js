@@ -260,7 +260,7 @@ function Scatterplot({id, unidata,
         {hoverInfo.object && (
           <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
             count:{hoverInfo.object.count}, count2:{hoverInfo.object.count2}, region:{hoverInfo.object.rname}
-            {/* , {hoverInfo.object.x}, {hoverInfo.object.y} */}
+            , {hoverInfo.object.x}, {hoverInfo.object.y} 
           </div>
         )}
       </DeckGL>

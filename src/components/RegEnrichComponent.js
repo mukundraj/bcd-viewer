@@ -205,7 +205,7 @@ function RegEnrich({setDataLoadStatus}){
   // }, [chosenPuckid, selectedRegIds])
 
 
-  let maxRows = 100;
+  let maxRows = 10000;
 
   return(
     <>
