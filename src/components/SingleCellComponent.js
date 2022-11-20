@@ -74,12 +74,13 @@ function SingleCell(props){
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses] = await Promise.all(
+      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus] = await Promise.all(
         [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
           zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts"), // pct contribution from majority contributing cell class
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/uniqcellclasses"), 
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/mapStatus"), 
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -90,7 +91,7 @@ function SingleCell(props){
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i])}})
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i]}})
       setTableData(initTableData);
       setTableDataSorted(initTableData);
 
