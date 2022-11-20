@@ -42,6 +42,7 @@ function SingleCell(props){
   const [cellClassOptions, setCellClassOptions] = useState([]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
+  const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -292,8 +293,9 @@ function SingleCell(props){
           <Col className="" xs="10">
             {columns.length>0?
               <>
-                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={24} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={72} handleSorting={handleSorting}/>
+                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
+                <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={58} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="2">
