@@ -35,7 +35,7 @@ function Loader({dataConfig}){
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   // const [chosenGene, setChosenGene] = useState(["Pcp4"])
-  const chosenGene = useStore(state => state.chosenGene);
+  const chosenGene = usePersistStore(state => state.chosenGene);
   const setChosenGene = useStore(state => state.setChosenGene);
 
   const chosenGene2 = useStore(state => state.chosenGene2);
@@ -630,7 +630,7 @@ function Loader({dataConfig}){
         <Dendrogram
           setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});}}
         />
-        <RegEnrich setDataLoadStatus={setDataLoadStatus}/>
+        {/* <RegEnrich setDataLoadStatus={setDataLoadStatus}/> */}
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 

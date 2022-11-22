@@ -52,8 +52,8 @@ function RegEnrich({setDataLoadStatus}){
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
-  const selectedRegIds = useStore(state => state.selectedRegIds);
-  const chosenGene = useStore(state => state.chosenGene);
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const chosenGene = usePersistStore(state => state.chosenGene);
 
   const [ridToIdx, setRidToIdx] = useState({});
   const [inFracs, setInFracs] = useState([]);

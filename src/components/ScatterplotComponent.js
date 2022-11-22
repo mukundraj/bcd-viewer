@@ -6,7 +6,7 @@ import {OrthographicView} from '@deck.gl/core';
 import {useCallback, useState, useEffect} from 'react'
 import {interpolateViridis} from 'd3-scale-chromatic'
 import {legendLinear, legendColor} from 'd3-svg-legend'
-import useStore from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {getUrl} from "../shared/common"
 import * as d3 from 'd3';
@@ -27,7 +27,7 @@ function Scatterplot({id, unidata,
   const setHoverInfo = useStore(state => state.setHoverInfo);
   // const maxUmiThreshold = useStore(state => state.maxUmiThreshold);
   // const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2);
-  const selectedRegions = useStore(state => state.selectedRegions);
+  const selectedRegions = usePersistStore(state => state.selectedRegions);
 
   const currentColorMap = useStore(state => state.currentColorMap);
   // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);

@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import DropdownTreeSelect from 'react-dropdown-tree-select'
 import 'react-dropdown-tree-select/dist/styles.css'
 import {getUrl} from "../shared/common"
+import {getPaths} from "../shared/utils"
 import "../css/Dendrogram.css";
 import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import 'font-awesome/css/font-awesome.min.css';
-import {useStore} from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import DendroBars from "./DendroBarsComponent"
 import useSize from '../hooks/useSize'
 
@@ -17,10 +18,16 @@ function Dendrogram(props){
   const setTogglePid = useStore(state => state.setTogglePid);
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
 
-  const [data, setData] = useState({"label": "Root", "value":"root"})
+  // const [dendroData, setDendroData] = useState([{"label": "Root", "value":"root", "children":[]}]);
+  const dendroData = usePersistStore(state => state.dendroData);
+  const setDendroData = usePersistStore(state => state.setDendroData);
   
-  const setSelectedRegions = useStore(state => state.setSelectedRegions);
-  const setSelectedRegIds = useStore(state => state.setSelectedRegIds);
+  const setSelectedRegions = usePersistStore(state => state.setSelectedRegions);
+  const setSelectedRegIds = usePersistStore(state => state.setSelectedRegIds);
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodePaths);
+  const regionTreeNodePaths = usePersistStore(state => state.regionTreeNodePaths);
+  const curNumRegions = usePersistStore(state => state.curNumRegions);
 
   const target = React.useRef(null)
   const size = useSize(target)
@@ -66,10 +73,25 @@ function Dendrogram(props){
       const readData = await fetch(regionTreeDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
+      
+      console.log('selectedRegIds', selectedRegIds, selectedRegIds.length);
+      // if (selectedRegIds.length > 0){ // if there are selected regions, set corresponding checked values in readData['children'] subtree
+
+      //   // readData['children'][1]['checked'] = true;
+      //   for (const regId of selectedRegIds){
+      //     let curnode = readData;
+      //     const path = regionTreeNodePaths[regId];
+      //     console.log('regId', regId, path, regionTreeNodePaths);
+      //     for (const nodeIdx in path){
+      //       curnode = curnode.children[path[nodeIdx]];
+      //     }   
+      //     curnode['checked'] = true;
+      //   }
+      // }
 
 
-      // console.log(readData);
-      setData(readData["children"]);
+      console.log('dendroData', readData);
+      setDendroData(readData["children"]);
       // setDendroData(readData["children"]);
 
 
@@ -78,11 +100,28 @@ function Dendrogram(props){
       // setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
       // setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
     }
-    fetchData();
+    // if (dendroData.length===1){ // if dendroData is not loaded yet
+      fetchData();
+    // }else{ // update dendroData based on selectedRegIds
+      
+    // }
     
     // console.log(data);
 
   }, []);
+
+  // compute and store path to region nodes in tree for direct traversal for setting state of preselected regions
+  // useEffect(()=>{
+
+  //   if (curNumRegions > 0){
+  //       let regionTreeNodePaths = getPaths(dendroData);
+  //       setRegionTreeNodePaths(regionTreeNodePaths);
+  //       console.log('regionTreeNodePaths', regionTreeNodePaths);
+  //       console.log('curNumRegions', curNumRegions);
+  //   }
+
+  // }, [dendroData, curNumRegions]);
+
 
   function searchPredicate(node, searchTerm) {
     // console.log(node);
@@ -94,11 +133,11 @@ function Dendrogram(props){
 
   return(
     <>
-      <DendroBars/>
+      {/* <DendroBars/> */}
       <div className="tree-inner-wrap" style={{"width":"70%", "height":"60%"}} ref={target}>
         <Scrollbars style={{ width: size?size.width:100, height: size?size.height:100}}>
           <DropdownTreeSelect
-            data={data} 
+            data={dendroData} 
             onChange={onChange} onAction={onAction} 
             onNodeToggle={onNodeToggle} 
             keepTreeOnSearch={true}

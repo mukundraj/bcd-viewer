@@ -2,7 +2,7 @@ import '../css/FrequencyBars.css';
 import { useD3 } from '../hooks/useD3';
 import React from 'react';
 import * as d3 from 'd3';
-import {useStore} from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import {srnoToPid} from "../shared/common"
 import { useEffect, useState } from 'react';
 import {getUrl} from "../shared/common"
@@ -15,6 +15,7 @@ function DendroBars(props){
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
   const setTogglePid = useStore(state => state.setTogglePid);
   const [regionwiseData, setRegionwiseData] = useState(null);
+  const setCurNumRegions = usePersistStore(state => state.setCurNumRegions);
   
 
   const carouselRef = useStore(state => state.carouselRef);
@@ -24,18 +25,20 @@ function DendroBars(props){
     setTogglePid(srnoToPid[d.sr]);
     toggleGeneralToggleFlag();
   }
-  const dendroBarData = useStore(state => state.dendroBarData);
+  const dendroBarData = usePersistStore(state => state.dendroBarData);
   let data = dendroBarData.map((x,i)=>{return {"sr":i+1, "cnt":x}});
 
-  const chosenGene = useStore(state => state.chosenGene);
-  const selectedRegIds = useStore(state => state.selectedRegIds);
-  const setDendroBarData = useStore(state => state.setDendroBarData);
+  const chosenGene = usePersistStore(state => state.chosenGene);
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const setDendroBarData = usePersistStore(state => state.setDendroBarData);
 
   function updateDendroBars(regIds, data){
       let curDendroBarData = [...Array(101).keys()].map(x=>0);
 
       regIds.map(regId =>{
         
+        console.log('regId', regId);
+        console.log('data', data);
         let readDataArray = data[parseInt(regId)].puck_dist;
         for (let i=0; i<curDendroBarData.length;i++){
           curDendroBarData[i] += readDataArray[i];
@@ -58,10 +61,11 @@ function DendroBars(props){
       let regionTreeDataUrl = await getUrl(regionTreeDataPath);
       const readData = await fetch(regionTreeDataUrl)
        .then(response => response.json());
-      console.log(selectedRegIds);
+      console.log('chosenGene', chosenGene, selectedRegIds);
 
       setRegionwiseData(readData);
       updateDendroBars(selectedRegIds, readData);
+      setCurNumRegions(Object.keys(readData).length);
 
     }
 
