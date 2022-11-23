@@ -35,8 +35,8 @@ function Loader({dataConfig}){
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
   // const [chosenGene, setChosenGene] = useState(["Pcp4"])
-  const chosenGene = useStore(state => state.chosenGene);
-  const setChosenGene = useStore(state => state.setChosenGene);
+  const chosenGene = usePersistStore(state => state.chosenGene);
+  const setChosenGene = usePersistStore(state => state.setChosenGene);
 
   const chosenGene2 = useStore(state => state.chosenGene2);
   const setChosenGene2 = useStore(state => state.setChosenGene2);

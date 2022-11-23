@@ -52,8 +52,8 @@ function RegEnrich({setDataLoadStatus}){
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenPuckid = useStore(state => state.setChosenPuckid);
-  const selectedRegIds = useStore(state => state.selectedRegIds);
-  const chosenGene = useStore(state => state.chosenGene);
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const chosenGene = usePersistStore(state => state.chosenGene);
 
   const [ridToIdx, setRidToIdx] = useState({});
   const [inFracs, setInFracs] = useState([]);
@@ -84,7 +84,7 @@ function RegEnrich({setDataLoadStatus}){
       // loop though selectedRegIds and get nz counts for each region
       if (selectedRegIds.length>0){ // create new array
         let row_idx = ridToIdx[selectedRegIds[0]];
-            console.log('row_idx', row_idx);
+            console.log('row_idx', row_idx, selectedRegIds, ridToIdx);
         // let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), 
         let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/pall/X`, row_idx), 
           zloader.getDataRow(`nz_aggr.zarr/pall/Xout`, row_idx)]);
@@ -121,8 +121,11 @@ function RegEnrich({setDataLoadStatus}){
 
 
     }
-    fetchData(0);
-  },[chosenPuckid, selectedRegIds]);
+    if(Object.keys(ridToIdx).length>0){
+      fetchData(0);
+    }
+      
+  },[chosenPuckid, selectedRegIds, ridToIdx]);
 
   useEffect(()=>{
 

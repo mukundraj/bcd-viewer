@@ -8,19 +8,24 @@ import "../css/Dendrogram.css";
 import useResizeObserver from '@react-hook/resize-observer'
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import 'font-awesome/css/font-awesome.min.css';
-import {useStore} from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import DendroBars from "./DendroBarsComponent"
 import useSize from '../hooks/useSize'
+import {getPaths, markDendroDataNode} from "../shared/utils"
 
 function Dendrogram(props){
 
   const setTogglePid = useStore(state => state.setTogglePid);
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
 
-  const [data, setData] = useState({"label": "Root", "value":"root"})
+  // const [dendroData, setDendroData] = useState({"label": "Root", "value":"root"})
+  const dendroData = usePersistStore(state => state.dendroData);
+  const setDendroData = usePersistStore(state => state.setDendroData);
+  const regionTreeNodePaths = usePersistStore(state => state.regionTreeNodePaths);
+  const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodePaths);
   
-  const setSelectedRegions = useStore(state => state.setSelectedRegions);
-  const setSelectedRegIds = useStore(state => state.setSelectedRegIds);
+  const setSelectedRegions = usePersistStore(state => state.setSelectedRegions);
+  const setSelectedRegIds = usePersistStore(state => state.setSelectedRegIds);
 
   const target = React.useRef(null)
   const size = useSize(target)
@@ -40,6 +45,28 @@ function Dendrogram(props){
     // console.log(selectedRegIds, currentNode.value, selectedRegIds.includes(currentNode.value));
       // console.log('onChange::', currentNode, selectedNodes)
     // fetchAndSetBarData(selectedRegIds);
+
+    // if (selectedRegIds.length>0){
+    // let dendroDataTmp = dendroData;
+    //   for (let i=0; i<selectedRegIds.length;i++){
+    //     const regId = selectedRegIds[i];
+    //     dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId);
+    //     setDendroData(dendroDataTmp);
+    //   }
+    // }
+    console.log("currentNode", currentNode);
+    if (!!currentNode.checked && currentNode.checked===true){ // check if property exists and confirm if it is true
+      let dendroDataTmp = dendroData;
+      const regId = currentNode.value;
+      dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId, true);
+      setDendroData(dendroDataTmp);
+    }else{
+      let dendroDataTmp = dendroData;
+      const regId = currentNode.value;
+      dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId, false);
+      setDendroData(dendroDataTmp);
+
+    }
   }
 
 
@@ -69,8 +96,11 @@ function Dendrogram(props){
 
 
       // console.log(readData);
-      setData(readData["children"]);
+      setDendroData(readData["children"]);
       // setDendroData(readData["children"]);
+      let regionTreeNodePaths = getPaths(readData["children"]);
+      setRegionTreeNodePaths(regionTreeNodePaths);
+      console.log('regionTreeNodePaths', regionTreeNodePaths);
 
 
       // setCoordsData(readData);
@@ -78,7 +108,12 @@ function Dendrogram(props){
       // setMaxUmiThreshold(parseFloat(readData[maxCountMetadataKey]));
       // setDataLoadStatus((p)=>({...p, metadata:p.metadata+1}));
     }
-    fetchData();
+    console.log('dendroData length', dendroData.length, dendroData);
+    if (dendroData.length === 1){ // load dendroData and populate regionTreeNodePaths
+      fetchData(); 
+    }else{
+      console.log('dendroData already loaded', dendroData);
+    }
     
     // console.log(data);
 
@@ -98,7 +133,7 @@ function Dendrogram(props){
       <div className="tree-inner-wrap" style={{"width":"70%", "height":"60%"}} ref={target}>
         <Scrollbars style={{ width: size?size.width:100, height: size?size.height:100}}>
           <DropdownTreeSelect
-            data={data} 
+            data={dendroData} 
             onChange={onChange} onAction={onAction} 
             onNodeToggle={onNodeToggle} 
             keepTreeOnSearch={true}
