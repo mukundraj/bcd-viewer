@@ -43,6 +43,8 @@ function Scatterplot({id, unidata,
 
   const [data, setData] = useState(() => unidata);
   const [regionTree, setRegionTree] = useState(null);
+  const regionTreeJson = usePersistStore(state => state.regionTreeJson);
+  const setRegionTreeJson = usePersistStore(state => state.setRegionTreeJson);
   const accessToken = useStore(state => state.accessToken);
   const isLoggedIn = useStore(state => state.isLoggedIn);
   // const [hoverInfo, setHoverInfo] = useState(0);
@@ -178,13 +180,21 @@ function Scatterplot({id, unidata,
       const readData = await fetch(regionArrayDataUrl)
        .then(response => response.json());
 
+      setRegionTreeJson(readData);
       var tree_util = require('tree-util')
       var standardConfig =  { id : 'id', parentid : 'parentid'};
       var trees = tree_util.buildTrees(readData, standardConfig);
       setRegionTree(trees[0]);
 
     }
-    fetchData();
+    if (regionTreeJson === null){ 
+      fetchData();
+    }else{
+      var tree_util = require('tree-util')
+      var standardConfig =  { id : 'id', parentid : 'parentid'};
+      var trees = tree_util.buildTrees(regionTreeJson, standardConfig);
+      setRegionTree(trees[0]);
+    }
 
 
   },[]);
