@@ -14,6 +14,7 @@ import {useSCComponentStore} from '../store/SCComponentStore'
 import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
 import {Form} from 'react-bootstrap'
+import Dendrogram from './DendrogramComponent'
 
 
 function SingleCell(props){
@@ -290,7 +291,7 @@ function SingleCell(props){
           </Col>
         </Row>:null}
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
-          <Col className="" xs="10">
+          <Col className="" xs="9">
             {columns.length>0?
               <>
                 <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
@@ -298,7 +299,7 @@ function SingleCell(props){
                 <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={58} handleSorting={handleSorting}/>
               </>:null}
           </Col>
-          <Col xs="2">
+          <Col xs="3">
             <Row style={{marginTop:"10px"}}>
               {columns.length>0?<>
                 <Form.Check
@@ -331,6 +332,13 @@ function SingleCell(props){
                   </div>
                 </>:null
               }
+            </Row>
+            <Row>
+              <Dendrogram
+                showDendrobar={false}
+                divWidth="100%" divHeight="100%"
+                sbarWidth={100} sbarHeight={240}
+              />
             </Row>
           </Col>
         </Row>

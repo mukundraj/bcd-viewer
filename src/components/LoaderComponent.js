@@ -628,7 +628,9 @@ function Loader({dataConfig}){
       </div>
       <div className="floater">
         <Dendrogram
-          setPuckidAndLoadStatus={(x)=>{setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});}}
+          showDendrobar={true}
+          divWidth="70%" divHeight="60%"
+          sbarWidth={100} sbarHeight={100}
         />
         <RegEnrich setDataLoadStatus={setDataLoadStatus}/>
       </div>
