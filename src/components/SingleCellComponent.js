@@ -1,6 +1,6 @@
 import Breadcrumbs from './BreadcrumbsComponent'
 import {useEffect, useRef } from 'react';
-import {getUrl} from "../shared/common"
+import {getUrl, fetchJson} from "../shared/common"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ZarrLoader from "../loaders/ZarrLoader"
 import {Col, Row, FormGroup, FormLabel} from 'react-bootstrap'
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
 import Table from './table/TableComponent'
-import useStore from '../store/store'
+import {useStore, usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
 import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
@@ -40,6 +40,8 @@ function SingleCell(props){
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
+  const [mappedCelltypeToIdx, setMappedCelltypeToIdx] = useState({});
+  const [regionToCelltype, setRegionToCelltype] = useState({});
   const [cellClassOptions, setCellClassOptions] = useState([]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
@@ -52,12 +54,13 @@ function SingleCell(props){
   const toggleSortByToggleVal = useSCComponentStore(state => state.toggleSortByToggleVal);
   const tableDataFiltered = useSCComponentStore(state => state.tableDataFiltered);
   const setTableDataFiltered = useSCComponentStore(state => state.setTableDataFiltered);
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
 
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
-  let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/singlecell_data`
+  let scPathInBucket  = `https://storage.googleapis.com/bcdportaldata/singlecell_data`;
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
@@ -70,10 +73,15 @@ function SingleCell(props){
     setOrder("desc");
   },[]);
 
+  // useEffect(()=>{
+  //   console.log("selectedRegIds", selectedRegIds);
+
+  // }, [selectedRegIds])
+
   // get zarr store connection and initialize geneOptions
   useEffect(()=>{
     const fetchData = async () => {
-      let zloader = new ZarrLoader({zarrPathInBucket});
+      let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
       let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus] = await Promise.all(
@@ -97,22 +105,37 @@ function SingleCell(props){
       setTableData(initTableData);
       setTableDataSorted(initTableData);
 
-      // let zloader2 = new ZarrLoader({zarrPathInBucket});
+      // let zloader2 = new ZarrLoader({scPathInBucket});
       // let dataGenes2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/var/genes");
       // let dataCellTypesRaw2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
       // console.log('dataGenes2', dataGenes2);
       // console.log('datacellTypesRaw2', dataCellTypesRaw2);
     }
+    const fetchRegionData = async () => {
+      let fpath1 =`${scPathInBucket}/s2/s2_regtocell/mappedCellType_to_idx.json`;
+      let fpath2 = `${scPathInBucket}/s2/s2_regtocell/region_to_celltype.json`
+      console.log('newdata', fpath1, fpath2);
+      let [dataMappedCellTypesToIdx, dataRegionToCellTypeMap] = await Promise.all(
+        [fetchJson(fpath1),
+        fetchJson(fpath2)]
+      );
+      setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
+      setRegionToCelltype(dataRegionToCellTypeMap);
+      // console.log('newdata', dataMappedCellTypesToIdx, dataRegionToCellTypeMap);
+
+    }
+
 
     fetchData();
+    fetchRegionData();
 
   }, []);
 
   // updating tableData json array on change in selected genes
   useEffect(()=>{
     const fetchData = async (col_idx) => {
-      let zloader = new ZarrLoader({zarrPathInBucket});
-      // let zloader2 = new ZarrLoader({zarrPathInBucket});
+      let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
+      // let zloader2 = new ZarrLoader({scPathInBucket});
       // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
       // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
       //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);

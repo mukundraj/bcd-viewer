@@ -1,6 +1,13 @@
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
+export const fetchJson = async (filepath) => {
+  return await fetch(filepath)
+    .then(function(response){
+      return response.json();
+    });
+}
+
 export function pad(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
