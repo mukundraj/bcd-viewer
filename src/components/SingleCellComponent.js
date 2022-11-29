@@ -130,13 +130,14 @@ function SingleCell(props){
       //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
       let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("/scZarr.zarr/nz/X", col_idx),
                                                   zloader.getDataColumn("/scZarr.zarr/avg/X", col_idx)]);
+      const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
-        draft[col_idx] = dataCol[i];
-        draft[-col_idx] = avgDataCol[i];
+        draft[scol_idx] = dataCol[i];
+        draft[-scol_idx] = avgDataCol[i];
       }));
       setTableData(tableDataTmp);
       if (sortField===""){
-        setSortField(col_idx);
+        setSortField(scol_idx);
         setTableDataSorted(tableDataTmp);
         handleSorting(sortField, order, sortByToggleVal);
         // console.log(tableDataTmp);
@@ -156,7 +157,8 @@ function SingleCell(props){
 
       // adding gene entry to columns array
       let columnsTmp = columns;
-      columnsTmp.push({"label":added[0], "accessor":colIdx, "sortable":true});
+      const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
+      columnsTmp.push({"label":added[0], "accessor":scolIdx, "sortable":true});
       setColumns(columnsTmp);
       console.log(columnsTmp);
 
@@ -164,13 +166,15 @@ function SingleCell(props){
       removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
       console.log('removed', removed);
       let colIdx = geneOptions.indexOf(removed[0]);
+      const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
-        delete draft[colIdx];
+        delete draft[scolIdx];
+        delete draft[-scolIdx];
       }));
       setTableData(tableDataTmp);
 
       // removing gene entry from column array
-      let columnsTmp = columns.filter(x=>x.accessor!==colIdx);
+      let columnsTmp = columns.filter(x=>x.accessor!==scolIdx);
       setColumns(columnsTmp);
 
       let sortFieldAfterGeneRemoval = "";
@@ -179,8 +183,8 @@ function SingleCell(props){
       }
       console.log(columnsTmp);
 
-      console.log("sortField", sortField, colIdx, sortField===colIdx);
-      if (sortField===colIdx){
+      console.log("sortField", sortField, colIdx, scolIdx, sortField===scolIdx);
+      if (sortField===scolIdx){
         // Removing the current sortField
         setSortField(sortFieldAfterGeneRemoval);
         setTableDataSorted(tableDataTmp);
@@ -215,7 +219,7 @@ function SingleCell(props){
     for (let i=0; i<selectedRegIds.length; i++){
       if (!!regionToCelltype){
         console.log('selectedRegIds ', selectedRegIds[i]);
-        const cellIdxInRegion = regionToCelltype[selectedRegIds[i]];
+        const cellIdxInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
         console.log('cellIdxInRegion', cellIdxInRegion)
         for (const cidx of cellIdxInRegion){
           wantedCelltypes.add(cidx);
