@@ -40,9 +40,9 @@ function SingleCell(props){
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
-  const [mappedCelltypeToIdx, setMappedCelltypeToIdx] = useState({});
-  const [regionToCelltype, setRegionToCelltype] = useState({});
-  const [cellClassOptions, setCellClassOptions] = useState([]);
+  // const [mappedCelltypeToIdx, setMappedCelltypeToIdx] = useState({});
+  const [regionToCelltype, setRegionToCelltype] = useState(()=>{});
+  const [cellClassOptions, setCellClassOptions] = useState(()=>[]);
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
@@ -73,24 +73,24 @@ function SingleCell(props){
     setOrder("desc");
   },[]);
 
-  // useEffect(()=>{
-  //   console.log("selectedRegIds", selectedRegIds);
-
-  // }, [selectedRegIds])
-
   // get zarr store connection and initialize geneOptions
   useEffect(()=>{
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
+      let mappedCelltypeToIdxFile =`${scPathInBucket}/s2/s2_regtocell/mappedCellType_to_idx.json`;
+      let regionToCelltypeFile = `${scPathInBucket}/s2/s2_regtocell/region_to_celltype.json`
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus] = await Promise.all(
+      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus, 
+          dataMappedCellTypesToIdx, dataRegionToCellTypeMap] = await Promise.all(
         [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
           zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts"), // pct contribution from majority contributing cell class
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/uniqcellclasses"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/mapStatus"), 
+          fetchJson(mappedCelltypeToIdxFile), 
+          fetchJson(regionToCelltypeFile),
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -101,9 +101,12 @@ function SingleCell(props){
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i]}})
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]]}}) // cid:celltype idx
       setTableData(initTableData);
       setTableDataSorted(initTableData);
+      // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
+      setRegionToCelltype(dataRegionToCellTypeMap);
+      // console.log('initTableData', initTableData);
 
       // let zloader2 = new ZarrLoader({scPathInBucket});
       // let dataGenes2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/var/genes");
@@ -111,23 +114,8 @@ function SingleCell(props){
       // console.log('dataGenes2', dataGenes2);
       // console.log('datacellTypesRaw2', dataCellTypesRaw2);
     }
-    const fetchRegionData = async () => {
-      let fpath1 =`${scPathInBucket}/s2/s2_regtocell/mappedCellType_to_idx.json`;
-      let fpath2 = `${scPathInBucket}/s2/s2_regtocell/region_to_celltype.json`
-      console.log('newdata', fpath1, fpath2);
-      let [dataMappedCellTypesToIdx, dataRegionToCellTypeMap] = await Promise.all(
-        [fetchJson(fpath1),
-        fetchJson(fpath2)]
-      );
-      setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
-      setRegionToCelltype(dataRegionToCellTypeMap);
-      // console.log('newdata', dataMappedCellTypesToIdx, dataRegionToCellTypeMap);
-
-    }
-
 
     fetchData();
-    fetchRegionData();
 
   }, []);
 
@@ -218,16 +206,44 @@ function SingleCell(props){
   // filter tableDataSorted based on cellClassSelection
   useEffect(()=>{
     console.log('cellClassSelection ', cellClassSelection, 'tableData');
+    console.log('selectedRegIds', selectedRegIds);
+
+    let wantedCelltypes = new Set();
+
+    // iterate over selectedRegIds
+    for (let i=0; i<selectedRegIds.length; i++){
+      if (!!regionToCelltype){
+        console.log('selectedRegIds ', selectedRegIds[i]);
+        const cellIdxInRegion = regionToCelltype[selectedRegIds[i]];
+        console.log('cellIdxInRegion', cellIdxInRegion)
+        for (const cidx of cellIdxInRegion){
+          wantedCelltypes.add(cidx);
+        }
+      }
+    }
+    console.log('wantedCelltypes', wantedCelltypes.size);
+    
+    
+
     if (cellClassSelection.length>0){
       let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0] && x.pct>minCompoPct);
+
+      // filter further if wanted celltypes are identified, else no further filtering
+      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+      }
       setTableDataFiltered(tableDataFilteredTmp);
     }else{
 
       let tableDataFilteredTmp = tableDataSorted.filter(x => x.pct>minCompoPct);
+      // filter further if wanted celltypes are identified, else no further filtering
+      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+      }
       setTableDataFiltered(tableDataFilteredTmp);
     }
 
-  }, [tableDataSorted, cellClassSelection, minCompoPct]);
+  }, [tableDataSorted, cellClassSelection, minCompoPct, selectedRegIds]);
 
  
   const [handleSorting] = useSortableTable(tableData);
@@ -257,7 +273,7 @@ function SingleCell(props){
     setMaxAvgVal(Math.max(...avgVals));
     
 
-  }, [tableDataFiltered, columns, maxCellTypes]);
+  }, [tableDataFiltered, columns, maxCellTypes, selectedRegIds]);
 
 
   return(
