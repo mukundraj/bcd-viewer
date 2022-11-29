@@ -17,6 +17,7 @@ import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
 import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
+import Dendrogram from './DendrogramComponent'
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -609,6 +610,13 @@ function LoaderCellSpatial({dataConfig}){
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
           chosenItem2={chosenCell2}
+        />
+      </div>
+      <div className="floater">
+        <Dendrogram
+          showDendrobar={false}
+          divWidth="70%" divHeight="60%"
+          sbarWidth={100} sbarHeight={100}
         />
       </div>
     </div>
