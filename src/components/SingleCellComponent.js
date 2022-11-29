@@ -71,6 +71,7 @@ function SingleCell(props){
 
   useEffect(()=>{ // since 'order' is shared between component - fix it sometime
     setOrder("desc");
+    setSortField("");
   },[]);
 
   // get zarr store connection and initialize geneOptions
@@ -266,6 +267,7 @@ function SingleCell(props){
         avgVals.push(x[-curAccessors[i]]);
       }
     });
+    console.log('proportionVals', proportionVals, order, sortField);
     
     console.log('curShown', curShown, columns);
     // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
