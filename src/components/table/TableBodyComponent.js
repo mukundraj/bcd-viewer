@@ -70,7 +70,7 @@ const TableBody = ({columns, tableDataSorted}) => {
                 return <td key={accessor}>
                   {isNaN(tData)?
                     <>
-                      {accessor=='ct'?data.st==='Y'?<button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(data[accessor])}}>{data[accessor]}</button>:<span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{data[accessor]}</span>: <>{data[accessor]}, <span style={{color:'#BB8FCE'}}>{data.pct}%</span></>}
+                      {accessor=='ct'?data.st==='Y'?<button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(data[accessor])}}>{data[accessor]}</button>:<span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{data[accessor]}</span>: <>{data[accessor]}{accessor==='tr'?<>, <span style={{color:'#BB8FCE'}}>{data.pct}%</span></>:null}</>}
 
                   {/* <span style={{color:'#8E44AD'}}>{data.cc}</span>, <span style={{color:'#BB8FCE'}}>{data.pct}%</span> */}
                       </>

@@ -46,6 +46,7 @@ function SingleCell(props){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
+  const topRegionColumn = [{"label":"topregion \t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -82,7 +83,8 @@ function SingleCell(props){
       let regionToCelltypeFile = `${scPathInBucket}/s2/s2_regtocell/region_to_celltype.json`
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
-      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus, 
+      let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus,
+          dataTopRegions,
           dataMappedCellTypesToIdx, dataRegionToCellTypeMap] = await Promise.all(
         [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
           zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
@@ -90,6 +92,7 @@ function SingleCell(props){
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts"), // pct contribution from majority contributing cell class
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/uniqcellclasses"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/mapStatus"), 
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/topregions"), 
           fetchJson(mappedCelltypeToIdxFile), 
           fetchJson(regionToCelltypeFile),
           ]); 
@@ -102,7 +105,7 @@ function SingleCell(props){
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]]}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopRegions[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]]}}) // cid:celltype idx
       setTableData(initTableData);
       setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -341,7 +344,8 @@ function SingleCell(props){
               <>
                 <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
                 <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={58} handleSorting={handleSorting}/>
+                <Table columns={topRegionColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={43} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="3">
