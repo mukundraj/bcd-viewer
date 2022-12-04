@@ -1,11 +1,11 @@
-import {useStore} from '../../store/store'
+import {useStore, usePersistStore} from '../../store/store'
 import {pidToSrno} from "../../shared/common"
 import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
 
 const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus}) => {
 
-  const setChosenPuckid = useStore(state => state.setChosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
   const carouselRef = useStore(state => state.carouselRef);
 
   const updateChosenGene = (newGene, newPid) => {
