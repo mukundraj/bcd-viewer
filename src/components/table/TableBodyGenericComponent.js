@@ -19,12 +19,12 @@ const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus}) => {
 
   let tableDataInner = null;
     tableDataInner = 
-        tableDataSorted.map((data) => {
+        tableDataSorted.map((data, idx) => {
           return (
             <tr key={data.key}>
               {columns.map(({ accessor }) => {
                 if (accessor==='g')
-                  return <td key={accessor}><button className="regexptooltip" onClick={()=>updateChosenGene(data[accessor], data['p'])}>{data[accessor]}<span className='regexptooltiptext'>pid:{pidToSrno[data['p']]}</span></button></td>;
+                  return <td key={accessor}><button className="regexptooltip" onClick={()=>updateChosenGene(data[accessor], data['p'])}>{data[accessor]}<span className='regexptooltiptext'>pid:{pidToSrno[data['p']]},r:{idx}</span></button></td>;
                 else
                   return <td key={accessor}>{data[accessor]}</td>;
               })}
