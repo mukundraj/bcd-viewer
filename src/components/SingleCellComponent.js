@@ -34,7 +34,7 @@ function SingleCell(props){
   });
 
   const [maxCellTypes, setMaxCellTypes] = useState(10);
-  const [minCompoPct, setMinCompoPct] = useState(0);
+  // const [minCompoPct, setMinCompoPct] = useState(0);
   const [multiSelections, setMultiSelections] = useState([]);
   const [cellClassSelection, setCellClassSelection] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -234,7 +234,8 @@ function SingleCell(props){
     
 
     if (cellClassSelection.length>0){
-      let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0] && x.pct>minCompoPct);
+      // let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0] && x.pct>minCompoPct);
+      let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0]);
 
       // filter further if wanted celltypes are identified, else no further filtering
       if (wantedCelltypes.size>0 || selectedRegIds.length>0){
@@ -243,15 +244,17 @@ function SingleCell(props){
       setTableDataFiltered(tableDataFilteredTmp);
     }else{
 
-      let tableDataFilteredTmp = tableDataSorted.filter(x => x.pct>minCompoPct);
-      // filter further if wanted celltypes are identified, else no further filtering
-      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
-        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
-      }
-      setTableDataFiltered(tableDataFilteredTmp);
+      // let tableDataFilteredTmp = tableDataSorted.filter(x => x.pct>minCompoPct);
+      // // filter further if wanted celltypes are identified, else no further filtering
+      // if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+      //   tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+      // }
+      // setTableDataFiltered(tableDataFilteredTmp);
+      setTableDataFiltered(tableDataSorted);
     }
 
-  }, [tableDataSorted, cellClassSelection, minCompoPct, selectedRegIds]);
+  // }, [tableDataSorted, cellClassSelection, minCompoPct, selectedRegIds]);
+  }, [tableDataSorted, cellClassSelection, selectedRegIds]);
 
  
   const [handleSorting] = useSortableTable(tableData);
@@ -327,15 +330,15 @@ function SingleCell(props){
               selected={cellClassSelection}
             />
           </Col>
-          <Col xs="2">Min composition %:</Col>
+          <Col xs="2"></Col>
           <Col xs="2">
-            <RangeSlider
-              value={minCompoPct}
-              onChange={e => setMinCompoPct(e.target.value)}
-              min={0}
-              max={100}
-              step={1}
-            />
+            {/* <RangeSlider */}
+            {/*   value={minCompoPct} */}
+            {/*   onChange={e => setMinCompoPct(e.target.value)} */}
+            {/*   min={0} */}
+            {/*   max={100} */}
+            {/*   step={1} */}
+            {/* /> */}
           </Col>
         </Row>:null}
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
