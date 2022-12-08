@@ -7,12 +7,12 @@ import {useStore, usePersistStore} from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
-function RegEnrich({setDataLoadStatus}){
+function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader}){
 
 
   const columns = [
     {
-      label: "Gene", accessor: "g"
+      label: firstColHeader, accessor: "g"
     },
     { label: "% in", accessor: "1",
     },
@@ -76,8 +76,8 @@ function RegEnrich({setDataLoadStatus}){
     const fetchData = async (row_idx) => {
       // console.log("LLL");
       // let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
-      let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
-      let zloader = new ZarrLoader({zarrPathInBucket});
+      // let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
+      let zloader = new ZarrLoader({zarrPathInBucket:regEnrichZarrPath});
       // let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
 
@@ -130,9 +130,8 @@ function RegEnrich({setDataLoadStatus}){
   useEffect(()=>{
 
     const fetchData = async (row_idx) => {
-      // console.log("LLL");
-      let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
-      let zloader = new ZarrLoader({zarrPathInBucket});
+      // let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
+      let zloader = new ZarrLoader({zarrPathInBucket:regEnrichZarrPath});
       let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
       let ridToIdxTmp = {};
@@ -141,7 +140,8 @@ function RegEnrich({setDataLoadStatus}){
       }
       setRidToIdx(ridToIdxTmp);
 
-      let geneInfoPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/gene_info.json`
+      // let geneInfoPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/gene_info.json`
+      let geneInfoPath = `${regEnrichZarrPath}names_info.json`
       // let geneOptionsUrl = await getUrl(geneNamesPath);
       console.log("geneOptionsUrl ", geneInfoPath);
       // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
@@ -150,6 +150,7 @@ function RegEnrich({setDataLoadStatus}){
           return response.json();
         })
         .then(function(myJson) {
+          console.log("myJson ",myJson.data);
           setGeneNames(myJson.data)
           setMaxExprPids(myJson.maxExprPuck)
         });
@@ -245,7 +246,7 @@ function RegEnrich({setDataLoadStatus}){
             </Row>
           </Col>
           <Col xs="7">
-          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus}/>
+          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem}/>
           </Col>
         </Row>
     </>

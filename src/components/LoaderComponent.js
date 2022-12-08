@@ -480,6 +480,15 @@ function Loader({dataConfig}){
     }else{
       setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
+  
+  let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`;
+
+  const updateChosenItem = (newItem, newPid) => {
+    console.log('chosenGene ', newItem, ' pid ', newPid);
+    setDataLoadStatus({gene:0, puck:0, metadata:0});
+    setChosenPuckid({pid:newPid, gene:newItem}); 
+    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+  }
 
   return(
     <div>
@@ -632,7 +641,11 @@ function Loader({dataConfig}){
           divWidth="70%" divHeight="60%"
           sbarWidth={100} sbarHeight={100}
         />
-        <RegEnrich setDataLoadStatus={setDataLoadStatus}/>
+        <RegEnrich setDataLoadStatus={setDataLoadStatus}
+                   regEnrichZarrPath={regEnrichZarrPath}
+                  updateChosenItem={updateChosenItem}
+                  firstColHeader="Gene"
+        />
       </div>
       {/* <div className="add-border floater"> */}
       {/*   <Scatterplot id={'right_splot'} */} 

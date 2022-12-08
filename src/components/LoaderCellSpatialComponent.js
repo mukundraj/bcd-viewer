@@ -18,6 +18,7 @@ import ColorSquare from '../components/ColorSquareComponent'
 import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
 import Dendrogram from './DendrogramComponent'
+import RegEnrich from "./RegEnrichComponent"
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -470,6 +471,15 @@ function LoaderCellSpatial({dataConfig}){
     setChosenCell(cell);
   }
 
+  let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
+
+  const updateChosenItem = (newItem, newPid) => {
+    console.log('chosenCelltype ', newItem, ' pid ', newPid);
+    setDataLoadStatus({cell:0, puck:0, metadata:0});
+    setChosenPuckid({pid:newPid, cell:newItem}); 
+    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+  }
+
   return(
     <div>
       <Breadcrumbs/>
@@ -617,6 +627,11 @@ function LoaderCellSpatial({dataConfig}){
           showDendrobar={false}
           divWidth="70%" divHeight="60%"
           sbarWidth={100} sbarHeight={100}
+        />
+        <RegEnrich setDataLoadStatus={setDataLoadStatus}
+                   regEnrichZarrPath={regEnrichZarrPath}
+                  updateChosenItem={updateChosenItem}
+                  firstColHeader="Celltype"
         />
       </div>
     </div>
