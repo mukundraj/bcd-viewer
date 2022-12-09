@@ -244,13 +244,12 @@ function SingleCell(props){
       setTableDataFiltered(tableDataFilteredTmp);
     }else{
 
-      // let tableDataFilteredTmp = tableDataSorted.filter(x => x.pct>minCompoPct);
-      // // filter further if wanted celltypes are identified, else no further filtering
-      // if (wantedCelltypes.size>0 || selectedRegIds.length>0){
-      //   tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
-      // }
-      // setTableDataFiltered(tableDataFilteredTmp);
-      setTableDataFiltered(tableDataSorted);
+      let tableDataFilteredTmp = tableDataSorted;
+      // filter further if wanted celltypes are identified, else no further filtering
+      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+      }
+      setTableDataFiltered(tableDataFilteredTmp);
     }
 
   // }, [tableDataSorted, cellClassSelection, minCompoPct, selectedRegIds]);
@@ -311,7 +310,7 @@ function SingleCell(props){
               value={maxCellTypes}
               onChange={e => setMaxCellTypes(e.target.value)}
               min={0}
-              max={100}
+              max={130}
               step={1}
               tooltipPlacement="top"
             />
