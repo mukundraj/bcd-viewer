@@ -65,7 +65,7 @@ function Colorbar(props){
       // .attr("transform", "translate(90,20)");
 
       var legendLinear = legendColor()
-        .shapeWidth(17)
+        .shapeWidth(props.barWidth)
         .cells(props.cells)
         .orient('horizontal')
         .scale(logColorScale);
@@ -87,7 +87,13 @@ function Colorbar(props){
   );
 }
 
+// Set default props
+Colorbar.defaultProps = {
+  barWidth: 17,
+};
+
 export default Colorbar;
 
 // References
 // https://blog.griddynamics.com/using-d3-js-with-react-js-an-8-step-comprehensive-manual/
+// https://blog.logrocket.com/complete-guide-react-default-props/

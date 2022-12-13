@@ -15,6 +15,7 @@ import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
 import {Form} from 'react-bootstrap'
 import Dendrogram from './DendrogramComponent'
+import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
 
 function SingleCell(props){
@@ -40,6 +41,8 @@ function SingleCell(props){
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
+  const [globalMaxAvgVal, setGlobalMaxAvgVal] = useState(0);
+  const [adaptNormalizerStatus, setAdaptNormalizerStatus] = useState(true);
   // const [mappedCelltypeToIdx, setMappedCelltypeToIdx] = useState({});
   const [regionToCelltype, setRegionToCelltype] = useState(()=>{});
   const [cellClassOptions, setCellClassOptions] = useState(()=>[]);
@@ -85,7 +88,8 @@ function SingleCell(props){
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
       let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus,
           dataTopStructs,
-          dataMappedCellTypesToIdx, dataRegionToCellTypeMap] = await Promise.all(
+          dataMappedCellTypesToIdx, dataRegionToCellTypeMap,
+          dataGlobalMaxAvgVal] = await Promise.all(
         [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
           zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
@@ -95,6 +99,7 @@ function SingleCell(props){
           zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/topstructs"), 
           fetchJson(mappedCelltypeToIdxFile), 
           fetchJson(regionToCelltypeFile),
+          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/globalMaxAvgVal")
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -110,6 +115,7 @@ function SingleCell(props){
       setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
       setRegionToCelltype(dataRegionToCellTypeMap);
+      setGlobalMaxAvgVal(parseFloat(dataGlobalMaxAvgVal[0]));
       // console.log('initTableData', initTableData);
 
       // let zloader2 = new ZarrLoader({scPathInBucket});
@@ -280,11 +286,16 @@ function SingleCell(props){
     
     console.log('curShown', curShown, columns);
     // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
-    setMaxProportionalVal(Math.max(...proportionVals)||Number.MIN_VALUE);
-    setMaxAvgVal(Math.max(...avgVals));
-    
 
-  }, [tableDataFiltered, columns, maxCellTypes, selectedRegIds]);
+    if (adaptNormalizerStatus){
+      setMaxProportionalVal(Math.max(...proportionVals)||Number.MIN_VALUE);
+      setMaxAvgVal(Math.max(...avgVals));
+    }else{
+      setMaxProportionalVal(1);
+      setMaxAvgVal(globalMaxAvgVal);
+    }
+
+  }, [tableDataFiltered, columns, maxCellTypes, selectedRegIds, adaptNormalizerStatus]);
 
 
   return(
@@ -329,7 +340,15 @@ function SingleCell(props){
               selected={cellClassSelection}
             />
           </Col>
-          <Col xs="2"></Col>
+          <Col xs="1">
+            Normalizer: 
+          </Col>
+          <Col xs="1">
+            <BootstrapSwitchButton 
+              checked={adaptNormalizerStatus} onstyle="outline-primary" offstyle="outline-secondary" width={70}
+              onlabel="Adapt" offlabel="Fix" 
+              onChange={(checked) => {if (checked){ setAdaptNormalizerStatus(true)}else{setAdaptNormalizerStatus(false)}}}/>
+          </Col>
           <Col xs="2">
             {/* <RangeSlider */}
             {/*   value={minCompoPct} */}
@@ -361,7 +380,7 @@ function SingleCell(props){
                   onChange={toggleSortByToggleVal}
                   checked={sortByToggleVal===1}
                 />
-                <Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} /></>:null
+                <Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} barWidth={26}/> </> :null
               }
             </Row>
             <Row style={{marginTop:"25px"}}>
