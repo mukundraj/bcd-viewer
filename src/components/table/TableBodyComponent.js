@@ -39,7 +39,8 @@ const TableBody = ({columns, tableDataSorted}) => {
           const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
 
           setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype});
-          navigate('/cellspatial');
+          // navigate('/cellspatial');
+          window.open('/cellspatial', '_blank'); // https://stackoverflow.com/questions/71793116/open-new-tab-with-usenavigate-hook-in-react
           return readData;
         } )
         .catch(error => {
