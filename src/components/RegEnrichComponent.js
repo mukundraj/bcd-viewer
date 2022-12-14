@@ -58,6 +58,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   const [ridToIdx, setRidToIdx] = useState({});
   const [inFracs, setInFracs] = useState([]);
   const [outFracs, setOutFracs] = useState([]);
+  const [maxNzOutPct, setMaxNzOutPct] = useState(100);
+  const [maxNzInPct, setMaxNzInPct] = useState(100);
   const [geneNames, setGeneNames] = useState([]);
   const [maxExprPids, setMaxExprPids] = useState([]);
   const [fullData, setFullData] = useState([]);
@@ -165,8 +167,12 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
     if (inFracs.length===outFracs.length && outFracs.length===geneNames.length){
       let fullDataTmp = [];
       for (let i=0; i<geneNames.length; i++){
-        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*1000)/1000, "-1": Math.round(outFracs[i]*1000)/1000, "p": parseInt(maxExprPids[i])});
+        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*10000000)/10000000, "-1": Math.round(outFracs[i]*10000000)/10000000, "p": parseInt(maxExprPids[i])});
       }
+      let maxNzOutPctTmp = Math.max(...outFracs);
+      setMaxNzOutPct(maxNzOutPctTmp);
+      let maxNzInPctTmp = Math.max(...inFracs);
+      setMaxNzInPct(maxNzInPctTmp);
 
       // console.log('fullDataTmp', fullDataTmp);
       setFullData(fullDataTmp);
@@ -225,8 +231,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
                   value={minFrac}
                   onChange={e=>setMinFrac(e.target.value)}
                   min={0}
-                  max={1}
-                  step={0.01}
+                  max={maxNzInPct}
+                  step={maxNzInPct/1000}
                 />
               </Col>
             </Row>
@@ -239,8 +245,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
               value={maxFrac}
               onChange={e=> setMaxFrac(e.target.value)}
               min={0}
-              max={1}
-              step={0.01}
+              max={maxNzOutPct}
+              step={maxNzOutPct/1000}
             />
           </Col>
             </Row>
