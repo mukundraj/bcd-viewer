@@ -343,17 +343,18 @@ function SingleCell(props){
               selected={cellClassSelection}
             />
           </Col>
+          {selectedRegIds.length>0?<>
           <Col xs="2">Min composition %: </Col>
           <Col xs="2">
             <RangeSlider
-              value={minCompoPct}
-              onChange={e => setMinCompoPct(e.target.value)}
+              value={minCompoPct*100}
+              onChange={e => setMinCompoPct(e.target.value/100)}
               min={0}
-              max={1.0}
-              step={0.01}
+              max={100}
+              step={1}
               tooltipPlacement="top"
             />
-          </Col>
+          </Col> </>:<Col xs="4"></Col>}
           <Col xs="1">
             Normalizer: 
           </Col>
