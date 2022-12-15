@@ -35,7 +35,7 @@ function SingleCell(props){
   });
 
   const [maxCellTypes, setMaxCellTypes] = useState(10);
-  // const [minCompoPct, setMinCompoPct] = useState(0);
+  const [minCompoPct, setMinCompoPct] = useState(0.25);
   const [multiSelections, setMultiSelections] = useState([]);
   const [cellClassSelection, setCellClassSelection] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -230,12 +230,16 @@ function SingleCell(props){
         console.log('selectedRegIds ', selectedRegIds[i]);
         const cellIdxInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
         console.log('cellIdxInRegion', cellIdxInRegion)
-        for (const cidx of cellIdxInRegion){
-          wantedCelltypes.add(cidx);
+        // for (const cidx of cellIdxInRegion){
+        for (const cidx in cellIdxInRegion){
+          // wantedCelltypes.add(cidx);
+          if (cellIdxInRegion[cidx]>minCompoPct){
+            wantedCelltypes.add(parseInt(cidx));
+          }
         }
       }
     }
-    console.log('wantedCelltypes', wantedCelltypes.size);
+    console.log('wantedCelltypes', wantedCelltypes.size, wantedCelltypes);
     
     
 
@@ -258,8 +262,7 @@ function SingleCell(props){
       setTableDataFiltered(tableDataFilteredTmp);
     }
 
-  // }, [tableDataSorted, cellClassSelection, minCompoPct, selectedRegIds]);
-  }, [tableDataSorted, cellClassSelection, selectedRegIds]);
+  }, [tableDataSorted, cellClassSelection, selectedRegIds, minCompoPct]);
 
  
   const [handleSorting] = useSortableTable(tableData);
@@ -330,7 +333,7 @@ function SingleCell(props){
         {columns.length>0?
         <Row className="mt-2">
           <Col xs="2">Select a cell class:</Col>
-          <Col xs="6">
+          <Col xs="2">
             <Typeahead
               id="cellclass-typeahead"
               labelKey="name"
@@ -338,6 +341,17 @@ function SingleCell(props){
               options={cellClassOptions}
               placeholder="Currently showing all cell classes..."
               selected={cellClassSelection}
+            />
+          </Col>
+          <Col xs="2">Min composition %: </Col>
+          <Col xs="2">
+            <RangeSlider
+              value={minCompoPct}
+              onChange={e => setMinCompoPct(e.target.value)}
+              min={0}
+              max={1.0}
+              step={0.01}
+              tooltipPlacement="top"
             />
           </Col>
           <Col xs="1">
