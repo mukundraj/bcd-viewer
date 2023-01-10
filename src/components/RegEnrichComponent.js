@@ -10,15 +10,34 @@ import {getUrl} from "../shared/common"
 function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader}){
 
 
-  const columns = [
+  let columns = null;
+
+  if (firstColHeader=='Celltype'){
+
+  columns = [
     {
       label: firstColHeader, accessor: "g"
     },
-    { label: "% in", accessor: "1",
+    { label: "pct", accessor: "1",
     },
-    { label: "% out", accessor: "-1",
+    { label: "cnt", accessor: "-1",
     },
   ];
+
+  }else if (firstColHeader=='Gene'){
+
+    columns = [
+      {
+        label: firstColHeader, accessor: "g"
+      },
+      { label: "% in", accessor: "1",
+      },
+      { label: "% cnt", accessor: "-1",
+      },
+    ];
+
+
+  }
 
   // const data = [
  // {
@@ -64,7 +83,10 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   const [maxExprPids, setMaxExprPids] = useState([]);
   const [fullData, setFullData] = useState([]);
   const [minFrac, setMinFrac] = useState(0); // at least frac
-  const [maxFrac, setMaxFrac] = useState(1); // at most frac
+
+  const initSecFieldVal = firstColHeader==="Gene"?1:0;
+  const [maxFrac, setMaxFrac] = useState(initSecFieldVal); // at most frac
+
   const setCurrentREgene = useStore(state => state.setCurrentREgene);
   const setOrder = useStore(state => state.setOrder);
 
@@ -188,7 +210,14 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   useEffect(()=>{
 
 
-    let filterdData = fullData.filter(obj=>{return (obj['1'] > minFrac) && (obj['-1'] < maxFrac) });
+    let filterdData = null;
+
+    if (firstColHeader==="Gene"){
+      filterdData = fullData.filter(obj=>{return (obj['1'] > minFrac) && (obj['-1'] < maxFrac) });
+    }else{
+      filterdData = fullData.filter(obj=>{return (obj['1'] > minFrac) && (obj['-1'] > maxFrac) });
+    }
+
     setTableDataFiltered(filterdData);
     // filterdData.sort((a,b)=>(a['1']>b['1'])?-1:1);
 
@@ -224,7 +253,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
           <Col xs="5">
             <Row>
               <Col xs="7">
-                Min nz bead % in region &gt;
+                {firstColHeader==='Gene'?'Min nz bead % in region >':'pct in selected region >'}
               </Col>
               <Col xs="5"> 
                 <RangeSlider
@@ -238,7 +267,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
             <Row>
           <Col xs="7">
-            Max nz bead % out of region &lt;
+            {firstColHeader==='Gene'?'Max nz bead % out of region >':'celltype bead count in region >'}
           </Col>
           <Col xs="5"> 
             <RangeSlider
