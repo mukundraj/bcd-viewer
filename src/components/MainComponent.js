@@ -59,6 +59,7 @@ function Main(props){
               {/* </Route> */}
             </Route>
             <Route path="/nph" element={<NphHome/>} />
+            <Route path="/resource" element={<NphHome/>} />
           </Routes>
         </Container>
       </BrowserRouter>
