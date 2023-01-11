@@ -208,6 +208,22 @@ function LoaderCellSpatial({dataConfig}){
 
   },[cellNameToIdx]);
 
+  useEffect(()=>{
+
+    const fetchData = async () => {
+      let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
+      let zloader = new ZarrLoader({zarrPathInBucket});
+      let rowIdx = cellNameToIdx[chosenCell[0]];
+      let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+      setCurPuckMaxScores(locMaxScores);
+
+    }
+
+      fetchData();
+
+
+  },[coordsData]);
+
 
   // when puck changes and coords loaded, load both cells' metadata (maxScores)
   useEffect(()=>{
@@ -217,22 +233,23 @@ function LoaderCellSpatial({dataConfig}){
 
       let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let rowIdx = cellNameToIdx[chosenCell[0]];
+      // let rowIdx = cellNameToIdx[chosenCell[0]];
       // console.log("zarrPathInBucket ", zarrPathInBucket, 'chosenPuckid', chosenPuckid, 'rowIdx', rowIdx, cellNameToIdx);
 
+      let rowIdx = cellNameToIdx[chosenCell[0]];
       let readData = null;
       if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
 
-        let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        setCurPuckMaxScores(locMaxScores);
+        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+        // setCurPuckMaxScores(locMaxScores);
 
-        let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
+        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
         setMaxScoreThreshold(locMaxScoreThreshold);
         setScoreUpperThreshold(locMaxScoreThreshold);
         // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
         let rowIdx2 = cellNameToIdx[chosenCell2[0]];
-        let locMaxScoreThreshold2 = parseFloat(locMaxScores[rowIdx2]);
+        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
         locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
         setMaxScoreThreshold2(locMaxScoreThreshold2);
         setScoreUpperThreshold2(locMaxScoreThreshold2);
@@ -253,10 +270,10 @@ function LoaderCellSpatial({dataConfig}){
 
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx); 
 
-        let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        setCurPuckMaxScores(locMaxScores);
+        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+        // setCurPuckMaxScores(locMaxScores);
 
-        let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
+        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
         // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
         setMaxScoreThreshold(locMaxScoreThreshold);
@@ -284,7 +301,8 @@ function LoaderCellSpatial({dataConfig}){
       setChosenCell([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
     }    
 
-  }, [coordsData]);
+  // }, [coordsData]);
+  }, [curPuckMaxScores]);
 
 
   // loading new counts on new cell selection
