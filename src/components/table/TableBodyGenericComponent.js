@@ -8,6 +8,15 @@ const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateC
   const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
   const carouselRef = useStore(state => state.carouselRef);
 
+  const updateChosenGene = (newGene, newPid) => {
+    console.log('chosenGene ', newGene, ' pid ', newPid);
+
+    setDataLoadStatus({gene:0, puck:0, metadata:0});
+    setChosenPuckid({pid:newPid, gene:newGene}); 
+    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+
+  }
+
   let tableDataInner = null;
     tableDataInner = 
         tableDataSorted.map((data, idx) => {

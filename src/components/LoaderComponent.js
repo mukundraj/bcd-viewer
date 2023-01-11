@@ -486,7 +486,7 @@ function Loader({dataConfig}){
   const updateChosenItem = (newItem, newPid) => {
     console.log('chosenGene ', newItem, ' pid ', newPid);
     setDataLoadStatus({gene:0, puck:0, metadata:0});
-    setChosenPuckid({pid:newPid, gene:newItem, cell: chosenPuckid.cell}); 
+    setChosenPuckid({pid:newPid, gene:newItem}); 
     carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
   }
 

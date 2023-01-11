@@ -491,7 +491,7 @@ function LoaderCellSpatial({dataConfig}){
   const updateChosenItem = (newItem, newPid) => {
     console.log('chosenCelltype ', newItem, ' pid ', newPid);
     setDataLoadStatus({cell:0, puck:0, metadata:0});
-    setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene}); 
+    setChosenPuckid({pid:newPid, cell:newItem}); 
     carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
   }
 
