@@ -224,7 +224,7 @@ function LoaderCellSpatial({dataConfig}){
       if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
 
         let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        setCurPuckMaxScores({curPid: chosenPuckid.pid, maxScores:locMaxScores});
+        setCurPuckMaxScores(locMaxScores);
 
         let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
@@ -254,7 +254,7 @@ function LoaderCellSpatial({dataConfig}){
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx); 
 
         let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        setCurPuckMaxScores({curPid: chosenPuckid.pid, maxScores:locMaxScores});
+        setCurPuckMaxScores(locMaxScores);
 
         let locMaxScoreThreshold = parseFloat(locMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
@@ -277,26 +277,11 @@ function LoaderCellSpatial({dataConfig}){
         setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1})); 
     }
 
-    console.log('herenow', chosenPuckid.cell, chosenCell[0]);
     if (chosenPuckid.cell === chosenCell[0]){
       fetchData();
     }else{
       console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCell", chosenCell);
       setChosenCell([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
-
-      // set curPuckMaxScores and add curPuckMaxScores to next useEffect
-      const fetchData2 = async () => {
-
-        let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
-        let zloader = new ZarrLoader({zarrPathInBucket});
-        let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        setCurPuckMaxScores({curPid: chosenPuckid.pid, maxScores:locMaxScores});
-      }
-
-      // if (chosenPuckid.pid === curPuckMaxScores.curPid){
-        fetchData2();
-      // }
-      
     }    
 
   }, [coordsData]);
@@ -315,9 +300,9 @@ function LoaderCellSpatial({dataConfig}){
         let rowIdx = cellNameToIdx[chosenCell[0]];
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
-        let locMaxScoreThreshold = parseFloat(curPuckMaxScores.maxScores[rowIdx]);
+        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
         locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
-        console.log("locMaxScoreThreshold", locMaxScoreThreshold, 'rowIdx', rowIdx, chosenCell, 'pid', chosenPuckid.pid, curPuckMaxScores);
+        console.log("locMaxScoreThreshold", locMaxScoreThreshold);
         setMaxScoreThreshold(locMaxScoreThreshold);
         setScoreUpperThreshold(locMaxScoreThreshold);
 
@@ -344,7 +329,7 @@ function LoaderCellSpatial({dataConfig}){
         setUnifiedData(readData);
 
         // let maxVal = Math.max(...unifiedData.map(o => o.count));
-        console.log('unifiedData', unifiedData, coordsData.length, rowIdx, locMaxScoreThreshold);
+        // console.log(unifiedData);
 
         if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
           setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
@@ -355,7 +340,7 @@ function LoaderCellSpatial({dataConfig}){
       console.log("chosen cell not included", chosenCell);
     }
       
-  }, [chosenCell, curPuckMaxScores]);
+  }, [chosenCell]);
 
 
   // loading new scores on chosenCell2 selection
@@ -371,7 +356,7 @@ function LoaderCellSpatial({dataConfig}){
         let rowIdx = cellNameToIdx[chosenCell2[0]];
         const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
-        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores.maxScores[rowIdx]);
+        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx]);
         locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
         console.log("locMaxScoreThreshold2", locMaxScoreThreshold2);
         setMaxScoreThreshold2(locMaxScoreThreshold2);

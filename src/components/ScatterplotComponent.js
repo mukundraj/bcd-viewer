@@ -221,7 +221,6 @@ function Scatterplot({id, unidata,
       let data = data_tmp2.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
       // let data = data_tmp2.sort((a,b) => (a.count>b.count)?1:-1);
       setData(data);
-      // console.log('ddd', data, unidata, upperThreshold, lowerThreshold, upperThreshold2, lowerThreshold2);
     }else{
       let data = data_tmp.sort((a,b) => (a.logcnt1+a.logcnt2 > b.logcnt1+b.logcnt2)?1:-1);
       // let data = data_tmp.sort((a,b) => (a.count>b.count)?1:-1);
