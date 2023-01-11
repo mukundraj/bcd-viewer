@@ -7,7 +7,7 @@ export const useCSComponentStore = create(set => ({
         setChosenCell2: (val)=>set({chosenCell2:val}),
         cellOptions: ['Inh_Lhx6_Nmu_1'],
         setCellOptions: (val) => set({cellOptions:val}),
-        curPuckMaxScores: [0.5],
+    curPuckMaxScores: {curPid:-1, maxScores:[]},  
         setCurPuckMaxScores: (val) => set({curPuckMaxScores:val}),
         maxScoreThreshold:0.0001,
         setMaxScoreThreshold: (val) => set({maxScoreThreshold:val}),
