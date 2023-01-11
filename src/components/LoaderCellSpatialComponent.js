@@ -219,7 +219,9 @@ function LoaderCellSpatial({dataConfig}){
 
     }
 
+    if (coordsData.length>1){ // adding to prevent double fetching during browser refresh
       fetchData();
+    }
 
 
   },[coordsData]);
