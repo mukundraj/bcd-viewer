@@ -49,7 +49,11 @@ function DendroBars(props){
   }
 
   useEffect(()=>{
+
+    if (regionwiseData){
+
       updateDendroBars(selectedRegIds, regionwiseData);
+    }
 
   }, [selectedRegIds, regionwiseData]);
 
