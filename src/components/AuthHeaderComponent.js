@@ -101,6 +101,7 @@ function AuthHeader(props){
             <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/cellspatial">CellSpatial</NavLink>
             {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/anaindex">Analysis</NavLink> */}
             {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink> */}
+            <a className="nav-link" href="https://docs.braincelldata.org">Docs</a>
           </Nav>
         {isDemoPortal?false:
         <Nav>
