@@ -19,32 +19,32 @@ export const DATACONFIGS =
       title: "Cell Score",
       relativePath: "/cellspatial_data",
     },
-    {
-      id: 2,
-      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
-      prefix: "rc_",
-      geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
-      maxCountMetadataKey: "maxCount",
-      title: "Regionally Aggregated Expression",
-      relativePath: "test_data2/gene_csvs"
-    },
-    {
-      id: 3,
-      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
-      prefix: "rnc_",
-      geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
-      maxCountMetadataKey: "maxNormedCount",
-      title: "Regionally Aggregated Normalized Expression",
-      relativePath: "test_data2/gene_csvs"
-    },
-    {
-      id: 4,
-      basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
-      prefix: "gene_",
-      geneOptions: [''],
-      maxCountMetadataKey: "maxCount",
-      title: "Regionally Aggregated Normalized Expression2",
-      relativePath: "test_data2/gene_csvs_s9d",
-      freqBarsDataPath:"test_data2/gene_jsons_s9e"
-    },
+    // {
+    //   id: 2,
+    //   basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
+    //   prefix: "rc_",
+    //   geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
+    //   maxCountMetadataKey: "maxCount",
+    //   title: "Regionally Aggregated Expression",
+    //   relativePath: "test_data2/gene_csvs"
+    // },
+    // {
+    //   id: 3,
+    //   basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
+    //   prefix: "rnc_",
+    //   geneOptions: ['Gad1', 'Gad2', 'Slc17a7'],
+    //   maxCountMetadataKey: "maxNormedCount",
+    //   title: "Regionally Aggregated Normalized Expression",
+    //   relativePath: "test_data2/gene_csvs"
+    // },
+    // {
+    //   id: 4,
+    //   basePath: "https://storage.googleapis.com/ml_portal/test_data/gene_csvs",
+    //   prefix: "gene_",
+    //   geneOptions: [''],
+    //   maxCountMetadataKey: "maxCount",
+    //   title: "Regionally Aggregated Normalized Expression2",
+    //   relativePath: "test_data2/gene_csvs_s9d",
+    //   freqBarsDataPath:"test_data2/gene_jsons_s9e"
+    // },
   ]
