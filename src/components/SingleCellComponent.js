@@ -16,6 +16,7 @@ import Colorbar from '../components/ColorbarComponent'
 import {Form} from 'react-bootstrap'
 import Dendrogram from './DendrogramComponent'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
+import ReactGA from "react-ga4";
 
 
 function SingleCell(props){
@@ -72,6 +73,11 @@ function SingleCell(props){
   const setSortField = useStore(state => state.setSortField);
   const order = useStore(state => state.order);
   const setOrder = useStore(state => state.setOrder);
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/singlecell" });
+    document.title = "Single Cell | BrainCellData Viewer";
+  }, []);
 
   useEffect(()=>{ // since 'order' is shared between component - fix it sometime
     setOrder("desc");

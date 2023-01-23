@@ -19,6 +19,7 @@ import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
 import Dendrogram from './DendrogramComponent'
 import RegEnrich from "./RegEnrichComponent"
+import ReactGA from "react-ga4";
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -84,8 +85,10 @@ function LoaderCellSpatial({dataConfig}){
   //   window.history.replaceState({}, document.title); // https://stackoverflow.com/questions/40099431/how-do-i-clear-location-state-in-react-router-on-page-reload
   // },[location]);
 
-
-
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/cellspatial" });
+    document.title = "Cell Spatial | BrainCellData Viewer";
+  }, []);
 
 
   // generalToggleFlag gets toggled when the user clicks on frequency bar or dendro bar

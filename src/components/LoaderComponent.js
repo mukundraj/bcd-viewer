@@ -20,6 +20,7 @@ import Dendrogram from './DendrogramComponent'
 import DualSlider from './DualSliderComponent'
 import Breadcrumbs from './BreadcrumbsComponent'
 import RegEnrich from "./RegEnrichComponent"
+import ReactGA from "react-ga4";
 
 function Loader({dataConfig}){
 
@@ -92,6 +93,11 @@ function Loader({dataConfig}){
       // ...
     }
   });
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/genex" });
+    document.title = "Gene Expression | BrainCellData Viewer";
+  }, []);
 
   // async function getUrl(pathInBucket){
   //   console.log(pathInBucket);
