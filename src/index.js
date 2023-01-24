@@ -11,6 +11,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css'; // for typeahead
 import 'react-bootstrap-typeahead/css/Typeahead.bs5.css'; // for typeahead's bootstrap5 support (fixed clearButton issue)
 
 ReactGA.initialize("G-YJETVHXCRD");
+ReactGA.ga('set', 'anonymizeIp', true);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
