@@ -19,7 +19,7 @@ import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
 import Dendrogram from './DendrogramComponent'
 import RegEnrich from "./RegEnrichComponent"
-import ReactGA from "react-ga4";
+// import ReactGA from "react-ga4";
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -86,7 +86,7 @@ function LoaderCellSpatial({dataConfig}){
   // },[location]);
 
   useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: "/cellspatial" });
+    // ReactGA.send({ hitType: "pageview", page: "/cellspatial" });
     document.title = "Cell Spatial | BrainCellData Viewer";
   }, []);
 
