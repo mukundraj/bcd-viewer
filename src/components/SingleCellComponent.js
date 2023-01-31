@@ -17,6 +17,8 @@ import {Form} from 'react-bootstrap'
 import Dendrogram from './DendrogramComponent'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 // import ReactGA from "react-ga4";
+import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
+import { LTOB} from 'downsample';
 
 
 function SingleCell(props){
@@ -60,6 +62,7 @@ function SingleCell(props){
   const tableDataFiltered = useSCComponentStore(state => state.tableDataFiltered);
   const setTableDataFiltered = useSCComponentStore(state => state.setTableDataFiltered);
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const [downsampledTableData, setDownsampledTableData] = useState({});
 
 
   const maxColVals = useStore(state => state.maxColVals);
@@ -270,6 +273,84 @@ function SingleCell(props){
 
   }, [tableDataSorted, cellClassSelection, selectedRegIds, minCompoPct]);
 
+  // updates downsampledTableData based on chosen genes; needed for OverviewPlots
+  useEffect(()=>{
+
+    // update downsampledTableData based on selected genes
+    let downsample = (numSamples, tableDataSorted) => {
+
+      // let downsampledTableDataTmp = [{accessor:1, dataPct: [], dataAvg: []}];
+      console.log('tableDataSorted', tableDataSorted);
+
+      const downsampledTableDataTmp = produce(downsampledTableData, (draft)=>{
+
+        // create an array with keys of downsampledTableData
+        let curDownsampledAccessors = Object.keys(draft);
+        console.log('curDownsampledAccessors', curDownsampledAccessors, downsampledTableData);
+
+        
+        // create an array with accessor property of columns
+        let curColAccessors = columns.map(x=>x.accessor);
+
+
+        // add accessor to downsampled data if not already present
+        for (let i=0; i<columns.length; i++){
+          // check if columns[i].accessor is in curDownsampledAccessors
+          if (!curDownsampledAccessors.includes(columns[i].accessor.toString()) ){
+
+            // check accessor is a key in first object of tableDataSorted
+            if (tableDataSorted[0].hasOwnProperty(columns[i].accessor)){
+
+              console.log('accessor does not exist, adding ', columns[i].accessor);
+
+              // prepare dataPct and dataAvg arrays
+              let inpDataPctAvg = [];
+
+              // iterate over tableDataFiltered
+              for (let j=0; j<tableDataFiltered.length; j++){
+                inpDataPctAvg.push([tableDataSorted[j][columns[i].accessor], tableDataSorted[j][-columns[i].accessor]]);
+              }
+
+
+              // let dwndDataPct = LTOB(inpDataPct, numSamples);
+              // let dwndDataAvg = LTOB(inpDataAvg, numSamples);
+              let dwndData = LTOB(inpDataPctAvg, numSamples);
+
+              // console.log('dwnd', dwndData);
+
+              // add accessor and data
+              draft[columns[i].accessor]=dwndData;
+            }
+
+          }
+        }    
+        
+        // remove accessor from downsampled data if not present in columns
+        for (let i=0; i<curDownsampledAccessors.length; i++){
+
+          // check if curDownsampledAccessors[i] is in colAccessors
+          if (!curColAccessors.includes(parseInt(curDownsampledAccessors[i]))){
+            console.log('accessor extranuous, removing ', curDownsampledAccessors[i]);
+
+            // remove ith element from draft
+            delete draft[curDownsampledAccessors[i]];
+          }
+        }
+
+      });
+
+        // console.log('columns', columns, downsampledTableData, downsampledTableDataTmp);
+
+      return downsampledTableDataTmp;
+
+    };
+
+    // console.log('tableDataSorted', tableDataSorted);
+    // prepare downsampled data and update in component's store
+    let downsampledTableDataTmp = downsample(50, tableDataSorted);
+    setDownsampledTableData(downsampledTableDataTmp);
+
+  }, [columns, tableDataSorted]);
  
   const [handleSorting] = useSortableTable(tableData);
   // const tableDataSorted = useStore(state => state.tableDataSorted);

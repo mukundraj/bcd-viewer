@@ -18,6 +18,7 @@
     "d3-svg-legend": "^2.25.6",
     "deck.gl": "^8.7.8",
     "dom": "^0.0.3",
+    "downsample": "^1.4.0",
     "firebase": "^9.8.1",
     "font-awesome": "^4.7.0",
     "immer": "^9.0.15",

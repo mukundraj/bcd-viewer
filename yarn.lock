@@ -5945,6 +5945,11 @@ dotenv@8.2.0:
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-8.2.0.tgz"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
+downsample@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/downsample/-/downsample-1.4.0.tgz#f7500318efd5d979641d45fe49cd2dc8d7cb9397"
+  integrity sha512-teYPhUPxqwtyICt47t1mP/LjhbRV/ghuKb/LmFDbcZ0CjqFD31tn6rVLZoeCEa1xr8+f2skW8UjRiLiGIKQE4w==
+
 draco3d@1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/draco3d/-/draco3d-1.4.1.tgz"
