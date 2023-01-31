@@ -178,7 +178,6 @@ function SingleCell(props){
       const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
       columnsTmp.push({"label":added[0], "accessor":scolIdx, "sortable":true});
       setColumns(columnsTmp);
-      console.log(columnsTmp);
 
     }else if(prevMultiSelections.current.length>multiSelections.length){ // gene removed
       removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
@@ -347,7 +346,8 @@ function SingleCell(props){
 
     // console.log('tableDataSorted', tableDataSorted);
     // prepare downsampled data and update in component's store
-    let downsampledTableDataTmp = downsample(50, tableDataSorted);
+    let numSamples = 500;
+    let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
     setDownsampledTableData(downsampledTableDataTmp);
 
   }, [columns, tableDataSorted]);
@@ -461,6 +461,18 @@ function SingleCell(props){
             {/* /> */}
           </Col>
         </Row>:null}
+        <Row>
+          {columns.length>0?
+            <>
+              <Col xs="9">
+                <div style={{float:'left', width:'53%'}}>&nbsp;</div>
+                <div style={{ float:'left', width:'45%'}}>
+                  <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/>
+                </div>
+              </Col>
+              <Col cs="3"></Col>
+            </>:null}
+        </Row>
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
           <Col className="" xs="9">
             {columns.length>0?
