@@ -13,6 +13,7 @@ export const DATACONFIGS =
     {
       id: 1,
       basePath: "https://storage.googleapis.com/bcdportaldata",
+      batchPath: "/batch_230131",
       prefix:"cell_",
       cellOptions: [],
       maxCountMetadataKey: "maxCount",
