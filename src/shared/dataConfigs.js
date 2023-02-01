@@ -17,7 +17,8 @@ export const DATACONFIGS =
       cellOptions: [],
       maxCountMetadataKey: "maxCount",
       title: "Cell Score",
-      relativePath: "/cellspatial_data",
+      relativePathOld: "/cellspatial_data",
+      relativePath: "/batch_230131/cellspatial_data",
     },
     // {
     //   id: 2,

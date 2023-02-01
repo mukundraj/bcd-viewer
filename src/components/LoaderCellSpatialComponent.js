@@ -23,7 +23,7 @@ import RegEnrich from "./RegEnrichComponent"
 
 function LoaderCellSpatial({dataConfig}){
 
-  const {prefix, maxCountMetadataKey, title, basePath, relativePath} = dataConfig;
+  const {prefix, maxCountMetadataKey, title, basePath, relativePathOld, relativePath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
   const generalToggleFlag = useStore(state => state.generalToggleFlag);
   const togglePid = useStore(state => state.togglePid);
@@ -454,7 +454,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
     
     const fetchData = async () => {
-      let fbarsDataUrl = `${basePath}${relativePath}/freqbars/cell_jsons_s2c/${chosenCell[0]}.json`
+      let fbarsDataUrl = `${basePath}${relativePathOld}/freqbars/cell_jsons_s2c/${chosenCell[0]}.json`
       const readData = await fetch(fbarsDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
