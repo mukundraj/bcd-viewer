@@ -3,6 +3,7 @@ import { useD3 } from '../../hooks/useD3';
 import * as d3 from 'd3';
 import {useState, useEffect, useCallback} from 'react';
 
+import './GeneOverviewPlotComponent.css';
 
 function GeneOverviewPlot({downsampledData, numCols}) {
 
@@ -13,7 +14,7 @@ function GeneOverviewPlot({downsampledData, numCols}) {
   useEffect(() => {
 
       // d[0] is pct and d[1] is avg
-      let dataTmp = downsampledData.map((d,i)=>{return {x: d[0], y: d[1]}});
+    let dataTmp = downsampledData.map((d,i)=>{return {x: d[0], y: d[1], xx: d[0]}});
       setPrepedData(dataTmp);
 
   }, [downsampledData]);
@@ -28,6 +29,7 @@ function GeneOverviewPlot({downsampledData, numCols}) {
       const height = element.getBoundingClientRect().height;
       const width = element.getBoundingClientRect().width;
       const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+      
       
       let data = prepedData;
 
@@ -63,6 +65,15 @@ function GeneOverviewPlot({downsampledData, numCols}) {
       //     .x(function(d) { return x(d.x) })
       //     .y(function(d) { return y1(d.y) })
       //   )
+      //
+
+      // get top left corner of svg element
+      // let svgTopLeft = svg.node().getBoundingClientRect(); // need replaced by 'element' argument below
+
+      var div = d3.select("body").append("div")
+     .attr("class", "tooltip")
+     .style("opacity", 0);
+      
 
       svg.append('g')
         .selectAll("dot")
@@ -73,6 +84,27 @@ function GeneOverviewPlot({downsampledData, numCols}) {
         .attr("cy", function (d) { return y1(d.y); } )
         .attr("r", 1.5)
         .style("fill", "steelblue")
+        .on('mouseover', function (event, dat) {
+          d3.select(this).transition()
+                .duration('100')
+                .attr("r", 7);
+          div.transition()
+               .duration(100)
+               .style("opacity", 1);
+          div.html("avg:" + d3.format(".2f")(dat.y) + "<br/>" + "pct:" + d3.format(".2f")(dat.x*100) + "%")
+               // .style("left",  String(parseFloat(svgTopLeft.x)+parseFloat(d3.select(this).attr("cx"))) + "px")
+               // .style("top",  String(parseFloat(svgTopLeft.y)+parseFloat(d3.select(this).attr("cy"))) + "px")
+            .style("left", event.x + "px")
+            .style("top",  event.y + "px")
+     })
+     .on('mouseout', function (d, i) {
+          d3.select(this).transition()
+               .duration('200')
+               .attr("r", 1.5);
+          div.transition()
+               .duration('200')
+               .style("opacity", 0);
+     });
 
     }, [prepedData, numCols]
 
@@ -80,7 +112,7 @@ function GeneOverviewPlot({downsampledData, numCols}) {
 
 
   return (
-    <div className="outer">
+    <div className="outer" style={{position:"static"}}>
       <svg
         ref={ref}
         style={{
@@ -104,3 +136,5 @@ function GeneOverviewPlot({downsampledData, numCols}) {
 
 
 export default GeneOverviewPlot;
+
+// modified and adapted from - https://medium.com/@kj_schmidt/hover-effects-for-your-scatter-plot-447df80ea116
