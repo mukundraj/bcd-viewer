@@ -47,7 +47,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy:main": "./scripts/deploy_main.sh",
-    "deploy:demo": "./scripts/deploy_demo.sh"
+    "deploy:demo": "./scripts/deploy_demo.sh",
+    "deploy:test": "./scripts/deploy_test.sh"
   },
   "homepage": "https://www.braincelldata.org",
   "eslintConfig": {
