@@ -149,12 +149,14 @@ function SingleCell({dataConfig}){
       // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
       // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
       //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
-      let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("/scZarr.zarr/nz_pct/X", col_idx),
-                                                  zloader.getDataColumn("/scZarr.zarr/avg/X", col_idx)]);
+      let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/scZarr.zarr/nz_pct/X", col_idx),
+                                                  zloader.getDataColumn("/scZarr.zarr/avg/X", col_idx), 
+                                                  zloader.getDataColumn("/scZarr.zarr/counts/X", col_idx)]);
       const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[scol_idx] = dataCol[i];
         draft[-scol_idx] = avgDataCol[i];
+        draft['c'+String(scol_idx)] = countDataCol[i];
       }));
       setTableData(tableDataTmp);
       if (sortField===""){
@@ -190,6 +192,7 @@ function SingleCell({dataConfig}){
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         delete draft[scolIdx];
         delete draft[-scolIdx];
+        delete draft['c'+String(scolIdx)];
       }));
       setTableData(tableDataTmp);
 
@@ -306,22 +309,35 @@ function SingleCell({dataConfig}){
               console.log('accessor does not exist, adding ', columns[i].accessor);
 
               // prepare dataPct and dataAvg arrays
-              let inpDataPctAvg = [];
+              // let inpDataPctAvg = [];
+              // prepare dataCnts array
+              let inpDataCnts = [];
 
               // iterate over tableDataFiltered
               for (let j=0; j<tableDataFiltered.length; j++){
-                inpDataPctAvg.push([tableDataSorted[j][columns[i].accessor], tableDataSorted[j][-columns[i].accessor]]);
+                // inpDataPctAvg.push([tableDataSorted[j][columns[i].accessor], tableDataSorted[j][-columns[i].accessor]]);
+
+                inpDataCnts.push(tableDataSorted[j]['c'+columns[i].accessor]);
               }
+
+              console.log('tableDataSorted', tableDataSorted);
+              console.log('inpDataCnts', inpDataCnts);
 
 
               // let dwndDataPct = LTOB(inpDataPct, numSamples);
               // let dwndDataAvg = LTOB(inpDataAvg, numSamples);
-              let dwndData = LTOB(inpDataPctAvg, numSamples);
+              // let dwndData = LTOB(inpDataPctAvg, numSamples);
 
               // console.log('dwnd', dwndData);
 
               // add accessor and data
-              draft[columns[i].accessor]=dwndData;
+              // draft[columns[i].accessor] = [{ct: 10}, {ct: 10}, {ct: 30}, {ct:20},{ct:25}];
+              // draft[columns[i].accessor] = [1,3,4,2,5,6,3,4,7,8,9, 18,5,2,3,4,1,7,19];
+
+              inpDataCnts = inpDataCnts.filter(x=>x>0);
+              inpDataCnts = inpDataCnts.map(x=>Math.log10(x));
+
+              draft[columns[i].accessor] = inpDataCnts;
             }
 
           }
@@ -341,7 +357,7 @@ function SingleCell({dataConfig}){
 
       });
 
-        // console.log('columns', columns, downsampledTableData, downsampledTableDataTmp);
+        console.log('columns', columns, downsampledTableData, downsampledTableDataTmp);
 
       return downsampledTableDataTmp;
 
@@ -350,6 +366,7 @@ function SingleCell({dataConfig}){
     // console.log('tableDataSorted', tableDataSorted);
     // prepare downsampled data and update in component's store
     let numSamples = 500;
+    // let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
     let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
     setDownsampledTableData(downsampledTableDataTmp);
 
@@ -375,7 +392,6 @@ function SingleCell({dataConfig}){
         avgVals.push(x[-curAccessors[i]]);
       }
     });
-    console.log('proportionVals', proportionVals, order, sortField);
     
     console.log('curShown', curShown, columns);
     // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
