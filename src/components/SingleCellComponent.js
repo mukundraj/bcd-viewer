@@ -23,7 +23,7 @@ import { LTOB} from 'downsample';
 
 function SingleCell({dataConfig}){
 
-  const {basePath, batchPath} = dataConfig;
+  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype} = dataConfig;
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -69,9 +69,7 @@ function SingleCell({dataConfig}){
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
-  // let scPathInBucket  = `https://storage.googleapis.com/bcdportaldata/singlecell_data`;
-  let scPathInBucket = `${basePath}${batchPath}/singlecell_data`;
-  let scPathInBucketOld = `${basePath}/singlecell_data`;
+  let scPathInBucket = `${basePath}${dpathScZarr}`;
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
@@ -94,24 +92,24 @@ function SingleCell({dataConfig}){
   useEffect(()=>{
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
-      let mappedCelltypeToIdxFile =`${scPathInBucketOld}/s2/s2_regtocell/mappedCellType_to_idx.json`;
-      let regionToCelltypeFile = `${scPathInBucketOld}/s2/s2_regtocell/region_to_celltype.json`
+      let mappedCelltypeToIdxFile =`${basePath}${dpathMappedCellTypesToIdx}`;
+      let regionToCelltypeFile = `${basePath}${dpathRegionToCelltype}`
       // let dataGenes = await zloader.getFlatArrDecompressed("z_proportions.zarr/var/human_name/categories");
       // let dataCellTypesRaw = await zloader.getFlatArrDecompressed("z_proportions.zarr/obs/_index");
       let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus,
           dataTopStructs,
           dataMappedCellTypesToIdx, dataRegionToCellTypeMap,
           dataGlobalMaxAvgVal] = await Promise.all(
-        [zloader.getFlatArrDecompressed("/scZarr.zarr/var/genes"),
-          zloader.getFlatArrDecompressed("/scZarr.zarr/obs/clusters"), 
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/cellclasses"), 
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/maxpcts"), // pct contribution from majority contributing cell class
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/uniqcellclasses"), 
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/mapStatus"), 
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/topstructs"), 
+        [zloader.getFlatArrDecompressed("/var/genes"),
+          zloader.getFlatArrDecompressed("/obs/clusters"), 
+          zloader.getFlatArrDecompressed("/metadata/cellclasses"), 
+          zloader.getFlatArrDecompressed("/metadata/maxpcts"), // pct contribution from majority contributing cell class
+          zloader.getFlatArrDecompressed("/metadata/uniqcellclasses"), 
+          zloader.getFlatArrDecompressed("/metadata/mapStatus"), 
+          zloader.getFlatArrDecompressed("/metadata/topstructs"), 
           fetchJson(mappedCelltypeToIdxFile), 
           fetchJson(regionToCelltypeFile),
-          zloader.getFlatArrDecompressed("/scZarr.zarr/metadata/globalMaxAvgVal")
+          zloader.getFlatArrDecompressed("/metadata/globalMaxAvgVal")
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -149,9 +147,9 @@ function SingleCell({dataConfig}){
       // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
       // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
       //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
-      let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/scZarr.zarr/nz_pct/X", col_idx),
-                                                  zloader.getDataColumn("/scZarr.zarr/avg/X", col_idx), 
-                                                  zloader.getDataColumn("/scZarr.zarr/counts/X", col_idx)]);
+      let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/nz_pct/X", col_idx),
+                                                  zloader.getDataColumn("/avg/X", col_idx), 
+                                                  zloader.getDataColumn("/counts/X", col_idx)]);
       const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
       let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
         draft[scol_idx] = dataCol[i];

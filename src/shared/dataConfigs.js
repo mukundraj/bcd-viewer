@@ -13,13 +13,24 @@ export const DATACONFIGS =
     {
       id: 1,
       basePath: "https://storage.googleapis.com/bcdportaldata",
-      batchPath: "/batch_230131",
-      prefix:"cell_",
-      cellOptions: [],
-      maxCountMetadataKey: "maxCount",
-      title: "Cell Score",
-      relativePathOld: "/cellspatial_data",
-      relativePath: "/batch_230131/cellspatial_data",
+      batchPath: "/batch_230131", // remove
+      prefix:"cell_", // remove
+      cellOptions: [], // remove
+      maxCountMetadataKey: "maxCount", // remove
+      title: "Cell Score", // remove
+      relativePathOld: "/cellspatial_data", // remove
+      relativePath: "/batch_230131/cellspatial_data", // remove
+
+      // GeneExp data
+      dpathGeneExprs: "/batch_230131/genexp_data/gene_exprs_cshl",
+
+      // SingleCell data
+      dpathScZarr: "/batch_230131/singlecell_data/scZarr.zarr",
+      dpathMappedCellTypesToIdx: "/singlecell_data/s2/s2_regtocell/mappedCellType_to_idx.json",
+      dpathRegionToCelltype: "/singlecell_data/s2/s2_regtocell/region_to_celltype.json",
+
+      // CellSpatial data
+      dPathCellScores: "/batch_230131/cellspatial_data/cellscores",
     },
     // {
     //   id: 2,
