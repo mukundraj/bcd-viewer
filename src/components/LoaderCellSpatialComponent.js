@@ -23,7 +23,7 @@ import RegEnrich from "./RegEnrichComponent"
 
 function LoaderCellSpatial({dataConfig}){
 
-  const {prefix, maxCountMetadataKey, title, basePath, relativePathOld, relativePath} = dataConfig;
+  const {basePath, dpathCellScores, dpathFreqBarsJsons} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
   const generalToggleFlag = useStore(state => state.generalToggleFlag);
   const togglePid = useStore(state => state.togglePid);
@@ -122,7 +122,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
 
     const fetchCellOptions = async () => {
-      let cellOptionsUrl = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/cellOptions.json`
+      let cellOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellOptions.json`
       // const cellOptions = await load(cellOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
       fetch(cellOptionsUrl
       // ,{
@@ -173,7 +173,7 @@ function LoaderCellSpatial({dataConfig}){
     // read coords data
     const fetchData = async () => {
       // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
-      let coordsUrl = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/coords.csv`
+      let coordsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/coords.csv`
       // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
 
@@ -182,7 +182,7 @@ function LoaderCellSpatial({dataConfig}){
     }
 
     const fetchNissl = async () => {
-      let nis_url = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
+      let nis_url = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/nis_${pad(chosenPuckid.pid, 3)}.png`
       console.log("nis_url: ", nis_url);
 
       setCurNisslUrl(nis_url);
@@ -191,7 +191,7 @@ function LoaderCellSpatial({dataConfig}){
     }
 
     const fetchAtlas = async () => {
-      let atlas_url = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid, 3)}.png`;
+      let atlas_url = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/chuck_sp_wireframe_${pad(chosenPuckid.pid, 3)}.png`;
 
       setCurAtlasUrl(atlas_url);
       // setDataLoadStatus(dataLoadStatus+1);
@@ -214,7 +214,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
 
     const fetchData = async () => {
-      let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
+      let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
       let zloader = new ZarrLoader({zarrPathInBucket});
       let rowIdx = cellNameToIdx[chosenCell[0]];
       let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
@@ -236,7 +236,7 @@ function LoaderCellSpatial({dataConfig}){
     // read cell data
     const fetchData = async () => {
 
-      let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
+      let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
       let zloader = new ZarrLoader({zarrPathInBucket});
       // let rowIdx = cellNameToIdx[chosenCell[0]];
       // console.log("zarrPathInBucket ", zarrPathInBucket, 'chosenPuckid', chosenPuckid, 'rowIdx', rowIdx, cellNameToIdx);
@@ -318,7 +318,7 @@ function LoaderCellSpatial({dataConfig}){
       // read cell data
       const fetchData = async () => {
 
-        let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
+        let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
         let rowIdx = cellNameToIdx[chosenCell[0]];
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
@@ -374,7 +374,7 @@ function LoaderCellSpatial({dataConfig}){
       // read cell data
       const fetchData = async () => {
 
-        let zarrPathInBucket = `${basePath}${relativePath}/cellscores/puck${chosenPuckid.pid}/`;
+        let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
         let rowIdx = cellNameToIdx[chosenCell2[0]];
         const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
@@ -454,7 +454,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
     
     const fetchData = async () => {
-      let fbarsDataUrl = `${basePath}${relativePathOld}/freqbars/cell_jsons_s2c/${chosenCell[0]}.json`
+      let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${chosenCell[0]}.json`
       const readData = await fetch(fbarsDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
