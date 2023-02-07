@@ -66,6 +66,8 @@ export const usePersistStore = create(persist( set => ({
     setRegionwiseData: (val)=>set({regionwiseData:val}),
     regionTreeJson: null,
     setRegionTreeJson: (val)=>set({regionTree:val}),
+    acroToNameMap: null,
+    setAcroToNameMap: (val)=>set({acroToNameMap:val}),
 }),
     {
         name: "main-persist-storage",

@@ -14,10 +14,10 @@ export const DATACONFIGS =
       basePath: "https://storage.googleapis.com/bcdportaldata",
 
       // SingleCell data
-      dpathScZarr: "/batch_230131/singlecell_data/scZarr.zarr",
+      dpathScZarr: "/batch_230131/singlecell_data/scZarr_230207.zarr",
       dpathMappedCellTypesToIdx: "/singlecell_data/s2/s2_regtocell/mappedCellType_to_idx.json",
       dpathRegionToCelltype: "/singlecell_data/s2/s2_regtocell/region_to_celltype.json",
-
+      dpathIdAcroNameMap: "/batch_230131/singlecell_data/s1/idAcroNameMap/idAcroNameMap.csv",
     },
     {
 

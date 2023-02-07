@@ -18,12 +18,13 @@ import Dendrogram from './DendrogramComponent'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 // import ReactGA from "react-ga4";
 import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
-import { LTOB} from 'downsample';
+import {load} from '@loaders.gl/core';
+import {CSVLoader} from '@loaders.gl/csv';
 
 
 function SingleCell({dataConfig}){
 
-  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype} = dataConfig;
+  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -63,8 +64,10 @@ function SingleCell({dataConfig}){
   const tableDataFiltered = useSCComponentStore(state => state.tableDataFiltered);
   const setTableDataFiltered = useSCComponentStore(state => state.setTableDataFiltered);
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+  const selectedRegions = usePersistStore(state => state.selectedRegions);
   const [downsampledTableData, setDownsampledTableData] = useState({});
-
+  const acroToNameMap = usePersistStore(state => state.acroToNameMap);
+  const setAcroToNameMap = usePersistStore(state => state.setAcroToNameMap);
 
   const maxColVals = useStore(state => state.maxColVals);
   const setMaxColVals = useStore(state => state.setMaxColVals);
@@ -78,6 +81,10 @@ function SingleCell({dataConfig}){
   const order = useStore(state => state.order);
   const setOrder = useStore(state => state.setOrder);
 
+  const regionTreeJson = usePersistStore(state => state.regionTreeJson);
+  const setRegionTreeJson = usePersistStore(state => state.setRegionTreeJson);
+  const [regionTree, setRegionTree] = useState(null);
+
   useEffect(() => {
     // ReactGA.send({ hitType: "pageview", page: "/singlecell" });
     document.title = "Single Cell | BrainCellData Viewer";
@@ -86,6 +93,32 @@ function SingleCell({dataConfig}){
   useEffect(()=>{ // since 'order' is shared between component - fix it sometime
     setOrder("desc");
     setSortField("");
+  },[]);
+  
+  useEffect(()=>{
+    const fetchData = async () => {
+      let regionArrayDataPath = `test_data2/s9f/regions_array.json`
+      let regionArrayDataUrl = await getUrl(regionArrayDataPath);
+      const readData = await fetch(regionArrayDataUrl)
+       .then(response => response.json());
+
+      setRegionTreeJson(readData);
+      var tree_util = require('tree-util')
+      var standardConfig =  { id : 'id', parentid : 'parentid'};
+      var trees = tree_util.buildTrees(readData, standardConfig);
+      setRegionTree(trees[0]);
+
+    }
+    if (regionTreeJson === null){ 
+      fetchData();
+    }else{
+      var tree_util = require('tree-util')
+      var standardConfig =  { id : 'id', parentid : 'parentid'};
+      var trees = tree_util.buildTrees(regionTreeJson, standardConfig);
+      setRegionTree(trees[0]);
+    }
+
+
   },[]);
 
   // get zarr store connection and initialize geneOptions
@@ -115,6 +148,7 @@ function SingleCell({dataConfig}){
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
       // console.log(dataGenes);
       setCellClassOptions(dataUniqCellClasses);
+      console.log('dataCellTypesRaw', dataCellTypesRaw.length);
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
@@ -133,6 +167,26 @@ function SingleCell({dataConfig}){
       // let dataCellTypesRaw2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
       // console.log('dataGenes2', dataGenes2);
       // console.log('datacellTypesRaw2', dataCellTypesRaw2);
+    }
+
+    fetchData();
+
+  }, []);
+
+  // fetch the idAcroNameMap and populate acroToNameMap
+  useEffect(()=>{ 
+
+    // write an async function to fetch the acroToNameMap csv file from bucket 
+    // and populate the acroToNameMap state variable
+
+    const fetchData = async () => {
+      let acroIdNameMapFile = `${basePath}${dpathIdAcroNameMap}`;
+      const acroIdNameMap = await load(acroIdNameMapFile, [CSVLoader], {csv:{delimiter:"\t"}});
+
+      let acroToNameMapTmp = {};
+      acroIdNameMap.forEach(x=>acroToNameMapTmp[x.column2] = x.column3);
+
+      setAcroToNameMap(acroToNameMapTmp);
     }
 
     fetchData();
@@ -233,6 +287,7 @@ function SingleCell({dataConfig}){
   useEffect(()=>{
     console.log('cellClassSelection ', cellClassSelection, 'tableData');
     console.log('selectedRegIds', selectedRegIds);
+    console.log('selectedRegions', selectedRegions);
 
     let wantedCelltypes = new Set();
 
