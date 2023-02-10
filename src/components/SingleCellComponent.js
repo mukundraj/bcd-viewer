@@ -295,12 +295,12 @@ function SingleCell({dataConfig}){
     for (let i=0; i<selectedRegIds.length; i++){
       if (!!regionToCelltype){
         console.log('selectedRegIds ', selectedRegIds[i]);
-        const cellIdxInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
-        console.log('cellIdxInRegion', cellIdxInRegion)
+        const cellIdxsInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
+        console.log('cellIdxsInRegion', cellIdxsInRegion)
         // for (const cidx of cellIdxInRegion){
-        for (const cidx in cellIdxInRegion){
+        for (const cidx in cellIdxsInRegion){
           // wantedCelltypes.add(cidx);
-          if (cellIdxInRegion[cidx]>minCompoPct){
+          if (cellIdxsInRegion[cidx]>minCompoPct){
             wantedCelltypes.add(parseInt(cidx));
           }
         }
@@ -325,6 +325,16 @@ function SingleCell({dataConfig}){
       // filter further if wanted celltypes are identified, else no further filtering
       if (wantedCelltypes.size>0 || selectedRegIds.length>0){
         tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+
+        if (selectedRegIds.length>0 && !!regionToCelltype){
+          const cellIdxsInRegion = regionToCelltype[selectedRegIds[0]]; // cell idx among mapped region of chosen region
+          // add property to each object of tableDataFilteredTmp
+          tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
+            // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
+            draft['tr'] = draft['tr']+`, src:${String(cellIdxsInRegion[x.cid])}`;  // composition percentage
+          }));
+        }
+
       }
       setTableDataFiltered(tableDataFilteredTmp);
     }

@@ -15,8 +15,8 @@ export const DATACONFIGS =
 
       // SingleCell data
       dpathScZarr: "/batch_230131/singlecell_data/scZarr_230207.zarr",
-      dpathMappedCellTypesToIdx: "/singlecell_data/s2/s2_regtocell/mappedCellType_to_idx.json",
-      dpathRegionToCelltype: "/singlecell_data/s2/s2_regtocell/region_to_celltype.json",
+      dpathMappedCellTypesToIdx: "/batch_230131/singlecell_data/s2/s2_regtocell_230208/mappedCellType_to_idx.json",
+      dpathRegionToCelltype: "/batch_230131/singlecell_data/s2/s2_regtocell_230208/region_to_celltype.json",
       dpathIdAcroNameMap: "/batch_230131/singlecell_data/s1/idAcroNameMap/idAcroNameMap.csv",
     },
     {
