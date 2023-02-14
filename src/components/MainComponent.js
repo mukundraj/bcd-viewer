@@ -12,8 +12,8 @@ import Heatmap from './HeatmapComponent'
 import RequireAuth from './RequireAuthComponent'
 import SingleCell from './SingleCellComponent'
 import LoaderCellSpatial from './LoaderCellSpatialComponent';
-import Loader from './LoaderComponent';
 import NphHome from './nph/NphHomeComponent'
+import GenexGuard from './genex/GenexGuardComponent'
 
 function Main(props){
 
@@ -46,7 +46,7 @@ function Main(props){
           <Routes>
             <Route path="/" element={<AuthHeader/>}>
               <Route index path="/" element={<Home/>}/>
-              <Route path="genex" element={ <RequireAuth><Loader dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
+              <Route path="genex" element={ <RequireAuth><GenexGuard dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
               <Route path="singlecell" element={ <RequireAuth><SingleCell dataConfig={DATACONFIGS[1]}/></RequireAuth>} />
               <Route path="cellspatial" element={ <RequireAuth><LoaderCellSpatial dataConfig={DATACONFIGS[2]}/></RequireAuth>} />
               {/* <Route path="anaindex"> */}

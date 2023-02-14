@@ -22,7 +22,7 @@ import Breadcrumbs from './BreadcrumbsComponent'
 import RegEnrich from "./RegEnrichComponent"
 // import ReactGA from "react-ga4";
 
-function Loader({dataConfig}){
+function Loader({dataConfig, validatedURLParams}){
 
   const {maxCountMetadataKey, basePath, dpathGeneExprs, dpathFreqBarsJsons} = dataConfig;
 
@@ -93,6 +93,20 @@ function Loader({dataConfig}){
       // ...
     }
   });
+
+  useEffect(() => {
+    if (validatedURLParams){
+
+      const paramgene = validatedURLParams.gene;
+      console.log('paramgene', paramgene);
+      const paramgeneCamelCase = paramgene.charAt(0).toUpperCase() + paramgene.slice(1);
+      console.log('setting paramgene', paramgeneCamelCase);
+      setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));
+      setChosenGene([paramgeneCamelCase]); 
+      setChosenPuckid({...chosenPuckid, gene:paramgeneCamelCase});
+      // setChosenGene([paramgene]);
+    }
+  }, [validatedURLParams])
 
   useEffect(() => {
     // ReactGA.send({ hitType: "pageview", page: "/genex" });
