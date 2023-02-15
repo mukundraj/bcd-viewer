@@ -108,9 +108,10 @@ function AuthHeader(props){
           </Nav>
         {isDemoPortal?false:
         <Nav>
+          {location.pathname!=='/'?
           <Button 
             onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
-          >GetLink</Button>
+          >GetLink</Button>:null}
           <Button onClick={logInOut}>{loginButtonText}</Button>
         </Nav>
         }
