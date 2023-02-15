@@ -4,6 +4,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, setPersistence, 
 import { useState, useEffect } from 'react'
 import {useStore, useAuthStore} from '../store/store'
 import {Outlet, useLocation, useNavigate, NavLink} from "react-router-dom"
+import useGetLinkInfo from '../hooks/useGetLinkInfo'
 
 
 function AuthHeader(props){
@@ -91,6 +92,8 @@ function AuthHeader(props){
     }
   }
 
+  const generateLink = useGetLinkInfo();
+
   return(
     <>
       <Navbar bg="light" variant="light">
@@ -105,6 +108,9 @@ function AuthHeader(props){
           </Nav>
         {isDemoPortal?false:
         <Nav>
+          <Button 
+            onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
+          >GetLink</Button>
           <Button onClick={logInOut}>{loginButtonText}</Button>
         </Nav>
         }
@@ -123,3 +129,4 @@ export default AuthHeader;
 // https://stackoverflow.com/questions/37828543/how-to-pass-props-without-value-to-component
 // https://stackoverflow.com/questions/54843302/reactjs-bootstrap-navbar-and-routing-not-working-together
 // https://stackblitz.com/github/remix-run/react-router/tree/main/examples/auth?file=src%2FApp.tsx
+// https://stackoverflow.com/questions/1368264/how-to-extract-the-hostname-portion-of-a-url-in-javascript
