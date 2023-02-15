@@ -15,7 +15,11 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenGene = usePersistStore(state => state.setChosenGene);
+  const setChosenGene2 = useStore(state => state.setChosenGene2);
   const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
+  const setFbarActiveDataName = useStore(state => state.setFbarActiveDataName);
+  const setNisslStatus = useStore(state => state.setNisslStatus);
+  const setWireframeStatus = useStore(state => state.setWireframeStatus);
 
   const checkParams = (searchParams) => {
     let urlParams = {
@@ -26,6 +30,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       gene2: searchParams.get('gene2'),
       th2: searchParams.get('th2'),
       fbd: searchParams.get('fbd'),
+      nisslStatus: searchParams.get('nisslStatus')==='true',
+      wireframeStatus: searchParams.get('wireframeStatus')==='true',
     }
     console.log('urlParams', urlParams);
 
@@ -33,7 +39,11 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
     if (urlParams.path==='genex'){
 
       setChosenGene([urlParams.gene]);
+      setChosenGene2([urlParams.gene2]);
       setChosenPuckid({...chosenPuckid, pid: urlParams.pid, gene: urlParams.gene});
+      setFbarActiveDataName(urlParams.fbd);
+      setNisslStatus(urlParams.nisslStatus);
+      setWireframeStatus(urlParams.wireframeStatus);
 
       return {status: true, path: '/genex'}
     }

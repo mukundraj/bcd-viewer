@@ -609,6 +609,7 @@ function Loader({dataConfig, validatedURLParams}){
           <Col xs="1">
             <Form.Check 
               defaultChecked={wireframeStatus}
+              checked={nisslStatus}
             type={'checkbox'}
             id={`nis-checkbox`}
             label={`Nissl`}
@@ -618,6 +619,7 @@ function Loader({dataConfig, validatedURLParams}){
           <Col xs="2">
             <Form.Check 
               defaultChecked={wireframeStatus}
+              checked={wireframeStatus}
             type={'checkbox'}
             id={`wf-checkbox`}
             label={`Wireframe`}
