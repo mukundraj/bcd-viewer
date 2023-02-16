@@ -8,6 +8,7 @@ import {Form, FormGroup, Col, Row, ProgressBar} from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import {OrthographicView} from '@deck.gl/core';
 import {useStore,useAuthStore, usePersistStore} from '../store/store'
+import {useGEComponentStore} from '../store/GEComponentStore'
 import Colorbar from '../components/ColorbarComponent'
 import ColorSquare from '../components/ColorSquareComponent'
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -45,14 +46,27 @@ function Loader({dataConfig, validatedURLParams}){
   // const [chosenGene, setChosenGene] = useState([geneOptions[0]])
   // const [chosenPuckid, setChosenPuckid] = useState(1)
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
+  const [unifiedDataTmp1, setUnifiedDataTmp1] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
   // const [umiThreshold, setUmiThreshold ] = useState(0.01);
-  const [umiLowerThreshold, setUmiLowerThreshold ] = useState(0.01);
-  const [umiUpperThreshold, setUmiUpperThreshold ] = useState(0.01);
-  const [umiLowerThreshold2, setUmiLowerThreshold2 ] = useState(1.0);
-  const [umiUpperThreshold2, setUmiUpperThreshold2 ] = useState(1.0);
-  const [opacityVal, setOpacityVal] = useState(1.0);
+  // const [umiLowerThreshold, setUmiLowerThreshold ] = useState(0.01);
+  // const [umiUpperThreshold, setUmiUpperThreshold ] = useState(0.01);
+  // const [umiLowerThreshold2, setUmiLowerThreshold2 ] = useState(1.0);
+  // const [umiUpperThreshold2, setUmiUpperThreshold2 ] = useState(1.0);
+  // const [opacityVal, setOpacityVal] = useState(1.0);
+
+  const umiLowerThreshold = useGEComponentStore(state => state.umiLowerThreshold);
+  const setUmiLowerThreshold = useGEComponentStore(state => state.setUmiLowerThreshold);
+  const umiUpperThreshold = useGEComponentStore(state => state.umiUpperThreshold);
+  const setUmiUpperThreshold = useGEComponentStore(state => state.setUmiUpperThreshold);
+  const umiLowerThreshold2 = useGEComponentStore(state => state.umiLowerThreshold2);
+  const setUmiLowerThreshold2 = useGEComponentStore(state => state.setUmiLowerThreshold2);
+  const umiUpperThreshold2 = useGEComponentStore(state => state.umiUpperThreshold2);
+  const setUmiUpperThreshold2 = useGEComponentStore(state => state.setUmiUpperThreshold2);
+  const opacityVal = useGEComponentStore(state => state.opacityVal);
+  const setOpacityVal = useGEComponentStore(state => state.setOpacityVal);
+
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
@@ -239,7 +253,9 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        setUmiUpperThreshold(locMaxUmiThreshold);
+        if (umiUpperThreshold==0.01){ // do not reset if upperThresold already provided by URL params
+          setUmiUpperThreshold(locMaxUmiThreshold);
+        }
 
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
         locMaxUmiThreshold2 = locMaxUmiThreshold2>0 ? locMaxUmiThreshold2 : 0.1;
@@ -268,7 +284,9 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        setUmiUpperThreshold(locMaxUmiThreshold);
+        if (umiUpperThreshold==0.01){ // do not reset if upperThresold already provided by URL params
+          setUmiUpperThreshold(locMaxUmiThreshold);
+        }
 
         readData = coordsData.map((obj, index) => ({
           ...obj,
@@ -311,7 +329,9 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        setUmiUpperThreshold(locMaxUmiThreshold);
+        if (umiUpperThreshold==0.01){ // do not reset if upperThresold already provided by URL params
+          setUmiUpperThreshold(locMaxUmiThreshold);
+        }
 
         console.log('locMaxUmiThreshold', locMaxUmiThreshold, 'chosenGene', chosenGene);
 
@@ -385,7 +405,7 @@ function Loader({dataConfig, validatedURLParams}){
         }
 
         // update state of unifiedData
-        setUnifiedData(readData);
+        setUnifiedDataTmp1(readData);
 
         setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
       }
@@ -425,15 +445,15 @@ function Loader({dataConfig, validatedURLParams}){
   // recreate unifiedData on change of umiUpperThreshold2 or umiLowerThreshold2 for matching the colormap to active range
   useEffect(()=>{
     if (chosenGene2.length>0){
-      let readData = unifiedData.map((obj, index) => ({
+      let readData = unifiedDataTmp1.map((obj, index) => ({
         ...obj,
-        logcnt2: Math.log(unifiedData[index].count2 +1 - umiLowerThreshold2)/Math.log(umiUpperThreshold2+1)
+        logcnt2: Math.log(unifiedDataTmp1[index].count2 +1 - umiLowerThreshold2)/Math.log(umiUpperThreshold2+1)
       }));
       setUnifiedData(readData);
       console.log("set2 ", readData);
     }  
 
-  }, [umiLowerThreshold2, umiUpperThreshold2]);
+  }, [umiLowerThreshold2, umiUpperThreshold2, unifiedDataTmp1]);
 
 
   // loading frequency bar plot data on change of chosenGene
@@ -559,7 +579,8 @@ function Loader({dataConfig, validatedURLParams}){
             UMI Count Threshold
           </Form.Label>
           <Col xs="1">
-            <DualSlider upperThreshold={maxUmiThreshold}
+            <DualSlider maxThreshold={maxUmiThreshold}
+                        upperThreshold={umiUpperThreshold}
                         lowerThreshold={umiLowerThreshold}
                         setUmiLowerThreshold={setUmiLowerThreshold} 
                         setUmiUpperThreshold={setUmiUpperThreshold}>
@@ -570,7 +591,8 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
           {chosenGene2.length>0?<>
           <Col xs="1">
-            <DualSlider upperThreshold={maxUmiThreshold2}
+            <DualSlider maxThreshold={maxUmiThreshold2}
+                        upperThreshold={umiUpperThreshold2}
                         lowerThreshold={umiLowerThreshold2}
                         setUmiLowerThreshold={setUmiLowerThreshold2} 
                         setUmiUpperThreshold={setUmiUpperThreshold2}>
@@ -608,7 +630,7 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
           <Col xs="1">
             <Form.Check 
-              defaultChecked={wireframeStatus}
+              // defaultChecked={wireframeStatus}
               checked={nisslStatus}
             type={'checkbox'}
             id={`nis-checkbox`}
@@ -618,7 +640,7 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
           <Col xs="2">
             <Form.Check 
-              defaultChecked={wireframeStatus}
+              // defaultChecked={wireframeStatus}
               checked={wireframeStatus}
             type={'checkbox'}
             id={`wf-checkbox`}

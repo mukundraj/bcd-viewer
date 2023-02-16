@@ -3,7 +3,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 import "../css/DualSlider.css"
 
-const DualSlider = ({upperThreshold, lowerThreshold, setUmiLowerThreshold, setUmiUpperThreshold}) => {
+const DualSlider = ({maxThreshold, upperThreshold, lowerThreshold, setUmiLowerThreshold, setUmiUpperThreshold}) => {
 
    function onSlide(render, handle, value, un, percent){
      setUmiLowerThreshold(value[0]);
@@ -12,7 +12,7 @@ const DualSlider = ({upperThreshold, lowerThreshold, setUmiLowerThreshold, setUm
   return(
     <>
       <div className="slider-styled" id="slider-round">
-        <Nouislider range={{ min: 0, max: upperThreshold }} start={[lowerThreshold, upperThreshold]} connect={[false,true,false]} 
+        <Nouislider range={{ min: 0, max: maxThreshold }} start={[lowerThreshold, upperThreshold]} connect={[false,true,false]} 
           onSlide={onSlide}
           tooltips={[true, true]}
           step={upperThreshold>2?1:upperThreshold/100}

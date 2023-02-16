@@ -564,7 +564,8 @@ function LoaderCellSpatial({dataConfig}){
             Score Threshold
           </Form.Label>
           <Col xs="1">
-            <DualSlider upperThreshold={maxScoreThreshold}
+            <DualSlider maxThreshold={maxScoreThreshold}
+                        upperThreshold={scoreUpperThreshold}
                         lowerThreshold={scoreLowerThreshold}
                         setUmiLowerThreshold={setScoreLowerThreshold} 
                         setUmiUpperThreshold={setScoreUpperThreshold}>
@@ -575,7 +576,8 @@ function LoaderCellSpatial({dataConfig}){
           </Col>
           {chosenCell2.length>0?<>
           <Col xs="1">
-            <DualSlider upperThreshold={maxScoreThreshold2}
+            <DualSlider maxThreshold={maxScoreThreshold2}
+                        upperThreshold={scoreUpperThreshold2}
                         lowerThreshold={scoreLowerThreshold2}
                         setUmiLowerThreshold={setScoreLowerThreshold2} 
                         setUmiUpperThreshold={setScoreUpperThreshold2}>
