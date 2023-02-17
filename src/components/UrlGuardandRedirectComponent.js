@@ -55,7 +55,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
     if (urlParams.path==='genex'){
 
       setChosenGene([urlParams.gene]);
-      if (urlParams.gene2==undefined){
+      if (urlParams.gene2!=="undefined"){
         setChosenGene2([urlParams.gene2]);
       }
       setChosenPuckid({...chosenPuckid, pid: urlParams.pid, gene: urlParams.gene});

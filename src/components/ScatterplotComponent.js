@@ -30,7 +30,6 @@ function Scatterplot({id, unidata,
   const selectedRegions = usePersistStore(state => state.selectedRegions);
 
   const currentColorMap = useStore(state => state.currentColorMap);
-  // const setCurrentColorMap = useStore(state => state.setCurrentColorMap);
   const wireframeStatus = useStore(state => state.wireframeStatus);
   const nisslStatus = useStore(state => state.nisslStatus);
 
@@ -39,7 +38,6 @@ function Scatterplot({id, unidata,
   const hexToRGBArray = hex =>  hex.match(/[a-f0-9]{2}/gi).map(v => parseInt(v,16));
   // console.log(interpolateViridis(0.5));
   // console.log(hexToRGBArray(interpolateViridis(0.5)));
-  // const [currentColorMap, setCurrentColorMap] = useState(() => interpolateViridis); 
 
   const [data, setData] = useState(() => unidata);
   const [regionTree, setRegionTree] = useState(null);
@@ -142,7 +140,7 @@ function Scatterplot({id, unidata,
     let colormap = getGeneralColormap(chosenItem2, currentColorMap);
     setGeneralColormap(colormap);
 
-  }, [chosenItem2.length, data, maxThreshold, maxThreshold2]);
+  }, [chosenItem2.length, data, maxThreshold, maxThreshold2, currentColorMap]);
 
   // console.log(unidata);
   const layer = new ScatterplotLayer({
