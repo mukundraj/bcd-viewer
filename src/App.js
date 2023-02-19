@@ -1,11 +1,23 @@
 import './App.css';
 import Main from './components/MainComponent';
+ import {
+   useQuery,
+   useMutation,
+   useQueryClient,
+   QueryClient,
+   QueryClientProvider,
+ } from 'react-query'
 
 function App() {
 
+  // Create a client
+ const queryClient = new QueryClient()
+
   return (
     <div>
+      <QueryClientProvider client={queryClient}>
       <Main />
+      </QueryClientProvider>
     </div>
   );
 }

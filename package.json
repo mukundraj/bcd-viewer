@@ -33,6 +33,7 @@
     "react-dropdown-tree-select": "^2.7.1",
     "react-ga4": "^2.0.0",
     "react-multi-carousel": "^2.8.2",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.2",
     "tree-util": "^1.0.7",
