@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import {srnoToPid} from "../shared/common"
 import {useStore, usePersistStore} from '../store/store'
 import GEComponentStore, {useGEComponentStore} from '../store/GEComponentStore'
+import {useQuery} from 'react-query'
 
 
 
@@ -48,6 +49,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       opacity: searchParams.get('opacityVal'),
       mth1: parseInt(searchParams.get('mth1')),
       mth2: parseInt(searchParams.get('mth2')),
+      regids: searchParams.get('regids'),
+      tmp: searchParams.get('tmp'),
     }
     console.log('urlParams', urlParams);
 
