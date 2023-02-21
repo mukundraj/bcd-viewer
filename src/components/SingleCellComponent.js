@@ -54,7 +54,7 @@ function SingleCell({dataConfig}){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure \t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const topStructureColumn = [{"label":"topstructure | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -139,7 +139,7 @@ function SingleCell({dataConfig}){
           zloader.getFlatArrDecompressed("/metadata/maxpcts"), // pct contribution from majority contributing cell class
           zloader.getFlatArrDecompressed("/metadata/uniqcellclasses"), 
           zloader.getFlatArrDecompressed("/metadata/mapStatus"), 
-          zloader.getFlatArrDecompressed("/metadata/topstructs"), 
+          zloader.getFlatArrDecompressed("/metadata/topstructs1"), 
           fetchJson(mappedCelltypeToIdxFile), 
           fetchJson(regionToCelltypeFile),
           zloader.getFlatArrDecompressed("/metadata/globalMaxAvgVal")
