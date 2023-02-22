@@ -108,7 +108,7 @@ function AuthHeader(props){
           </Nav>
         {isDemoPortal?false:
         <Nav>
-          {location.pathname!=='/'?
+          {location.pathname==='/genex'?
           <Button 
             onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
           >GetLink</Button>:null}
