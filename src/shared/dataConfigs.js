@@ -29,7 +29,7 @@ export const DATACONFIGS =
       dpathCellScores: "/batch_230131/cellspatial_data/cellscores",
       dpathFreqBarsJsons: "/cellspatial_data/freqbars/cell_jsons_s2c",
       regEnrichZarrPath: "/batch_230131/cellspatial_data/s2d_region_enrich/nz_zarr_230222.zarr",
-      nameInfoFilePath: "/batch_230131/cellspatial_data/s2d_region_enrich/gene_info_230222.json",
+      nameInfoFilePath: "/batch_230131/cellspatial_data/s2d_region_enrich/name_info_230222.json",
 
     }
   ]
