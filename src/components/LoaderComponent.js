@@ -36,7 +36,6 @@ function Loader({dataConfig, validatedURLParams}){
   
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
 
-  // const [chosenGene, setChosenGene] = useState(["Pcp4"])
   const chosenGene = usePersistStore(state => state.chosenGene);
   const setChosenGene = usePersistStore(state => state.setChosenGene);
 
@@ -469,7 +468,6 @@ function Loader({dataConfig, validatedURLParams}){
       // let fbarsDataUrl = await getUrl(fbars_data_path);
       let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${chosenGene[0]}.json`
       console.log('fbarsDataUrl', fbarsDataUrl);
-      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
       // console.log('meta_data_path ', meta_data_path);
       // console.log('meta_data_path ', meta_data_path2);
       const readData = await fetch(fbarsDataUrl)

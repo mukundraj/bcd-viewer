@@ -13,7 +13,7 @@ export const useStore = create(set => ({
     setCurrentColorMap: (val) => set({currentColorMap:val}),
     curRoute: 'none',
     setCurRoute: (val) => set({curRoute:val}),
-    geneOptions: ['Pcp4'],
+    geneOptions: ['Frmd7'],
     setGeneOptions: (val) => set({geneOptions:val}),
     chosenGene2:[],
     setChosenGene2: (val)=>set({chosenGene2:val}),
@@ -48,7 +48,7 @@ export const useStore = create(set => ({
     }));
 
 export const usePersistStore = create(persist( set => ({
-    chosenPuckid:{'pid':1, 'gene':'Pcp4', 'cell':'Inh_Lhx6_Nmu_1'},
+    chosenPuckid:{'pid':1, 'gene':'Frmd7', 'cell':'Inh_Lhx6_Nmu_1'},
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
     dendroData: [{"label": "Root", "value":"root", "children":[]}],
     setDendroData: (val)=>set({dendroData:val}),
@@ -60,7 +60,7 @@ export const usePersistStore = create(persist( set => ({
     setSelectedRegIds: (val)=>set({selectedRegIds:val}),
     dendroBarData:[...Array(101).keys()].map(x=>0),
     setDendroBarData: (val)=>set({dendroBarData:val}),
-    chosenGene:['Pcp4'],
+    chosenGene:['Frmd7'],
     setChosenGene: (val)=>set({chosenGene:val}),
     regionwiseData: null,
     setRegionwiseData: (val)=>set({regionwiseData:val}),

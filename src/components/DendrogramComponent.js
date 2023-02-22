@@ -87,7 +87,6 @@ function Dendrogram(props){
     const fetchData = async () => {
       let regionTreeDataPath = `test_data2/s9f/regions.json`
       let regionTreeDataUrl = await getUrl(regionTreeDataPath);
-      // let meta_data_path2 = 'https://storage.googleapis.com/ml_portal/test_data/gene_jsons/puck1/metadata_gene_Pcp4.json'
       // console.log('meta_data_path ', meta_data_path);
       // console.log('meta_data_path ', meta_data_path2);
       const readData = await fetch(regionTreeDataUrl)

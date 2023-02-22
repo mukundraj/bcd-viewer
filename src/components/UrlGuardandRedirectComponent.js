@@ -168,4 +168,3 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
 export default UrlGuardAndRedirect;
 
-// localhost:3000/genex?paramgene=Pcp4
