@@ -61,36 +61,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
 
 
-  // loading dendro data
-  useEffect(()=>{
-    
-    const fetchData = async () => {
-      let regionTreeDataPath = `test_data2/s9f/regions.json`
-      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
-      const readData = await fetch(regionTreeDataUrl)
-       .then(response => response.json());
-
-      // console.log(readData);
-      setDendroData(readData["children"]);
-      // setDendroData(readData["children"]);
-      let regionTreeNodePaths = getPaths(readData["children"]);
-      setRegionTreeNodePaths(regionTreeNodePaths);
-      console.log('regionTreeNodePaths', regionTreeNodePaths);
-
-    }
-    console.log('dendroData length', dendroData.length, dendroData);
-    if (dendroData.length === 1){ // load dendroData and populate regionTreeNodePaths
-      fetchData(); 
-    }else{
-      console.log('dendroData already loaded', dendroData);
-    }
-    
-    // console.log(data);
-
-  }, []);
-
-
-
   const checkParams = (searchParams) => {
 
     let regidsTmp = searchParams.get('regids')?searchParams.get('regids').split(','):[];
@@ -174,13 +144,15 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   useEffect(  () => {
 
-    selectedRegIds.forEach((regId)=>{
-      let dendroDataTmp = dendroData;
-      dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId, true);
-      setDendroData(dendroDataTmp);
+    if (Object.keys(regionTreeNodePaths).length>0){ // guard against delayed loading of regionTreeNodePaths
+      selectedRegIds.forEach(regId=>{
+        let dendroDataTmp = dendroData;
+        dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId, true);
+        setDendroData(dendroDataTmp);
       });
+   }   
     
-  }, [selectedRegIds]);
+  }, [selectedRegIds, regionTreeNodePaths]);
 
   return (
     <>
