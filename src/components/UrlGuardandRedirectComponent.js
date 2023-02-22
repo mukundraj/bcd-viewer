@@ -92,6 +92,12 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
 
   const checkParams = (searchParams) => {
+
+    let regidsTmp = searchParams.get('regids')?searchParams.get('regids').split(','):[];
+    if (regidsTmp.length>0){
+      regidsTmp = regidsTmp.map(x=>parseInt(x));
+    }
+
     let urlParams = {
       path: searchParams.get('path'),
       pid: srnoToPid[parseInt(searchParams.get('srno'))],
@@ -107,7 +113,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       opacity: searchParams.get('opacityVal'),
       mth1: parseInt(searchParams.get('mth1')),
       mth2: parseInt(searchParams.get('mth2')),
-      regids: searchParams.get('regids')?searchParams.get('regids').split(',').map((x)=>parseInt(x)):[],
+      regids: regidsTmp,
       tmp: searchParams.get('tmp'),
     }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
