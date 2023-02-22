@@ -25,7 +25,7 @@ import RegEnrich from "./RegEnrichComponent"
 
 function Loader({dataConfig, validatedURLParams}){
 
-  const {maxCountMetadataKey, basePath, dpathGeneExprs, dpathFreqBarsJsons} = dataConfig;
+  const {maxCountMetadataKey, basePath, dpathGeneExprs, dpathFreqBarsJsons, regEnrichZarrPath, nameInfoFilePath} = dataConfig;
 
   const carouselRef = useStore(state => state.carouselRef);
 
@@ -512,7 +512,7 @@ function Loader({dataConfig, validatedURLParams}){
       setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
   
-  let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`;
+  // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`;
 
   const updateChosenItem = (newItem, newPid) => {
     console.log('chosenGene ', newItem, ' pid ', newPid);
@@ -677,9 +677,10 @@ function Loader({dataConfig, validatedURLParams}){
           sbarWidth={100} sbarHeight={100}
         />
         <RegEnrich setDataLoadStatus={setDataLoadStatus}
-                   regEnrichZarrPath={regEnrichZarrPath}
+                  regEnrichZarrPath={`${basePath}${regEnrichZarrPath}`}
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Gene"
+                  nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
         />
       </div>
       {/* <div className="add-border floater"> */}

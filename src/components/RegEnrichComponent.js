@@ -7,7 +7,7 @@ import {useStore, usePersistStore} from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
-function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader}){
+function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath}){
 
 
   let columns = null;
@@ -110,8 +110,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
         let row_idx = ridToIdx[selectedRegIds[0]];
             console.log('row_idx', row_idx, selectedRegIds, ridToIdx);
         // let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/p${chosenPuckid}/X`, row_idx), 
-        let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/pall/X`, row_idx), 
-          zloader.getDataRow(`nz_aggr.zarr/pall/Xout`, row_idx)]);
+        let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`/pall/X`, row_idx), 
+          zloader.getDataRow(`/pall/Xout`, row_idx)]);
 
         let inFracsTmp = dataRow; // for case with only one region selected
         let outFracsTmp = dataRowOut;
@@ -119,7 +119,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
         if (selectedRegIds.length>1){ // add to existing array for >1 region selected
           for (let i=1; i<selectedRegIds.length; i++){
             let row_idx = ridToIdx[selectedRegIds[i]];
-            let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`nz_aggr.zarr/pall/X`, row_idx), zloader.getDataRow(`nz_aggr.zarr/pall/Xout`, row_idx)]);
+            let [dataRow, dataRowOut] = await Promise.all([zloader.getDataRow(`/pall/X`, row_idx), zloader.getDataRow(`/pall/Xout`, row_idx)]);
             // console.log('dataRow', dataRow);
             if (!isNaN(dataRow[0]) && (!isNaN(dataRowOut[0]))){ // a lazy check too see if selected region/outRegion has no beads for current puck
               for (let j=0; j<dataRow.length; j++){
@@ -156,7 +156,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
     const fetchData = async (row_idx) => {
       // let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
       let zloader = new ZarrLoader({zarrPathInBucket:regEnrichZarrPath});
-      let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
+      let dataRow = await zloader.getDataRow("/rids/X", row_idx);
 
       let ridToIdxTmp = {};
       for (let i=0; i<dataRow.length; i++){
@@ -165,7 +165,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
       setRidToIdx(ridToIdxTmp);
 
       // let geneInfoPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/gene_info.json`
-      let geneInfoPath = `${regEnrichZarrPath}names_info.json`
+      // let geneInfoPath = `${regEnrichZarrPath}names_info.json`
+      let geneInfoPath = `${nameInfoFilePath}`
       // let geneOptionsUrl = await getUrl(geneNamesPath);
       console.log("geneOptionsUrl ", geneInfoPath);
       // const geneOptions = await load(geneOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});

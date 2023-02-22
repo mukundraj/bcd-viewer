@@ -23,7 +23,7 @@ import RegEnrich from "./RegEnrichComponent"
 
 function LoaderCellSpatial({dataConfig}){
 
-  const {basePath, dpathCellScores, dpathFreqBarsJsons} = dataConfig;
+  const {basePath, dpathCellScores, dpathFreqBarsJsons, regEnrichZarrPath, nameInfoFilePath} = dataConfig;
   const carouselRef = useStore(state => state.carouselRef);
   const generalToggleFlag = useStore(state => state.generalToggleFlag);
   const togglePid = useStore(state => state.togglePid);
@@ -33,7 +33,7 @@ function LoaderCellSpatial({dataConfig}){
 
 
   const maxScoreThreshold = useCSComponentStore(state => state.maxScoreThreshold);
-  const setMaxScoreThreshold = useCSComponentStore(state => state.setMaxScoreThreshold);
+  const setMaxScoreThreshold = useCSComponentStore(state => state.setMaxScoreThreshold)
   const maxScoreThreshold2 = useCSComponentStore(state => state.maxScoreThreshold2);
   const setMaxScoreThreshold2 = useCSComponentStore(state => state.setMaxScoreThreshold2);
 
@@ -494,7 +494,7 @@ function LoaderCellSpatial({dataConfig}){
     setChosenCell(cell);
   }
 
-  let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
+  // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
 
   const updateChosenItem = (newItem, newPid) => {
     console.log('chosenCelltype ', newItem, ' pid ', newPid);
@@ -654,9 +654,10 @@ function LoaderCellSpatial({dataConfig}){
           sbarWidth={100} sbarHeight={100}
         />
         <RegEnrich setDataLoadStatus={setDataLoadStatus}
-                   regEnrichZarrPath={regEnrichZarrPath}
+                   regEnrichZarrPath={`${basePath}${regEnrichZarrPath}`}
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Celltype"
+                  nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
         />
       </div>
     </div>
