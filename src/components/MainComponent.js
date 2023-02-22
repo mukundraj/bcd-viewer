@@ -47,7 +47,7 @@ function Main(props){
           <Routes>
             <Route path="/" element={<AuthHeader/>}>
               <Route index path="/" element={<Home/>}/>
-              <Route path="redir" element={<UrlGuardAndRedirect/>}/>
+              <Route path="redir" element={<UrlGuardAndRedirect dataConfig={DATACONFIGS[1]}/>}/>
               <Route path="genex" element={ <RequireAuth><Loader dataConfig={DATACONFIGS[0]}/> </RequireAuth>} />
               <Route path="singlecell" element={ <RequireAuth><SingleCell dataConfig={DATACONFIGS[1]}/></RequireAuth>} />
               <Route path="cellspatial" element={ <RequireAuth><LoaderCellSpatial dataConfig={DATACONFIGS[2]}/></RequireAuth>} />

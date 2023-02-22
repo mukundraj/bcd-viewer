@@ -5,7 +5,10 @@ import { useState, useEffect } from 'react'
 import {srnoToPid} from "../shared/common"
 import {useStore, usePersistStore} from '../store/store'
 import GEComponentStore, {useGEComponentStore} from '../store/GEComponentStore'
-import {useQuery} from 'react-query'
+import {load} from '@loaders.gl/core';
+import {CSVLoader} from '@loaders.gl/csv';
+import {getPaths, markDendroDataNode} from "../shared/utils"
+import {getUrl} from "../shared/common"
 
 
 
@@ -32,6 +35,61 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
   const setMaxUmiThreshold2 = useStore(state => state.setMaxUmiThreshold2);
 
+  const setSelectedRegions = usePersistStore(state => state.setSelectedRegions);
+  const setSelectedRegIds = usePersistStore(state => state.setSelectedRegIds);
+
+  const dendroData = usePersistStore(state => state.dendroData);
+  const setDendroData = usePersistStore(state => state.setDendroData);
+  const regionTreeNodePaths = usePersistStore(state => state.regionTreeNodePaths);
+  const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodePaths);
+
+  const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+
+  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
+
+  const [regidToNameMap, setRegidToNameMap] = useState(null);
+
+    const fetchData = async () => {
+      let acroIdNameMapFile = `${basePath}${dpathIdAcroNameMap}`;
+      const acroIdNameMap = await load(acroIdNameMapFile, [CSVLoader], {csv:{delimiter:"\t"}});
+
+      console.log('acroId', acroIdNameMap);
+      let regidToNameMapTmp = {};
+      acroIdNameMap.forEach(x=>regidToNameMapTmp[x.column1] = x.column3);
+      setRegidToNameMap(regidToNameMapTmp);
+    }
+
+
+
+  // loading dendro data
+  useEffect(()=>{
+    
+    const fetchData = async () => {
+      let regionTreeDataPath = `test_data2/s9f/regions.json`
+      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
+      const readData = await fetch(regionTreeDataUrl)
+       .then(response => response.json());
+
+      // console.log(readData);
+      setDendroData(readData["children"]);
+      // setDendroData(readData["children"]);
+      let regionTreeNodePaths = getPaths(readData["children"]);
+      setRegionTreeNodePaths(regionTreeNodePaths);
+      console.log('regionTreeNodePaths', regionTreeNodePaths);
+
+    }
+    console.log('dendroData length', dendroData.length, dendroData);
+    if (dendroData.length === 1){ // load dendroData and populate regionTreeNodePaths
+      fetchData(); 
+    }else{
+      console.log('dendroData already loaded', dendroData);
+    }
+    
+    // console.log(data);
+
+  }, []);
+
+
 
   const checkParams = (searchParams) => {
     let urlParams = {
@@ -49,9 +107,11 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       opacity: searchParams.get('opacityVal'),
       mth1: parseInt(searchParams.get('mth1')),
       mth2: parseInt(searchParams.get('mth2')),
-      regids: searchParams.get('regids'),
+      regids: searchParams.get('regids').split(',').map((x)=>parseInt(x)),
       tmp: searchParams.get('tmp'),
     }
+      urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
+
     console.log('urlParams', urlParams);
 
     // check if all needed params present and if so update state and return status true
@@ -72,6 +132,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setUmiUpperThreshold2(urlParams.thh2);
       setMaxUmiThreshold(urlParams.mth1);
       setMaxUmiThreshold2(urlParams.mth2);
+      
+      setSelectedRegions(urlParams.regnames);
+      setSelectedRegIds(urlParams.regids);
 
       return {status: true, path: '/genex'}
     }
@@ -90,20 +153,35 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   useEffect(() => {
     if (searchParams) {
-      const urlParamStatusTmp = checkParams(searchParams);
-      console.log('urlParamStatusTmp', urlParamStatusTmp)
-      setUrlParamStatus(urlParamStatusTmp);
-      
+      fetchData();
    }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (regidToNameMap){
+      const urlParamStatusTmp = checkParams(searchParams);
+      console.log('urlParamStatusTmp', urlParamStatusTmp)
+      setUrlParamStatus(urlParamStatusTmp);
+    }
+
+  }, [regidToNameMap]);
+
+  useEffect(  () => {
+
+    selectedRegIds.forEach((regId)=>{
+      let dendroDataTmp = dendroData;
+      dendroDataTmp = markDendroDataNode(dendroDataTmp, regionTreeNodePaths, regId, true);
+      setDendroData(dendroDataTmp);
+      });
+    
+  }, [selectedRegIds]);
 
   return (
     <>
       {urlParamStatus.status?<Navigate to={urlParamStatus.path}/>:
       <div>
-      <h5>Invalid URL parameters</h5>
-      <h6> You can return to the home page or one of the analysis tabs using links on the navigation bar above.</h6>
+      <h5>Reading URL parameters... </h5>
+      <h6> In case URL is malformed, your target page will not load. You can still return to the home page or one of the analysis tabs using links on the navigation bar above.</h6>
       </div>}
     </>
   );
