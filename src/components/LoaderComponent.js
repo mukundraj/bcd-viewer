@@ -291,8 +291,9 @@ function Loader({dataConfig, validatedURLParams}){
         }));
       }       
       setUnifiedData(readData);
-      if (coordsData.length>1)
+      if (coordsData.length>1){
         setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1})); 
+        }
     }
     
     if (chosenPuckid.gene === chosenGene[0]){
@@ -370,6 +371,7 @@ function Loader({dataConfig, validatedURLParams}){
   // loading new counts on new gene selection for chosenGene2
   useEffect(()=>{
     console.log('unidatalength', unifiedData.length, 'chosenGene2', chosenGene2);
+    if(chosenPuckid.gene !== chosenGene[0]) // hacky way to prevent following code running when only unifiedData.length changes but not chosenGene2 - happens when changing puck - fixme todo
     if (unifiedData.length>1){
       if (geneOptions.includes(chosenGene2[0])){
         // create filename string using gene name and puckid
