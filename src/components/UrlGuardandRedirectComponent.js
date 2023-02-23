@@ -43,6 +43,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const regionTreeNodePaths = usePersistStore(state => state.regionTreeNodePaths);
   const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodePaths);
 
+  const setMinFrac = useStore(state => state.setMinFrac);
+  const setMaxFrac = useStore(state => state.setMaxFrac);
+
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
 
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
@@ -84,7 +87,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       mth1: parseInt(searchParams.get('mth1')),
       mth2: parseInt(searchParams.get('mth2')),
       regids: regidsTmp,
-      tmp: searchParams.get('tmp'),
+      minfrac: parseFloat(searchParams.get('minfrac')),
+      maxfrac: parseFloat(searchParams.get('maxfrac')),
     }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
 
@@ -108,6 +112,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setUmiUpperThreshold2(urlParams.thh2);
       setMaxUmiThreshold(urlParams.mth1);
       setMaxUmiThreshold2(urlParams.mth2);
+      setMinFrac(urlParams.minfrac);
+      setMaxFrac(urlParams.maxfrac);
       
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);

@@ -82,10 +82,15 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   const [geneNames, setGeneNames] = useState([]);
   const [maxExprPids, setMaxExprPids] = useState([]);
   const [fullData, setFullData] = useState([]);
-  const [minFrac, setMinFrac] = useState(0); // at least frac
+  // const [minFrac, setMinFrac] = useState(0); // at least frac
+  const minFrac = useStore(state => state.minFrac);
+  const setMinFrac = useStore(state => state.setMinFrac);
 
-  const initSecFieldVal = firstColHeader==="Gene"?1:0;
-  const [maxFrac, setMaxFrac] = useState(initSecFieldVal); // at most frac
+  // const initSecFieldVal = firstColHeader==="Gene"?1:0;
+  // const [maxFrac, setMaxFrac] = useState(initSecFieldVal); // at most frac
+  const maxFrac = useStore(state => state.maxFrac);
+  const setMaxFrac = useStore(state => state.setMaxFrac);
+
 
   const setCurrentREgene = useStore(state => state.setCurrentREgene);
   const setOrder = useStore(state => state.setOrder);

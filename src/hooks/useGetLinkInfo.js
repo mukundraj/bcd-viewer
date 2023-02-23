@@ -26,6 +26,10 @@ const useGetLinkInfo = () => {
     const umiUpperThreshold2 = useGEComponentStore(state => state.umiUpperThreshold2);
     const opacityVal = useGEComponentStore(state => state.opacityVal);
     const selectedRegIds = usePersistStore(state => state.selectedRegIds);
+    const minFrac = useStore(state => state.minFrac);
+    const maxFrac = useStore(state => state.maxFrac);
+
+
 
     const generateGenexLink = () =>
     {
@@ -34,7 +38,7 @@ const useGetLinkInfo = () => {
         const regIdsStr = selectedRegIds.join(',');
 
         console.log('uumiLowerThreshold', umiLowerThreshold, 'uumiUpperThreshold', umiUpperThreshold);
-        const link = `${window.location.origin}/redir?path=genex&srno=${pidToSrno[pid]}&gene=${gene}&thl=${umiLowerThreshold}&thh=${umiUpperThreshold}&gene2=${chosenGene2[0]}&thl2=${umiLowerThreshold2}&thh2=${umiUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityVal}&mth1=${maxUmiThreshold}&mth2=${maxUmiThreshold2}&regids=${regIdsStr}&tmp=1`
+        const link = `${window.location.origin}/redir?path=genex&srno=${pidToSrno[pid]}&gene=${gene}&thl=${umiLowerThreshold}&thh=${umiUpperThreshold}&gene2=${chosenGene2[0]}&thl2=${umiLowerThreshold2}&thh2=${umiUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityVal}&mth1=${maxUmiThreshold}&mth2=${maxUmiThreshold2}&regids=${regIdsStr}&minfrac=${minFrac}&maxfrac=${maxFrac}`
         return link;
     }
 

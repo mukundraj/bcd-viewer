@@ -45,6 +45,10 @@ export const useStore = create(set => ({
     setCurrentREgene: (val)=>set({currentREgene:val}),
     generalColormap: ()=>[0, 0, 0],
     setGeneralColormap: (val)=>set({generalColormap:val}),
+    minFrac: 0,
+    setMinFrac: (val)=>set({minFrac:val}),
+    maxFrac: 1,
+    setMaxFrac: (val)=>set({maxFrac:val}),
     }));
 
 export const usePersistStore = create(persist( set => ({
