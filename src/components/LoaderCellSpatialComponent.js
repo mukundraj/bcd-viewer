@@ -70,7 +70,6 @@ function LoaderCellSpatial({dataConfig}){
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
 
-  // const [cellNameToIdx, setCellNameToIdx] = useState({'Inh_Lhx6_Nmu_1':560 });
   const cellNameToIdx = useCSCPersistStore(state => state.cellNameToIdx);
   const setCellNameToIdx = useCSCPersistStore(state => state.setCellNameToIdx);
 
