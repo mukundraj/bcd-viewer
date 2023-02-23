@@ -54,7 +54,7 @@ function SingleCell({dataConfig}){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const topStructureColumn = [{"label":"topstructure | gene set cover | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -561,8 +561,8 @@ function SingleCell({dataConfig}){
               <>
                 <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
                 <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={12} handleSorting={handleSorting}/>
-                <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={44} handleSorting={handleSorting}/>
+                <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={36} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="3">
