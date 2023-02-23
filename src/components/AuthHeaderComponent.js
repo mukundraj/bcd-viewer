@@ -27,10 +27,10 @@ function AuthHeader(props){
   useEffect(()=>{
     let hostname = window.location.hostname;
     console.log('hostname', hostname, 'isDemoPortal', isDemoPortal, hostname==='braincelldata.uc.r.appspot.com' );
-    if (hostname==='braincelldata.uc.r.appspot.com'){
+    // if (hostname==='braincelldata.uc.r.appspot.com'){
       setIsDemoPortal(true);
       setIsLoggedIn(true);
-    }
+    // }
 
   },[])
 
@@ -106,15 +106,15 @@ function AuthHeader(props){
             {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink> */}
             <a className="nav-link" href="https://docs.braincelldata.org">Docs</a>
           </Nav>
-        {isDemoPortal?false:
         <Nav>
           {location.pathname==='/genex'?
-          <Button 
-            onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
-          >GetLink</Button>:null}
-          <Button onClick={logInOut}>{loginButtonText}</Button>
+            <Button 
+              onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
+            >GetLink</Button>:null}
+          {isDemoPortal?false:
+            <Button onClick={logInOut}>{loginButtonText}</Button>
+          }
         </Nav>
-        }
       </Navbar>
       <Outlet/>
     </>
