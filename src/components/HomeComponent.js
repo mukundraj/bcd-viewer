@@ -24,6 +24,9 @@ function Home(props){
           {/* <h1>Welcome</h1> */}
             <h4>Welcome to BrainCellData!</h4>
           <p>
+              Checkout our preprint: <a href="https://www.biorxiv.org/content/10.1101/2023.03.06.531307v1">The cell type composition of the adult mouse brain revealed by single cell and spatial genomics</a>!
+              </p>
+          <p>
 
             This site is managed by the <a
               href="https://macoskolab.com">Macosko lab</a> at the <a
@@ -44,6 +47,9 @@ function Home(props){
           </ul>
           
           <p> For more information, and to download the data, please see the <a href="https://docs.braincelldata.org">documentation</a> pages.</p>
+              <p>
+              Please email braincelldata at gmail dot com with any questions, comments, or queries.
+              </p>
         </div>
 
       )
