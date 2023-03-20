@@ -453,7 +453,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
     
     const fetchData = async () => {
-      let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${chosenCell[0]}.json`
+      let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${chosenPuckid.cell}.json`
       const readData = await fetch(fbarsDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
@@ -464,7 +464,7 @@ function LoaderCellSpatial({dataConfig}){
     
     console.log(fbarsData);
 
-  },[chosenCell]);
+  },[chosenPuckid.cell]);
 
   const [viewState, setViewState] = useState({
     // target: [228, 160, 0],
