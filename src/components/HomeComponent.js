@@ -24,7 +24,7 @@ function Home(props){
           {/* <h1>Welcome</h1> */}
             <h4>Welcome to BrainCellData!</h4>
           <p>
-              Checkout our preprint: <a href="https://www.biorxiv.org/content/10.1101/2023.03.06.531307v1">The cell type composition of the adult mouse brain revealed by single cell and spatial genomics</a>!
+              Checkout our preprint: <a href="https://www.biorxiv.org/content/10.1101/2023.03.06.531307v2">The cell type composition of the adult mouse brain revealed by single cell and spatial genomics</a>!
               </p>
           <p>
 
