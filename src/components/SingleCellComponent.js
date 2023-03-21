@@ -577,8 +577,8 @@ function SingleCell({dataConfig}){
           {columns.length>0?
             <>
               <Col xs="9">
-                <div style={{float:'left', width:'69%'}}>&nbsp;</div>
-                <div style={{ float:'left', width:'30%'}}>
+                <div style={{float:'left', width:'70%'}}>&nbsp;</div>
+                <div style={{ float:'left', width:'29%'}}>
                   <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/>
                 </div>
               </Col>
@@ -596,7 +596,7 @@ function SingleCell({dataConfig}){
                 <Table columns={neurotransBinaryColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
                 <Table columns={neuropepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
                 <Table columns={neuropepRecepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={31} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={29} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="3">
