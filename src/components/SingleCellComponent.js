@@ -52,9 +52,9 @@ function SingleCell({dataConfig}){
   const [regionToCelltype, setRegionToCelltype] = useState(()=>{});
   const [cellClassOptions, setCellClassOptions] = useState(()=>[]);
   const prevMultiSelections = useRef([]);
-  const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
-  const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure | gene_set_cover | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const cellTypeColumn = [{"label":"celltype \t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
+  const cellClassColumn = [{"label":"cellclass \t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
+  const topStructureColumn = [{"label":"topstructure \t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
   const geneSetCoverColumn = [{"label":"gene_set_cover \t\t\t\t\t\t\t", "accessor":"gs"}] // tabs maintain col width, consequently col height
   const neurotransBinaryColumn = [{"label":"neurotrans_binary \t\t\t\t\t\t\t", "accessor":"nt"}] // tabs maintain col width, consequently col height
   const neuropepColumn = [{"label":"neuropep \t\t\t\t\t\t\t", "accessor":"np"}] // tabs maintain col width, consequently col height
