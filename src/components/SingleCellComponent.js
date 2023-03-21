@@ -125,6 +125,22 @@ function SingleCell({dataConfig}){
 
   },[]);
 
+  const coolGenes = ['Siglech', 'Flt1', 'Dcn',  'Pitx2', 'Nrk', 'Slc6a4','Slc6a3', 'Sst', 'Vip'];
+  const moveCoolGenesToTop = (coolGenes, allGenes) => {
+
+    // iterate over coolGenes and move them to top of allGenes
+    for (let i=0; i<coolGenes.length; i++){
+      let idx = allGenes.findIndex(x => x === coolGenes[i]);
+      if (idx !== -1){
+        let gene = allGenes[idx];
+        allGenes.splice(idx, 1);
+        allGenes.unshift(gene);
+      }
+    }
+
+    return  allGenes;
+  }
+
   // get zarr store connection and initialize geneOptions
   useEffect(()=>{
     const fetchData = async () => {
@@ -165,7 +181,8 @@ function SingleCell({dataConfig}){
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
-      setGeneOptions(dataGenes);
+      const coolGenesOnTopArray = moveCoolGenesToTop(coolGenes, dataGenes);
+      setGeneOptions(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i], "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
       setTableData(initTableData);
