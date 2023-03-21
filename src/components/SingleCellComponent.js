@@ -54,7 +54,11 @@ function SingleCell({dataConfig}){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t\t\t\t\t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t\t\t\t\t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure | gene set cover | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const topStructureColumn = [{"label":"topstructure | gene_set_cover | neurotrans_binary | neuropep | neuropep_receptor\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const geneSetCoverColumn = [{"label":"gene_set_cover \t\t\t\t\t\t\t", "accessor":"gs"}] // tabs maintain col width, consequently col height
+  const neurotransBinaryColumn = [{"label":"neurotrans_binary \t\t\t\t\t\t\t", "accessor":"nt"}] // tabs maintain col width, consequently col height
+  const neuropepColumn = [{"label":"neuropep \t\t\t\t\t\t\t", "accessor":"np"}] // tabs maintain col width, consequently col height
+  const neuropepRecepColumn = [{"label":"receptor_neuropep \t\t\t\t\t\t\t", "accessor":"npr"}] // tabs maintain col width, consequently col height
   const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
@@ -132,7 +136,11 @@ function SingleCell({dataConfig}){
       let [dataGenes, dataCellTypesRaw, dataCellClasses, dataMaxPct, dataUniqCellClasses, dataMapStatus,
           dataTopStructs,
           dataMappedCellTypesToIdx, dataRegionToCellTypeMap,
-          dataGlobalMaxAvgVal] = await Promise.all(
+          dataGlobalMaxAvgVal, 
+          dataGeneSetCover, 
+          dataNeuroTrans, 
+          dataNeuroPep, 
+          dataNeuroPepRecep] = await Promise.all(
         [zloader.getFlatArrDecompressed("/var/genes"),
           zloader.getFlatArrDecompressed("/obs/clusters"), 
           zloader.getFlatArrDecompressed("/metadata/cellclasses"), 
@@ -142,7 +150,12 @@ function SingleCell({dataConfig}){
           zloader.getFlatArrDecompressed("/metadata/topstructs1"), 
           fetchJson(mappedCelltypeToIdxFile), 
           fetchJson(regionToCelltypeFile),
-          zloader.getFlatArrDecompressed("/metadata/globalMaxAvgVal")
+          zloader.getFlatArrDecompressed("/metadata/globalMaxAvgVal"),
+          zloader.getFlatArrDecompressed("/metadata/geneCovers"),
+          zloader.getFlatArrDecompressed("/metadata/neuroTrans"),
+          zloader.getFlatArrDecompressed("/metadata/neuroPep"),
+          zloader.getFlatArrDecompressed("/metadata/neuroPepRecep"),
+          zloader.getFlatArrDecompressed("/metadata/neuroPepRecep")
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -154,7 +167,7 @@ function SingleCell({dataConfig}){
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       setGeneOptions(dataGenes);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]]}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i], "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
       setTableData(initTableData);
       setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -547,8 +560,8 @@ function SingleCell({dataConfig}){
           {columns.length>0?
             <>
               <Col xs="9">
-                <div style={{float:'left', width:'53%'}}>&nbsp;</div>
-                <div style={{ float:'left', width:'45%'}}>
+                <div style={{float:'left', width:'69%'}}>&nbsp;</div>
+                <div style={{ float:'left', width:'30%'}}>
                   <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/>
                 </div>
               </Col>
@@ -559,10 +572,14 @@ function SingleCell({dataConfig}){
           <Col className="" xs="9">
             {columns.length>0?
               <>
-                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
-                <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={12} handleSorting={handleSorting}/>
-                <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={22} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={36} handleSorting={handleSorting}/>
+                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={16} handleSorting={handleSorting}/>
+                <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={geneSetCoverColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={neurotransBinaryColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={neuropepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={neuropepRecepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
+                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={31} handleSorting={handleSorting}/>
               </>:null}
           </Col>
           <Col xs="3">
