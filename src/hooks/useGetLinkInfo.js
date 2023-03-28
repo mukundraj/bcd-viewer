@@ -5,6 +5,7 @@ import {useStore, usePersistStore} from '../store/store'
 import { useLocation } from 'react-router-dom'
 import {pidToSrno} from "../shared/common"
 import useGEComponentStore from '../store/GEComponentStore'
+import {useSCComponentPersistStore} from '../store/SCComponentStore'
 
 
 
@@ -29,6 +30,20 @@ const useGetLinkInfo = () => {
     const minFrac = useStore(state => state.minFrac);
     const maxFrac = useStore(state => state.maxFrac);
 
+    // states for SC component
+    const multiSelections = useSCComponentPersistStore(state => state.multiSelections);
+    const order = useSCComponentPersistStore(state => state.order);
+    const sortField = useSCComponentPersistStore(state => state.sortField);
+    const cellClassSelection = useSCComponentPersistStore(state => state.cellClassSelection);
+    const sortByToggleVal = useSCComponentPersistStore(state => state.sortByToggleVal);
+    const maxCellTypes = useSCComponentPersistStore(state => state.maxCellTypes);
+    const minCompoPct = useSCComponentPersistStore(state => state.minCompoPct);
+    const adaptNormalizerStatus = useSCComponentPersistStore(state => state.adaptNormalizerStatus);
+    // const downsampledTableData = useSCComponentPersistStore(state => state.downsampledTableData);
+
+
+    // states for CS component
+
 
 
     const generateGenexLink = () =>
@@ -44,7 +59,12 @@ const useGetLinkInfo = () => {
 
     const generateSingleCellLink = () =>
     {
-        const link = `${window.location.origin}/redir?gene=${gene}&pid=${pid}&cell=${cell}`
+
+        const genes = multiSelections.map((gene) => gene).join(',');
+        const regIdsStr = selectedRegIds.join(',');
+
+        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&maxCellTypes=${maxCellTypes}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}`
+        // console.log('link', link);
         return link;
     }
 

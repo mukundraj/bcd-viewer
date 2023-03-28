@@ -37,10 +37,8 @@ export const useStore = create(set => ({
     setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
     tableDataSorted:[], 
     setTableDataSorted: (val)=>set({tableDataSorted:val}),
-    sortField:"", 
-    setSortField: (val)=>set({sortField:val}),
-    order:"desc", 
-    setOrder: (val)=>set({order:val}),
+    order:"desc",  // retained for use in RegEnrichComponent
+    setOrder: (val)=>set({order:val}), // retained for use in RegEnrichComponent
     currentREgene: "None",
     setCurrentREgene: (val)=>set({currentREgene:val}),
     generalColormap: ()=>[0, 0, 0],

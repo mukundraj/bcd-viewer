@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {useStore} from '../../store/store'
 import {useSCComponentStore} from '../../store/SCComponentStore'
+import {useSCComponentPersistStore} from '../../store/SCComponentStore'
 
 const TableHead = ({columns, handleSorting}) => {
 
@@ -8,10 +9,10 @@ const TableHead = ({columns, handleSorting}) => {
   // const [order, setOrder] = useState("asc");
   const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
 
-  const sortField = useStore(state => state.sortField);
-  const setSortField = useStore(state => state.setSortField);
-  const order = useStore(state => state.order);
-  const setOrder = useStore(state => state.setOrder);
+  const sortField = useSCComponentPersistStore(state => state.sortField);
+  const setSortField = useSCComponentPersistStore(state => state.setSortField);
+  const order = useSCComponentPersistStore(state => state.order);
+  const setOrder = useSCComponentPersistStore(state => state.setOrder);
 
   const handleSortingChange = (accessor) => {
     const sortOrder =

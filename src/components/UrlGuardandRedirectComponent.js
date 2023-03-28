@@ -9,6 +9,7 @@ import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {getPaths, markDendroDataNode} from "../shared/utils"
 import {getUrl} from "../shared/common"
+import {useSCComponentPersistStore} from '../store/SCComponentStore'
 
 
 
@@ -50,6 +51,18 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
 
+
+  // SC component related
+  const setMultiSelections = useSCComponentPersistStore(state => state.setMultiSelections);
+  const setOrder = useSCComponentPersistStore(state => state.setOrder);
+  const setSortField = useSCComponentPersistStore(state => state.setSortField);
+  const setSortByToggleVal = useSCComponentPersistStore(state => state.setSortByToggleVal);
+  const setMaxCellTypes = useSCComponentPersistStore(state => state.setMaxCellTypes);
+  const setMinCompoPct = useSCComponentPersistStore(state => state.setMinCompoPct);
+  const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
+  const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
+
+
   const [regidToNameMap, setRegidToNameMap] = useState(null);
 
     const fetchData = async () => {
@@ -71,31 +84,31 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       regidsTmp = regidsTmp.map(x=>parseInt(x));
     }
 
-    let urlParams = {
-      path: searchParams.get('path'),
-      pid: srnoToPid[parseInt(searchParams.get('srno'))],
-      gene: searchParams.get('gene'),
-      thl: parseFloat(searchParams.get('thl')),
-      thh: parseFloat(searchParams.get('thh')),
-      gene2: searchParams.get('gene2'),
-      thl2: parseFloat(searchParams.get('thl2')),
-      thh2: parseFloat(searchParams.get('thh2')),
-      fbd: searchParams.get('fbd'),
-      nisslStatus: searchParams.get('nisslStatus')==='true',
-      wireframeStatus: searchParams.get('wireframeStatus')==='true',
-      opacity: searchParams.get('opacityVal'),
-      mth1: parseInt(searchParams.get('mth1')),
-      mth2: parseInt(searchParams.get('mth2')),
-      regids: regidsTmp,
-      minfrac: parseFloat(searchParams.get('minfrac')),
-      maxfrac: parseFloat(searchParams.get('maxfrac')),
-    }
+    console.log('searchParams', searchParams.get('path'))
+    // check if all needed params present and if so update state and return status true
+    if (searchParams.get('path')==='genex'){
+      let urlParams = {
+        path: searchParams.get('path'),
+        pid: srnoToPid[parseInt(searchParams.get('srno'))],
+        gene: searchParams.get('gene'),
+        thl: parseFloat(searchParams.get('thl')),
+        thh: parseFloat(searchParams.get('thh')),
+        gene2: searchParams.get('gene2'),
+        thl2: parseFloat(searchParams.get('thl2')),
+        thh2: parseFloat(searchParams.get('thh2')),
+        fbd: searchParams.get('fbd'),
+        nisslStatus: searchParams.get('nisslStatus')==='true',
+        wireframeStatus: searchParams.get('wireframeStatus')==='true',
+        opacity: searchParams.get('opacityVal'),
+        mth1: parseInt(searchParams.get('mth1')),
+        mth2: parseInt(searchParams.get('mth2')),
+        regids: regidsTmp,
+        minfrac: parseFloat(searchParams.get('minfrac')),
+        maxfrac: parseFloat(searchParams.get('maxfrac')),
+      }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
 
-    console.log('urlParams', urlParams);
-
-    // check if all needed params present and if so update state and return status true
-    if (urlParams.path==='genex'){
+      console.log('urlParams', urlParams);
 
       setChosenGene([urlParams.gene]);
       if (urlParams.gene2!=="undefined"){
@@ -114,22 +127,53 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setMaxUmiThreshold2(urlParams.mth2);
       setMinFrac(urlParams.minfrac);
       setMaxFrac(urlParams.maxfrac);
-      
+
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
 
       return {status: true, path: '/genex'}
     }
-    else if (urlParams.path==='singlecell'){
+    else if (searchParams.get('path')==='singlecell'){
+      let urlParams = {
+        path: searchParams.get('path'),
+        regids: regidsTmp,
+        genes: searchParams.get('genes').split(','),
+        order: searchParams.get('order'),
+        sortField: searchParams.get('sortField')===''?'':parseInt(searchParams.get('sortField')),
+        cellClassSelection: searchParams.get('cellClassSelection'),
+        sortByToggleVal: parseInt(searchParams.get('sortByToggleVal')),
+        maxCellTypes: parseInt(searchParams.get('maxCellTypes')),
+        minCompoPct: parseFloat(searchParams.get('minCompoPct')),
+        adaptNormalizerStatus: searchParams.get('adaptNormalizerStatus')==='true',
+      }
+      urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
+      console.log('urlParams', urlParams);
 
+      setMultiSelections(urlParams.genes);
+      if (urlParams.cellClassSelection===""){
+        setCellClassSelection([]);
+      }else{
+        setCellClassSelection([urlParams.cellClassSelection]);
+      }
+      setSortByToggleVal(urlParams.sortByToggleVal);
+      setMaxCellTypes(urlParams.maxCellTypes);
+      setMinCompoPct(urlParams.minCompoPct);
+      setOrder(urlParams.order);
+      setSortField(urlParams.sortField);
+      setAdaptNormalizerStatus(urlParams.adaptNormalizerStatus);
 
-    }else if (urlParams.path==='cellspatial'){
+      setSelectedRegions(urlParams.regnames);
+      setSelectedRegIds(urlParams.regids);
+
+      return {status: true, path: '/singlecell'}
+
+    }else if (searchParams.get('path')==='cellspatial'){
 
     }
 
 
 
-      return {status: false, path: null};
+    return {status: false, path: null};
   }
 
 
@@ -150,6 +194,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   useEffect(  () => {
 
+    console.log('updated selectedRegIds', selectedRegIds, regionTreeNodePaths);
     if (Object.keys(regionTreeNodePaths).length>0){ // guard against delayed loading of regionTreeNodePaths
       selectedRegIds.forEach(regId=>{
         let dendroDataTmp = dendroData;
@@ -162,7 +207,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   return (
     <>
-      {urlParamStatus.status?<Navigate to={urlParamStatus.path}/>:
+      {urlParamStatus.status&&dendroData.length>1?<Navigate to={urlParamStatus.path}/>:
       <div>
       <h5>Reading URL parameters... </h5>
       <h6> In case URL is malformed, your target page will not load. You can still return to the home page or one of the analysis tabs using links on the navigation bar above.</h6>

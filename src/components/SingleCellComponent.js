@@ -11,6 +11,7 @@ import produce from "immer";
 import Table from './table/TableComponent'
 import {useStore, usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
+import {useSCComponentPersistStore} from '../store/SCComponentStore'
 import { useSortableTable } from "./table/hooks";
 import Colorbar from '../components/ColorbarComponent'
 import {Form} from 'react-bootstrap'
@@ -20,6 +21,7 @@ import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
+import {useQuery} from 'react-query'
 
 
 function SingleCell({dataConfig}){
@@ -39,15 +41,25 @@ function SingleCell({dataConfig}){
     }
   });
 
-  const [maxCellTypes, setMaxCellTypes] = useState(10);
-  const [minCompoPct, setMinCompoPct] = useState(0.25);
-  const [multiSelections, setMultiSelections] = useState([]);
-  const [cellClassSelection, setCellClassSelection] = useState([]);
+  const maxCellTypes = useSCComponentPersistStore(state => state.maxCellTypes);
+  const setMaxCellTypes = useSCComponentPersistStore(state => state.setMaxCellTypes);
+
+  const minCompoPct = useSCComponentPersistStore(state => state.minCompoPct);
+  const setMinCompoPct = useSCComponentPersistStore(state => state.setMinCompoPct);
+
+  const multiSelections = useSCComponentPersistStore(state => state.multiSelections);
+  const setMultiSelections = useSCComponentPersistStore(state => state.setMultiSelections);
+
+  const cellClassSelection = useSCComponentPersistStore(state => state.cellClassSelection);
+  const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
+
   const [tableData, setTableData] = useState([]);
+  const [rawTableData, setRawTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
   const [globalMaxAvgVal, setGlobalMaxAvgVal] = useState(0);
-  const [adaptNormalizerStatus, setAdaptNormalizerStatus] = useState(true);
+  const adaptNormalizerStatus = useSCComponentPersistStore(state => state.adaptNormalizerStatus);
+  const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
   // const [mappedCelltypeToIdx, setMappedCelltypeToIdx] = useState({});
   const [regionToCelltype, setRegionToCelltype] = useState(()=>{});
   const [cellClassOptions, setCellClassOptions] = useState(()=>[]);
@@ -63,8 +75,8 @@ function SingleCell({dataConfig}){
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
   const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
-  const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
-  const toggleSortByToggleVal = useSCComponentStore(state => state.toggleSortByToggleVal);
+  const sortByToggleVal = useSCComponentPersistStore(state => state.sortByToggleVal);
+  const toggleSortByToggleVal = useSCComponentPersistStore(state => state.toggleSortByToggleVal);
   const tableDataFiltered = useSCComponentStore(state => state.tableDataFiltered);
   const setTableDataFiltered = useSCComponentStore(state => state.setTableDataFiltered);
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
@@ -80,25 +92,22 @@ function SingleCell({dataConfig}){
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
-  const sortField = useStore(state => state.sortField);
-  const setSortField = useStore(state => state.setSortField);
-  const order = useStore(state => state.order);
-  const setOrder = useStore(state => state.setOrder);
+  const sortField = useSCComponentPersistStore(state => state.sortField);
+  const setSortField = useSCComponentPersistStore(state => state.setSortField);
+  const order = useSCComponentPersistStore(state => state.order);
+  const setOrder = useSCComponentPersistStore(state => state.setOrder);
 
   const regionTreeJson = usePersistStore(state => state.regionTreeJson);
   const setRegionTreeJson = usePersistStore(state => state.setRegionTreeJson);
   const [regionTree, setRegionTree] = useState(null);
 
+  // set page title
   useEffect(() => {
     // ReactGA.send({ hitType: "pageview", page: "/singlecell" });
     document.title = "Single Cell | BrainCellData Viewer";
   }, []);
 
-  useEffect(()=>{ // since 'order' is shared between component - fix it sometime
-    setOrder("desc");
-    setSortField("");
-  },[]);
-  
+  // read, build, and set region tree
   useEffect(()=>{
     const fetchData = async () => {
       let regionArrayDataPath = `test_data2/s9f/regions_array.json`
@@ -125,24 +134,24 @@ function SingleCell({dataConfig}){
 
   },[]);
 
-  const coolGenes = ['Siglech', 'Flt1', 'Dcn',  'Pitx2', 'Nrk', 'Slc6a4','Slc6a3', 'Sst', 'Vip'];
-  const moveCoolGenesToTop = (coolGenes, allGenes) => {
 
-    // iterate over coolGenes and move them to top of allGenes
-    for (let i=0; i<coolGenes.length; i++){
-      let idx = allGenes.findIndex(x => x === coolGenes[i]);
-      if (idx !== -1){
-        let gene = allGenes[idx];
-        allGenes.splice(idx, 1);
-        allGenes.unshift(gene);
-      }
-    }
-
-    return  allGenes;
-  }
-
-  // get zarr store connection and initialize geneOptions
+  // get zarr store connection and initialize geneOptions. Inits tableData and tableDataSorted
   useEffect(()=>{
+    const coolGenes = ['Siglech', 'Flt1', 'Dcn',  'Pitx2', 'Nrk', 'Slc6a4','Slc6a3', 'Sst', 'Vip'];
+    const moveCoolGenesToTop = (coolGenes, allGenes) => {
+
+      // iterate over coolGenes and move them to top of allGenes
+      for (let i=0; i<coolGenes.length; i++){
+        let idx = allGenes.findIndex(x => x === coolGenes[i]);
+        if (idx !== -1){
+          let gene = allGenes[idx];
+          allGenes.splice(idx, 1);
+          allGenes.unshift(gene);
+        }
+      }
+
+      return  allGenes;
+    }
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
       let mappedCelltypeToIdxFile =`${basePath}${dpathMappedCellTypesToIdx}`;
@@ -185,131 +194,153 @@ function SingleCell({dataConfig}){
       setGeneOptions(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i], "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
-      setTableData(initTableData);
-      setTableDataSorted(initTableData);
+      setRawTableData(initTableData);
+      // setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
       setRegionToCelltype(dataRegionToCellTypeMap);
       setGlobalMaxAvgVal(parseFloat(dataGlobalMaxAvgVal[0]));
-      // console.log('initTableData', initTableData);
 
-      // let zloader2 = new ZarrLoader({scPathInBucket});
-      // let dataGenes2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/var/genes");
-      // let dataCellTypesRaw2 = await zloader2.getFlatArrDecompressed("scZarr.zarr/obs/clusters");
-      // console.log('dataGenes2', dataGenes2);
-      // console.log('datacellTypesRaw2', dataCellTypesRaw2);
     }
 
     fetchData();
+    prevMultiSelections.current = [];
 
   }, []);
 
   // fetch the idAcroNameMap and populate acroToNameMap
-  useEffect(()=>{ 
+  const fetchAcroToNameMap = () => {
 
-    // write an async function to fetch the acroToNameMap csv file from bucket 
-    // and populate the acroToNameMap state variable
+    let acroIdNameMapFile = `${basePath}${dpathIdAcroNameMap}`;
 
-    const fetchData = async () => {
-      let acroIdNameMapFile = `${basePath}${dpathIdAcroNameMap}`;
-      const acroIdNameMap = await load(acroIdNameMapFile, [CSVLoader], {csv:{delimiter:"\t"}});
+    return load(acroIdNameMapFile, [CSVLoader], {csv:{delimiter:"\t"}})
+            .then((acroIdNameMap) => {
+                let acroToNameMapTmp = {};
+                acroIdNameMap.forEach(x=>acroToNameMapTmp[x.column2] = x.column3);
+                setAcroToNameMap(acroToNameMapTmp);
+                return Promise.resolve(acroToNameMapTmp);
 
-      let acroToNameMapTmp = {};
-      acroIdNameMap.forEach(x=>acroToNameMapTmp[x.column2] = x.column3);
+              });
+      }
 
-      setAcroToNameMap(acroToNameMapTmp);
-    }
+  const queryAcroToNameMap = useQuery(
+    ["acroIdToNameMap"],
+    fetchAcroToNameMap,
+  );
 
-    fetchData();
+  useEffect(()=>{
 
-  }, []);
+    // console.log('rawtabledata11 in lone useEffect', rawTableData, prevMultiSelections.current);
+    console.log('rawtabledata11 sortfield', sortField, 'order', order);
+    
+  }, [sortField]);
 
   // updating tableData json array on change in selected genes
   useEffect(()=>{
-    const fetchData = async (col_idx) => {
-      let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
-      // let zloader2 = new ZarrLoader({scPathInBucket});
-      // let dataCol = await zloader.getDataColumn("z_proportions.zarr/X", col_idx);
-      // let [dataCol, avgDataCol] = await Promise.all([zloader.getDataColumn("z_proportions.zarr/X", col_idx),
-      //                                             zloader2.getDataColumn("z_avgs.zarr/X", col_idx)]);
-      let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/nz_pct/X", col_idx),
-                                                  zloader.getDataColumn("/avg/X", col_idx), 
-                                                  zloader.getDataColumn("/counts/X", col_idx)]);
-      const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
-      let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
-        draft[scol_idx] = dataCol[i];
-        draft[-scol_idx] = avgDataCol[i];
-        draft['c'+String(scol_idx)] = countDataCol[i];
-      }));
-      setTableData(tableDataTmp);
-      if (sortField===""){
-        setSortField(scol_idx);
-        setTableDataSorted(tableDataTmp);
-        handleSorting(sortField, order, sortByToggleVal);
-        // console.log(tableDataTmp);
+    const fetchData = async (col_idxs, tableDataTmp) => {
+
+      for (const col_idx of col_idxs){
+        let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
+        let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/nz_pct/X", col_idx),
+                                                    zloader.getDataColumn("/avg/X", col_idx), 
+                                                    zloader.getDataColumn("/counts/X", col_idx)]);
+
+        const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
+        tableDataTmp = tableDataTmp.map((x,i)=>produce(x, draft=>{
+          draft[scol_idx] = dataCol[i];
+          draft[-scol_idx] = avgDataCol[i];
+          draft['c'+String(scol_idx)] = countDataCol[i];
+        }));
+
       }
-      // else{
-      //   handleSorting(sortField, order);
-      // }
+
+      setTableData(tableDataTmp);
+
+      if (sortField===""){
+        const scol_idx = col_idxs[0]+1;
+        setSortField(scol_idx);
+        handleSorting(scol_idx, order, sortByToggleVal); // also sets tableDataSorted
+      }
     }
 
     // identify newly added or removed gene and update tableData accordingly
     let added = null, removed = null;
-    if (prevMultiSelections.current.length<multiSelections.length){ // gene added
-      added = multiSelections.filter(x => !prevMultiSelections.current.includes(x));
-      console.log('added', added);
-      let colIdx = geneOptions.indexOf(added[0]);
-      fetchData(colIdx); // reminder: async function
+    if (rawTableData.length>0){
+      if (prevMultiSelections.current.length<multiSelections.length){ // gene added
+        added = multiSelections.filter(x => !prevMultiSelections.current.includes(x));
 
-      // adding gene entry to columns array
-      let columnsTmp = columns;
-      const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
-      columnsTmp.push({"label":added[0], "accessor":scolIdx, "sortable":true});
-      setColumns(columnsTmp);
+        // iterate over added
+        let columnsTmp = columns;
+        let col_idxs = [];
+        added.forEach((gene, i)=>{
+          let colIdx = geneOptions.indexOf(added[i]);
+          col_idxs.push(colIdx);
+          // fetchData(colIdx); // reminder: async function
+          // adding gene entry to columns array
+          const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
+          columnsTmp.push({"label":added[i], "accessor":scolIdx, "sortable":true});
+        });
+        let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
+        fetchData(col_idxs, tableDataTmp);
+        setColumns(columnsTmp);
 
-    }else if(prevMultiSelections.current.length>multiSelections.length){ // gene removed
-      removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
-      console.log('removed', removed);
-      let colIdx = geneOptions.indexOf(removed[0]);
-      const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
-      let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
-        delete draft[scolIdx];
-        delete draft[-scolIdx];
-        delete draft['c'+String(scolIdx)];
-      }));
-      setTableData(tableDataTmp);
+      }else if(prevMultiSelections.current.length>multiSelections.length){ // gene removed
+        removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
+        console.log('removed', removed);
+        let colIdx = geneOptions.indexOf(removed[0]);
+        const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
+        let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
+          delete draft[scolIdx];
+          delete draft[-scolIdx];
+          delete draft['c'+String(scolIdx)];
+        }));
+        setTableData(tableDataTmp);
 
-      // removing gene entry from column array
-      let columnsTmp = columns.filter(x=>x.accessor!==scolIdx);
-      setColumns(columnsTmp);
+        // removing gene entry from column array
+        let columnsTmp = columns.filter(x=>x.accessor!==scolIdx);
+        setColumns(columnsTmp);
 
-      let sortFieldAfterGeneRemoval = "";
-      if (columnsTmp.length>0){
-        sortFieldAfterGeneRemoval = columnsTmp.at(-1).accessor;
-      }
-      console.log(columnsTmp);
+        let sortFieldAfterGeneRemoval = "";
+        if (columnsTmp.length>0){
+          sortFieldAfterGeneRemoval = columnsTmp.at(-1).accessor;
+        }
+        if (sortField===scolIdx){
+          // Removing the current sortField
+          setSortField(sortFieldAfterGeneRemoval);
+          setTableDataSorted(tableDataTmp);
+        }else{
+          // Removig field that is not current sortField
+          handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
+        }
 
-      console.log("sortField", sortField, colIdx, scolIdx, sortField===scolIdx);
-      if (sortField===scolIdx){
-        // Removing the current sortField
-        setSortField(sortFieldAfterGeneRemoval);
-        setTableDataSorted(tableDataTmp);
-      }else{
-        // Removig field that is not current sortField
-        handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
-      }
+      }else if (multiSelections.length>0 && prevMultiSelections.current.length>0){ // page reload case
 
+        // // iterate over added
+        let columnsTmp = [];
+        let col_idxs = [];
+        multiSelections.forEach((gene, i)=>{
+          let colIdx = geneOptions.indexOf(gene);
+          col_idxs.push(colIdx);
+          // adding gene entry to columns array
+          const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
+          columnsTmp.push({"label":gene, "accessor":scolIdx, "sortable":true});
+        });
 
-      // // removing the max col val for the removed column
-      // setMaxColVals(produce(maxColVals, draft=>{
-      //   delete draft[colIdx];
-      // }));
-
+        let tableDataTmp = rawTableData.map(x=>x);
+        fetchData(col_idxs, tableDataTmp); // reminder: async function
+        setColumns(columnsTmp);
+      }    
     }
 
-    console.log('multiSelections', multiSelections);
     prevMultiSelections.current=multiSelections;
 
-  },[multiSelections]);
+  },[multiSelections, rawTableData]);
+
+  // sort table once tableData is updated with selected genes data
+  useEffect(()=>{
+    
+        handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
+
+  },[tableData, sortField, order]);
 
   const tableDataSorted = useStore(state => state.tableDataSorted);
 
@@ -336,7 +367,7 @@ function SingleCell({dataConfig}){
         }
       }
     }
-    console.log('wantedCelltypes', wantedCelltypes.size, wantedCelltypes);
+    console.log('wantedCelltypes', wantedCelltypes.size, wantedCelltypes, tableDataSorted.length);
     
     
 
@@ -350,7 +381,6 @@ function SingleCell({dataConfig}){
       }
       setTableDataFiltered(tableDataFilteredTmp);
     }else{
-
       let tableDataFilteredTmp = tableDataSorted;
       // filter further if wanted celltypes are identified, else no further filtering
       if (wantedCelltypes.size>0 || selectedRegIds.length>0){
@@ -407,15 +437,11 @@ function SingleCell({dataConfig}){
               let inpDataCnts = [];
 
               // iterate over tableDataFiltered
-              for (let j=0; j<tableDataFiltered.length; j++){
+              for (let j=0; j<tableDataSorted.length; j++){
                 // inpDataPctAvg.push([tableDataSorted[j][columns[i].accessor], tableDataSorted[j][-columns[i].accessor]]);
 
                 inpDataCnts.push(tableDataSorted[j]['c'+columns[i].accessor]);
               }
-
-              console.log('tableDataSorted', tableDataSorted);
-              console.log('inpDataCnts', inpDataCnts);
-
 
               // let dwndDataPct = LTOB(inpDataPct, numSamples);
               // let dwndDataAvg = LTOB(inpDataAvg, numSamples);
@@ -460,16 +486,18 @@ function SingleCell({dataConfig}){
     // prepare downsampled data and update in component's store
     let numSamples = 500;
     // let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
-    let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
-    setDownsampledTableData(downsampledTableDataTmp);
+    if (tableDataSorted.length>0){
+      let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
+      setDownsampledTableData(downsampledTableDataTmp);
+    }
 
   }, [columns, tableDataSorted]);
  
   const [handleSorting] = useSortableTable(tableData);
   // const tableDataSorted = useStore(state => state.tableDataSorted);
   useEffect(()=>{
+    console.log("sortByToggleVal ", sortByToggleVal, 'tableData', tableData, 'tableDataFiltered', tableDataFiltered);
     handleSorting(sortField, order, sortByToggleVal);
-    console.log("sortByToggleVal ", sortByToggleVal);
   }, [sortField, order, tableData, sortByToggleVal])
  
 
@@ -486,7 +514,6 @@ function SingleCell({dataConfig}){
       }
     });
     
-    console.log('curShown', curShown, columns);
     // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
 
     if (adaptNormalizerStatus){
@@ -499,6 +526,11 @@ function SingleCell({dataConfig}){
 
   }, [tableDataFiltered, columns, maxCellTypes, selectedRegIds, adaptNormalizerStatus]);
 
+  useEffect(()=>{
+
+    console.log('tableDataFiltered', tableDataFiltered);
+
+  }, [tableDataFiltered])
 
   return(
     <>

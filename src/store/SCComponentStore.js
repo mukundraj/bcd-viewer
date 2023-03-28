@@ -1,5 +1,6 @@
 import create from 'zustand'
 import {interpolateViridis} from 'd3-scale-chromatic'
+import { persist } from "zustand/middleware"
 
 export const useSCComponentStore = create(set => ({
         currentColorMap:interpolateViridis,
@@ -8,11 +9,40 @@ export const useSCComponentStore = create(set => ({
         setMaxAvgVal: (val) => set({maxAvgVal:val}),
         maxProportionalVal:1, 
         setMaxProportionalVal: (val)=>set({maxProportionalVal:val}),
-        sortByToggleVal:1,
-        toggleSortByToggleVal: () => set((state)=>({sortByToggleVal:-1*state.sortByToggleVal})),
         tableDataFiltered:[], 
         setTableDataFiltered: (val)=>set({tableDataFiltered:val}),
     }));
+
+export const useSCComponentPersistStore = create(persist(set => ({
+                multiSelections: [],
+                setMultiSelections: (val) => set({multiSelections:val}),
+                sortField:"", 
+                setSortField: (val)=>set({sortField:val}),
+                order:"desc", 
+                setOrder: (val)=>set({order:val}),
+                sortByToggleVal:1,
+                setSortByToggleVal: (val) => set({sortByToggleVal:val}),
+                toggleSortByToggleVal: () => set((state)=>({sortByToggleVal:-1*state.sortByToggleVal})),
+                cellClassSelection: [],
+                setCellClassSelection: (val) => set({cellClassSelection:val}),
+                maxCellTypes: 10,
+                setMaxCellTypes: (val) => set({maxCellTypes:val}),
+                minCompoPct: 0.25,
+                setMinCompoPct: (val) => set({minCompoPct:val}),
+                adaptNormalizerStatus: true,
+                setAdaptNormalizerStatus: (val) => set({adaptNormalizerStatus:val}),
+                // downsampledTableData:{},
+                // setDownsampledTableData: (val) => set({downsampledTableData:val}),
+
+        }), {
+                name: "SCComponentPersistStore",
+                getStorage: () => sessionStorage,
+
+        }));
+
+
+
+
 
 
 export default useSCComponentStore;
