@@ -195,6 +195,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         mth1: parseFloat(searchParams.get('mth1')),
         mth2: parseFloat(searchParams.get('mth2')),
         regids: regidsTmp,
+        minfrac: parseFloat(searchParams.get('minfrac')),
+        maxfrac: parseFloat(searchParams.get('maxfrac')),
       }
       console.log('urlParams', urlParams, urlParams.cell2!=="undefined");
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
