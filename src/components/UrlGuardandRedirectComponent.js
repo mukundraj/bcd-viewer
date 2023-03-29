@@ -10,6 +10,7 @@ import {CSVLoader} from '@loaders.gl/csv';
 import {getPaths, markDendroDataNode} from "../shared/utils"
 import {getUrl} from "../shared/common"
 import {useSCComponentPersistStore} from '../store/SCComponentStore'
+import {useCSComponentStore, useCSCPersistStore} from '../store/CSComponentStore'
 
 
 
@@ -62,6 +63,15 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
   const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
 
+  // CS component related
+  const setScoreLowerThreshold = useCSCPersistStore(state => state.setScoreLowerThreshold);
+  const setScoreUpperThreshold = useCSCPersistStore(state => state.setScoreUpperThreshold);
+  const setScoreLowerThreshold2 = useCSCPersistStore(state => state.setScoreLowerThreshold2);
+  const setScoreUpperThreshold2 = useCSCPersistStore(state => state.setScoreUpperThreshold2);
+  const setMaxScoreThreshold = useCSComponentStore(state => state.setMaxScoreThreshold);
+  const setMaxScoreThreshold2 = useCSComponentStore(state => state.setMaxScoreThreshold2);
+  const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
+  const setChosenCell2 = useCSComponentStore(state => state.setChosenCell2);
 
   const [regidToNameMap, setRegidToNameMap] = useState(null);
 
@@ -99,9 +109,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         fbd: searchParams.get('fbd'),
         nisslStatus: searchParams.get('nisslStatus')==='true',
         wireframeStatus: searchParams.get('wireframeStatus')==='true',
-        opacity: searchParams.get('opacityVal'),
-        mth1: parseInt(searchParams.get('mth1')),
-        mth2: parseInt(searchParams.get('mth2')),
+        opacity: parseFloat(searchParams.get('opacityVal')),
+        mth1: parseFloat(searchParams.get('mth1')),
+        mth2: parseFloat(searchParams.get('mth2')),
         regids: regidsTmp,
         minfrac: parseFloat(searchParams.get('minfrac')),
         maxfrac: parseFloat(searchParams.get('maxfrac')),
@@ -169,6 +179,46 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
     }else if (searchParams.get('path')==='cellspatial'){
 
+      let urlParams = {
+        path: searchParams.get('path'),
+        pid: srnoToPid[parseInt(searchParams.get('srno'))],
+        cell: searchParams.get('cell'),
+        thl: parseFloat(searchParams.get('thl')),
+        thh: parseFloat(searchParams.get('thh')),
+        cell2: searchParams.get('cell2'),
+        thl2: parseFloat(searchParams.get('thl2')),
+        thh2: parseFloat(searchParams.get('thh2')),
+        fbd: searchParams.get('fbd'),
+        nisslStatus: searchParams.get('nisslStatus')==='true',
+        wireframeStatus: searchParams.get('wireframeStatus')==='true',
+        opacity: parseFloat(searchParams.get('opacityVal')),
+        mth1: parseFloat(searchParams.get('mth1')),
+        mth2: parseFloat(searchParams.get('mth2')),
+        regids: regidsTmp,
+      }
+      console.log('urlParams', urlParams, urlParams.cell2!=="undefined");
+      urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
+      
+      setChosenCell([urlParams.cell]);
+      if (urlParams.cell2!=="undefined"){
+        setChosenCell2([urlParams.cell2]);
+      }
+
+      setChosenPuckid({...chosenPuckid, pid: urlParams.pid, cell: urlParams.cell});
+      setFbarActiveDataName(urlParams.fbd);
+      setNisslStatus(urlParams.nisslStatus);
+      setWireframeStatus(urlParams.wireframeStatus);
+      setOpacityVal(urlParams.opacity);
+      setScoreLowerThreshold(urlParams.thl);
+      setScoreUpperThreshold(urlParams.thh);
+      setScoreLowerThreshold2(urlParams.thl2);
+      setScoreUpperThreshold2(urlParams.thh2);
+      setMaxScoreThreshold(urlParams.mth1);
+      setMaxScoreThreshold2(urlParams.mth2);
+      setMinFrac(urlParams.minfrac);
+      setMaxFrac(urlParams.maxfrac);
+
+      return {status: true, path: '/cellspatial'}
     }
 
 

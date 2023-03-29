@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import {pidToSrno} from "../shared/common"
 import useGEComponentStore from '../store/GEComponentStore'
 import {useSCComponentPersistStore} from '../store/SCComponentStore'
+import {useCSComponentStore, useCSCPersistStore} from '../store/CSComponentStore'
 
 
 
@@ -18,9 +19,6 @@ const useGetLinkInfo = () => {
     const maxUmiThreshold = useStore(state => state.maxUmiThreshold)
     const chosenGene2 = useStore(state => state.chosenGene2)
     const maxUmiThreshold2 = useStore(state => state.maxUmiThreshold2)  
-    const fbarActiveDataName = useStore(state => state.fbarActiveDataName)
-    const nisslStatus = useStore(state => state.nisslStatus)
-    const wireframeStatus = useStore(state => state.wireframeStatus)
     const umiLowerThreshold = useGEComponentStore(state => state.umiLowerThreshold); 
     const umiUpperThreshold = useGEComponentStore(state => state.umiUpperThreshold);
     const umiLowerThreshold2 = useGEComponentStore(state => state.umiLowerThreshold2);
@@ -43,17 +41,35 @@ const useGetLinkInfo = () => {
 
 
     // states for CS component
+    const maxScoreThreshold = useCSComponentStore(state => state.maxScoreThreshold);
+    const maxScoreThreshold2 = useCSComponentStore(state => state.maxScoreThreshold2);
+    const scoreLowerThreshold = useCSCPersistStore(state => state.scoreLowerThreshold);
+    const scoreUpperThreshold = useCSCPersistStore(state => state.scoreUpperThreshold);
+    const chosenCell2 = useCSComponentStore(state => state.chosenCell2);
+    const scoreUpperThreshold2 = useCSCPersistStore(state => state.scoreUpperThreshold2);
+    const scoreLowerThreshold2 = useCSCPersistStore(state => state.scoreLowerThreshold2);
+    const opacityValCS = useCSComponentStore(state => state.opacityVal);
 
 
 
+    // common
+    const regIdsStr = selectedRegIds.join(','); // get regIds into a comma separated string from selectedRegIds
+    const fbarActiveDataName = useStore(state => state.fbarActiveDataName)
+    const nisslStatus = useStore(state => state.nisslStatus)
+    const wireframeStatus = useStore(state => state.wireframeStatus)
+
+
+    // internal functions
     const generateGenexLink = () =>
     {
-
-        // get regIds into a comma separated string from selectedRegIds
-        const regIdsStr = selectedRegIds.join(',');
-
         console.log('uumiLowerThreshold', umiLowerThreshold, 'uumiUpperThreshold', umiUpperThreshold);
         const link = `${window.location.origin}/redir?path=genex&srno=${pidToSrno[pid]}&gene=${gene}&thl=${umiLowerThreshold}&thh=${umiUpperThreshold}&gene2=${chosenGene2[0]}&thl2=${umiLowerThreshold2}&thh2=${umiUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityVal}&mth1=${maxUmiThreshold}&mth2=${maxUmiThreshold2}&regids=${regIdsStr}&minfrac=${minFrac}&maxfrac=${maxFrac}`
+        return link;
+    }
+
+    const generateCellSpatialLink = () =>
+    {
+        const link = `${window.location.origin}/redir?path=cellspatial&srno=${pidToSrno[pid]}&cell=${cell}&thl=${scoreLowerThreshold}&thh=${scoreUpperThreshold}&cell2=${chosenCell2[0]}&thl2=${scoreLowerThreshold2}&thh2=${scoreUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityValCS}&mth1=${maxScoreThreshold}&mth2=${maxScoreThreshold2}&regids=${regIdsStr}&minfrac=${minFrac}&maxfrac=${maxFrac}`
         return link;
     }
 
@@ -61,18 +77,12 @@ const useGetLinkInfo = () => {
     {
 
         const genes = multiSelections.map((gene) => gene).join(',');
-        const regIdsStr = selectedRegIds.join(',');
 
         const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&maxCellTypes=${maxCellTypes}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}`
         // console.log('link', link);
         return link;
     }
 
-    const generateCellSpatialLink = () =>
-    {
-        const link = `${window.location.origin}/redir?pid=${pid}&cell=${cell}`
-        return link;
-    }
 
     const location = useLocation();
     const path = location.pathname;

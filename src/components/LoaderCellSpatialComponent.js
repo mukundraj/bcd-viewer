@@ -48,11 +48,17 @@ function LoaderCellSpatial({dataConfig}){
   const [unifiedData, setUnifiedData] = useState([{"x":0, "y":0, "z":0, "count":0, "count2":0, logcnt1:1, logcnt2:1}]);
   const [fbarsData, setFbarsData] = useState({"regionwise_cnts":[], "sorted_puckwise_cnts":[]});
 
-  const [scoreLowerThreshold, setScoreLowerThreshold ] = useState(0.3); // formerly: 0.0001
-  const [scoreUpperThreshold, setScoreUpperThreshold ] = useState(0.0001);
-  const [scoreLowerThreshold2, setScoreLowerThreshold2 ] = useState(0.0001);
-  const [scoreUpperThreshold2, setScoreUpperThreshold2 ] = useState(0.0001);
-  const [opacityVal, setOpacityVal] = useState(1.0);
+  const scoreLowerThreshold = useCSCPersistStore(state => state.scoreLowerThreshold);
+  const setScoreLowerThreshold = useCSCPersistStore(state => state.setScoreLowerThreshold);
+  const scoreUpperThreshold = useCSCPersistStore(state => state.scoreUpperThreshold);
+  const setScoreUpperThreshold = useCSCPersistStore(state => state.setScoreUpperThreshold);
+  const scoreLowerThreshold2 = useCSCPersistStore(state => state.scoreLowerThreshold2);
+  const setScoreLowerThreshold2 = useCSCPersistStore(state => state.setScoreLowerThreshold2);
+  const scoreUpperThreshold2 = useCSCPersistStore(state => state.scoreUpperThreshold2);
+  const setScoreUpperThreshold2 = useCSCPersistStore(state => state.setScoreUpperThreshold2);
+
+  const opacityVal = useCSComponentStore(state => state.opacityVal);
+  const setOpacityVal = useCSComponentStore(state => state.setOpacityVal);
   
   const wireframeStatus = useStore(state => state.wireframeStatus);
   const setWireframeStatus = useStore(state => state.setWireframeStatus);
@@ -242,56 +248,60 @@ function LoaderCellSpatial({dataConfig}){
 
       let rowIdx = cellNameToIdx[chosenCell[0]];
       let readData = null;
-      if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
+      if (rowIdx !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
+        if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
 
-        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        // setCurPuckMaxScores(locMaxScores);
+          // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+          // setCurPuckMaxScores(locMaxScores);
 
-        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
-        locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
-        setMaxScoreThreshold(locMaxScoreThreshold);
-        setScoreUpperThreshold(locMaxScoreThreshold);
-        // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
-        let rowIdx2 = cellNameToIdx[chosenCell2[0]];
-        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
-        locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
-        setMaxScoreThreshold2(locMaxScoreThreshold2);
-        setScoreUpperThreshold2(locMaxScoreThreshold2);
+          let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
+          locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
+          setMaxScoreThreshold(locMaxScoreThreshold);
+          setScoreUpperThreshold(locMaxScoreThreshold);
+          // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
+          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
+          if (rowIdx2 !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
+            let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
+            locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
+            setMaxScoreThreshold2(locMaxScoreThreshold2);
+            setScoreUpperThreshold2(locMaxScoreThreshold2);
 
-        const [cellData, cellData2] = await Promise.all([
-          zloader.getDataRow("cellxbead.zarr/X", rowIdx),
-          zloader.getDataRow("cellxbead.zarr/X", rowIdx2)]); 
+            const [cellData, cellData2] = await Promise.all([
+              zloader.getDataRow("cellxbead.zarr/X", rowIdx),
+              zloader.getDataRow("cellxbead.zarr/X", rowIdx2)]); 
+            readData = coordsData.map((obj, index) => ({
+              ...obj,
+              count: cellData[index], 
+              count2: cellData2[index],
+              logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
+              logcnt2: Math.log(cellData2[index] + 1)/Math.log(locMaxScoreThreshold2+1),
+            }));
+
+          }
+
+        }else{ // just fetch and update cellData1
+
+          const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx); 
+
+          // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
+          // setCurPuckMaxScores(locMaxScores);
+
+          let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
+          locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
+          // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
+          setMaxScoreThreshold(locMaxScoreThreshold);
+          setScoreUpperThreshold(locMaxScoreThreshold);
+          console.log("scoreLowerThreshold", scoreLowerThreshold);
+
           readData = coordsData.map((obj, index) => ({
             ...obj,
-            count: cellData[index], 
-            count2: cellData2[index],
+            count:cellData[index], 
+            count2: 0,
             logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
-            logcnt2: Math.log(cellData2[index] + 1)/Math.log(locMaxScoreThreshold2+1),
+            logcnt2: 1
           }));
-
-
-      }else{ // just fetch and update cellData1
-
-        const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx); 
-
-        // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
-        // setCurPuckMaxScores(locMaxScores);
-
-        let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
-        locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
-        // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
-        setMaxScoreThreshold(locMaxScoreThreshold);
-        setScoreUpperThreshold(locMaxScoreThreshold);
-        console.log("scoreLowerThreshold", scoreLowerThreshold);
-
-        readData = coordsData.map((obj, index) => ({
-          ...obj,
-          count:cellData[index], 
-          count2: 0,
-          logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
-          logcnt2: 1
-        }));
-      }       
+        }       
+      }
 
       setUnifiedData(readData);
       if (coordsData.length>1)

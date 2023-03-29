@@ -108,7 +108,7 @@ function AuthHeader(props){
             <a className="nav-link" href="https://docs.braincelldata.org">Docs</a>
           </Nav>
         <Nav>
-          {location.pathname==='/genex' || location.pathname==='/singlecell'?
+          {location.pathname==='/genex' || location.pathname==='/singlecell' || location.pathname==='/cellspatial'?
             <Button 
               onClick={(e)=>{prompt('Direct link to current view:', generateLink())}}
             >GetLink</Button>:null}
