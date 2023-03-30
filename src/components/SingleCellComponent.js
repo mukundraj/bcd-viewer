@@ -57,6 +57,7 @@ function SingleCell({dataConfig}){
   const [rawTableData, setRawTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [geneOptions, setGeneOptions] = useState([]);
+  const [geneOptionsForDisplay, setGeneOptionsForDisplay] = useState([]);
   const [globalMaxAvgVal, setGlobalMaxAvgVal] = useState(0);
   const adaptNormalizerStatus = useSCComponentPersistStore(state => state.adaptNormalizerStatus);
   const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
@@ -140,17 +141,19 @@ function SingleCell({dataConfig}){
     const coolGenes = ['Siglech', 'Flt1', 'Dcn',  'Pitx2', 'Nrk', 'Slc6a4','Slc6a3', 'Sst', 'Vip'];
     const moveCoolGenesToTop = (coolGenes, allGenes) => {
 
+      const allGenesCopy = [...allGenes];
+
       // iterate over coolGenes and move them to top of allGenes
       for (let i=0; i<coolGenes.length; i++){
-        let idx = allGenes.findIndex(x => x === coolGenes[i]);
+        let idx = allGenesCopy.findIndex(x => x === coolGenes[i]);
         if (idx !== -1){
-          let gene = allGenes[idx];
-          allGenes.splice(idx, 1);
-          allGenes.unshift(gene);
+          let gene = allGenesCopy[idx];
+          allGenesCopy.splice(idx, 1);
+          allGenesCopy.unshift(gene);
         }
       }
 
-      return  allGenes;
+      return  allGenesCopy;
     }
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
@@ -191,7 +194,8 @@ function SingleCell({dataConfig}){
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       const coolGenesOnTopArray = moveCoolGenesToTop(coolGenes, dataGenes);
-      setGeneOptions(coolGenesOnTopArray);
+      setGeneOptions(dataGenes);
+      setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
       initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i], "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
       setRawTableData(initTableData);
@@ -544,7 +548,7 @@ function SingleCell({dataConfig}){
               labelKey="name"
               multiple
               onChange={setMultiSelections}
-              options={geneOptions}
+              options={geneOptionsForDisplay}
               placeholder="Click here to select genes..."
               selected={multiSelections}
             />
