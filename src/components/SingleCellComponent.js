@@ -136,25 +136,31 @@ function SingleCell({dataConfig}){
   },[]);
 
 
-  // get zarr store connection and initialize geneOptions. Inits tableData and tableDataSorted
-  useEffect(()=>{
+  // helper function to create new geneOptions list with cool genes at top
+  const moveCoolGenesToTop = (allGenes) => {
     const coolGenes = ['Siglech', 'Flt1', 'Dcn',  'Pitx2', 'Nrk', 'Slc6a4','Slc6a3', 'Sst', 'Vip'];
-    const moveCoolGenesToTop = (coolGenes, allGenes) => {
+    // remove multiSelections from coolGenes to remove already selected cool genes from dropdown
+    const coolGenesFiltered = coolGenes.filter(x => !multiSelections.includes(x));
 
-      const allGenesCopy = [...allGenes];
+    const allGenesCopy = [...allGenes];
 
-      // iterate over coolGenes and move them to top of allGenes
-      for (let i=0; i<coolGenes.length; i++){
-        let idx = allGenesCopy.findIndex(x => x === coolGenes[i]);
-        if (idx !== -1){
-          let gene = allGenesCopy[idx];
-          allGenesCopy.splice(idx, 1);
-          allGenesCopy.unshift(gene);
-        }
+    // iterate over coolGenesFiltered and move them to top of allGenes
+    for (let i=0; i<coolGenesFiltered.length; i++){
+      let idx = allGenesCopy.findIndex(x => x === coolGenes[i]);
+      if (idx !== -1){
+        let gene = allGenesCopy[idx];
+        allGenesCopy.splice(idx, 1);
+        allGenesCopy.unshift(gene);
       }
-
-      return  allGenesCopy;
     }
+
+    return  allGenesCopy;
+  }
+
+  // get zarr store connection and initialize geneOptions and geneOptionsForDisplay. Inits tableData and tableDataSorted
+  useEffect(()=>{
+
+
     const fetchData = async () => {
       let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
       let mappedCelltypeToIdxFile =`${basePath}${dpathMappedCellTypesToIdx}`;
@@ -193,7 +199,7 @@ function SingleCell({dataConfig}){
 
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
-      const coolGenesOnTopArray = moveCoolGenesToTop(coolGenes, dataGenes);
+      const coolGenesOnTopArray = moveCoolGenesToTop(dataGenes);
       setGeneOptions(dataGenes);
       setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
@@ -210,6 +216,12 @@ function SingleCell({dataConfig}){
     prevMultiSelections.current = [];
 
   }, []);
+
+  // update geneOptionsForDisplay when multiSelections changes
+  useEffect(()=>{
+      const coolGenesOnTopArray = moveCoolGenesToTop(geneOptions);
+      setGeneOptionsForDisplay(coolGenesOnTopArray);
+  }, [multiSelections, geneOptions]);
 
   // fetch the idAcroNameMap and populate acroToNameMap
   const fetchAcroToNameMap = () => {
