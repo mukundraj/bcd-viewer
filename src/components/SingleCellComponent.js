@@ -551,6 +551,10 @@ function SingleCell({dataConfig}){
               options={geneOptionsForDisplay}
               placeholder="Click here to select genes..."
               selected={multiSelections}
+              filterBy={(option, props) => {
+                /* Own filtering code goes here. */
+                return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
+              }}
             />
           </Col>
           <Col xs="2">Max #celltypes:</Col>
