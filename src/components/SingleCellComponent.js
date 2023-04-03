@@ -578,6 +578,7 @@ function SingleCell({dataConfig}){
               max={130}
               step={1}
               tooltipPlacement="top"
+              id="maxCellTypesSlider"
             />
           </Col>
         </Row>
