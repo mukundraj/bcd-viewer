@@ -50,7 +50,8 @@
     "eject": "react-scripts eject",
     "deploy:main": "./scripts/deploy_main.sh",
     "deploy:demo": "./scripts/deploy_demo.sh",
-    "deploy:test": "./scripts/deploy_test.sh"
+    "deploy:test": "./scripts/deploy_test.sh",
+    "cypress:open": "cypress open"
   },
   "homepage": "https://www.braincelldata.org",
   "eslintConfig": {
@@ -75,5 +76,8 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!d3)/"
     ]
+  },
+  "devDependencies": {
+    "cypress": "^12.9.0"
   }
 }
