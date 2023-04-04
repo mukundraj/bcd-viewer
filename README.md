@@ -34,3 +34,11 @@ May been execution permissions one time. `chmod u+x ./scripts/deploy_demo.sh`
 
 To start dev app with code coverage intrumentation. The report is saved at
 `./coverage/lcov-report/index.html`.
+
+### `yarn run cypress open`
+
+To run cypress tests interactively. Remember to start server with instrumentation to be able to generate coverage report.
+
+### `yarn run percy exec -- cypress run --spec \'cypress/e2e/path/to/spec.cy.js\'`
+
+Run visual tests using percy. Will run all tests (including non visual) in the specified specs file/folder(s). Requires Percy token to be set using `export PERCY_TOKEN=token`.

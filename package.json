@@ -80,6 +80,8 @@
   },
   "devDependencies": {
     "@cypress/instrument-cra": "^1.4.0",
+    "@percy/cli": "^1.21.0",
+    "@percy/cypress": "^3.1.2",
     "cypress": "^12.9.0"
   }
 }
