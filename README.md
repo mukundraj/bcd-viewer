@@ -29,3 +29,8 @@ May been execution permissions one time. `chmod u+x ./scripts/deploy_main.sh`
 To build and deploy to demo location.
 
 May been execution permissions one time. `chmod u+x ./scripts/deploy_demo.sh`
+
+### `yarn start:instrumentation`
+
+To start dev app with code coverage intrumentation. The report is saved at
+`./coverage/lcov-report/index.html`.
