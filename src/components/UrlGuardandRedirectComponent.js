@@ -220,6 +220,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setMinFrac(urlParams.minfrac);
       setMaxFrac(urlParams.maxfrac);
 
+      setSelectedRegions(urlParams.regnames);
+      setSelectedRegIds(urlParams.regids);
+
       return {status: true, path: '/cellspatial'}
     }
 
