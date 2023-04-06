@@ -1,5 +1,5 @@
 
-describe('template spec', () => {
+describe('Single cell tab misc tests', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
     // so we must tell it to visit our website with the `cy.visit()` command.
@@ -10,8 +10,11 @@ describe('template spec', () => {
 
 
   it('Test slc17a7', () => {
+    cy.visit('/singlecell')
     cy.get('.rbt-input-main').type('slc17a7')
       .click()
+    cy.wait(2000)
+cy.get('.rbt-input-main')
       .type('{downarrow}')
       .type('{enter}')
 
@@ -45,9 +48,12 @@ describe('template spec', () => {
     cy.get('.sctable')
       .contains('td', 'Ex_Rorb_Scn5a_Rxrg')
 
+    cy.wait(1000)
     cy.get('#maxCellTypesSlider')
       .then($el => $el[0].stepDown(1) )
       .trigger('change')
+      
+    cy.wait(1000)
 
     cy.get('.sctable')
       .contains('td', 'Ex_Rorb_Scn5a_Rxrg').should('not.exist')
@@ -57,6 +63,8 @@ describe('template spec', () => {
   it('Test Vip', () => {
     cy.get('.rbt-input-main').type('vip')
       .click()
+      cy.wait(2000)
+cy.get('.rbt-input-main')
       .type('{downarrow}')
       .type('{enter}')
     
@@ -78,10 +86,12 @@ describe('template spec', () => {
     cy.get('.sctable')
       .contains('td', 'Inh_Vip_Grpr')
 
+      cy.wait(1000)
     cy.get('#maxCellTypesSlider')
       .then($el => $el[0].stepDown(5) )
       .trigger('change')
 
+      cy.wait(1000)
     cy.get('.sctable')
       .contains('td', 'Inh_Vip_Grpr').should('not.exist')
 
