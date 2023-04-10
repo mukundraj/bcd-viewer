@@ -502,9 +502,9 @@ function Loader({dataConfig, validatedURLParams}){
   useEffect(()=>{
     if (unifiedData.length>1 && signalRawDataLoaded===false){
       if (viaURL){
-          setDataLoadStatus((p)=>({...p, gene:p.gene-1, metadata:p.metadata-1})); 
           setSignalRawDataLoaded(true);
       }
+          setDataLoadStatus((p)=>({...p, gene:p.gene-1, metadata:p.metadata-1})); // urlParams case
     }      
       
 
