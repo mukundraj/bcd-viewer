@@ -47,6 +47,8 @@ export const useStore = create(set => ({
     setMinFrac: (val)=>set({minFrac:val}),
     maxFrac: 1,
     setMaxFrac: (val)=>set({maxFrac:val}),
+    viaURL: false, // if true, then conveys data is loaded from the URL
+    setViaURL: (val)=>set({viaURL:val}),
     }));
 
 export const usePersistStore = create(persist( set => ({

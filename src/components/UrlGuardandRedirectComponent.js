@@ -28,11 +28,12 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setNisslStatus = useStore(state => state.setNisslStatus);
   const setWireframeStatus = useStore(state => state.setWireframeStatus);
   const setOpacityVal = useGEComponentStore(state => state.setOpacityVal);
-  const setUmiLowerThreshold = useGEComponentStore(state => state.setUmiLowerThreshold);
-  const setUmiUpperThreshold = useGEComponentStore(state => state.setUmiUpperThreshold);
+  const setUrlUmiLowerThreshold = useGEComponentStore(state => state.setUrlUmiLowerThreshold);
+  const setUrlUmiUpperThreshold = useGEComponentStore(state => state.setUrlUmiUpperThreshold);
 
-  const setUmiLowerThreshold2 = useGEComponentStore(state => state.setUmiLowerThreshold2);
-  const setUmiUpperThreshold2 = useGEComponentStore(state => state.setUmiUpperThreshold2);
+  const setUrlUmiLowerThreshold2 = useGEComponentStore(state => state.setUrlUmiLowerThreshold2);
+  const setUrlUmiUpperThreshold2 = useGEComponentStore(state => state.setUrlUmiUpperThreshold2);
+  const setViaURL = useStore(state => state.setViaURL);
 
   const setMaxUmiThreshold = useStore(state => state.setMaxUmiThreshold);
   const setMaxUmiThreshold2 = useStore(state => state.setMaxUmiThreshold2);
@@ -94,6 +95,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       regidsTmp = regidsTmp.map(x=>parseInt(x));
     }
 
+    setViaURL(true);
+
     console.log('searchParams', searchParams.get('path'))
     // check if all needed params present and if so update state and return status true
     if (searchParams.get('path')==='genex'){
@@ -129,10 +132,10 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setNisslStatus(urlParams.nisslStatus);
       setWireframeStatus(urlParams.wireframeStatus);
       setOpacityVal(urlParams.opacity);
-      setUmiLowerThreshold(urlParams.thl);
-      setUmiUpperThreshold(urlParams.thh);
-      setUmiLowerThreshold2(urlParams.thl2);
-      setUmiUpperThreshold2(urlParams.thh2);
+      setUrlUmiLowerThreshold(urlParams.thl);
+      setUrlUmiUpperThreshold(urlParams.thh);
+      setUrlUmiLowerThreshold2(urlParams.thl2);
+      setUrlUmiUpperThreshold2(urlParams.thh2);
       setMaxUmiThreshold(urlParams.mth1);
       setMaxUmiThreshold2(urlParams.mth2);
       setMinFrac(urlParams.minfrac);

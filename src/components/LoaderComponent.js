@@ -59,6 +59,14 @@ function Loader({dataConfig, validatedURLParams}){
   const opacityVal = useGEComponentStore(state => state.opacityVal);
   const setOpacityVal = useGEComponentStore(state => state.setOpacityVal);
 
+  const urlUmiLowerThreshold = useGEComponentStore(state => state.urlUmiLowerThreshold);
+  const setUrlUmiLowerThreshold = useGEComponentStore(state => state.setUrlUmiLowerThreshold);
+  const urlUmiUpperThreshold = useGEComponentStore(state => state.urlUmiUpperThreshold);
+  const setUrlUmiUpperThreshold = useGEComponentStore(state => state.setUrlUmiUpperThreshold);
+  const urlUmiLowerThreshold2 = useGEComponentStore(state => state.urlUmiLowerThreshold2);
+  const setUrlUmiLowerThreshold2 = useGEComponentStore(state => state.setUrlUmiLowerThreshold2);
+  const urlUmiUpperThreshold2 = useGEComponentStore(state => state.urlUmiUpperThreshold2);
+  const setUrlUmiUpperThreshold2 = useGEComponentStore(state => state.setUrlUmiUpperThreshold2);
 
   const [dataLoadStatus, setDataLoadStatus] = useState({puck:0, gene:0, metadata:0});
   const [dataLoadPercent, setDataLoadPercent] = useState(0);
@@ -86,6 +94,10 @@ function Loader({dataConfig, validatedURLParams}){
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+
+  const [signalRawDataLoaded, setSignalRawDataLoaded] = useState(false); // used to signal a gene2's useEffect that initial data load run is complete (unifiedData is set)
+  const viaURL = useStore(state => state.viaURL); // conveys whether the user has entered the page via a URL
+  const setViaURL = useStore(state => state.setViaURL);
 
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
@@ -245,15 +257,35 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        if (umiUpperThreshold===0.01){ // do not reset if upperThresold already provided by URL params
+
+        if (urlUmiUpperThreshold !==null){ // use URL params if provided
+          setUmiUpperThreshold(urlUmiUpperThreshold);
+          setUrlUmiUpperThreshold(null);
+        }else{
           setUmiUpperThreshold(locMaxUmiThreshold);
+        }
+        if (urlUmiLowerThreshold !== null){ // use URL params if provided
+          setUmiLowerThreshold(urlUmiLowerThreshold);
+          setUrlUmiLowerThreshold(null);
+        }else{
+          setUmiLowerThreshold(0.01);
         }
 
         let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
         locMaxUmiThreshold2 = locMaxUmiThreshold2>0 ? locMaxUmiThreshold2 : 0.1;
         setMaxUmiThreshold2(locMaxUmiThreshold2);
-        if (umiUpperThreshold2===1.0){ // do not reset if upperThresold already provided by URL params
+
+        if (urlUmiUpperThreshold2 !==null){ // use URL params if provided
+          setUmiUpperThreshold2(urlUmiUpperThreshold2);
+          setUrlUmiUpperThreshold2(null);
+        }else{
           setUmiUpperThreshold2(locMaxUmiThreshold2);
+        }
+        if (urlUmiLowerThreshold2 !== null){ // use URL params if provided
+          setUmiLowerThreshold2(urlUmiLowerThreshold2);
+          setUrlUmiLowerThreshold2(null);
+        }else{
+          setUmiLowerThreshold2(0.01);
         }
 
         const geneData2= await load(geneDataUrl, [CSVLoader]);
@@ -265,7 +297,7 @@ function Loader({dataConfig, validatedURLParams}){
             logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
           }));
 
-
+        console.log('yess')
 
       }else{ // just fetch and update geneData1
 
@@ -278,8 +310,18 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0 ? locMaxUmiThreshold : 0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        if (umiUpperThreshold===0.01){ // do not reset if upperThresold already provided by URL params
+
+        if (urlUmiUpperThreshold !==null){ // use URL params if provided
+          setUmiUpperThreshold(urlUmiUpperThreshold);
+          setUrlUmiUpperThreshold(null);
+        }else{
           setUmiUpperThreshold(locMaxUmiThreshold);
+        }
+        if (urlUmiLowerThreshold !== null){ // use URL params if provided
+          setUmiLowerThreshold(urlUmiLowerThreshold);
+          setUrlUmiLowerThreshold(null);
+        }else{
+          setUmiLowerThreshold(0.01);
         }
 
         readData = coordsData.map((obj, index) => ({
@@ -297,6 +339,7 @@ function Loader({dataConfig, validatedURLParams}){
     }
     
     if (chosenPuckid.gene === chosenGene[0]){
+      console.log('YESS')
       fetchData();
     }else{
       setChosenGene([chosenPuckid.gene]); // update gene to match the gene set by region enrichment component
@@ -324,8 +367,18 @@ function Loader({dataConfig, validatedURLParams}){
         let locMaxUmiThreshold = parseFloat(metaData[maxCountMetadataKey]);
         locMaxUmiThreshold = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
         setMaxUmiThreshold(locMaxUmiThreshold);
-        if (umiUpperThreshold===0.01){ // do not reset if upperThresold already provided by URL params
+
+        if (urlUmiUpperThreshold !==null){ // use URL params if provided
+          setUmiUpperThreshold(urlUmiUpperThreshold);
+          setUrlUmiUpperThreshold(null);
+        }else{
           setUmiUpperThreshold(locMaxUmiThreshold);
+        }
+        if (urlUmiLowerThreshold !== null){ // use URL params if provided
+          setUmiLowerThreshold(urlUmiLowerThreshold);
+          setUrlUmiLowerThreshold(null);
+        }else{
+          setUmiLowerThreshold(0.01);
         }
 
         console.log('locMaxUmiThreshold', locMaxUmiThreshold, 'chosenGene', chosenGene);
@@ -370,7 +423,7 @@ function Loader({dataConfig, validatedURLParams}){
   
   // loading new counts on new gene selection for chosenGene2
   useEffect(()=>{
-    console.log('unidatalength', unifiedData.length, 'chosenGene2', chosenGene2);
+    console.log('unidatalength', unifiedData.length, unifiedData);
     if(chosenPuckid.gene !== chosenGene[0]) // hacky way to prevent following code running when only unifiedData.length changes but not chosenGene2 - happens when changing puck - fixme todo
     if (unifiedData.length>1){
       if (geneOptions.includes(chosenGene2[0])){
@@ -389,8 +442,18 @@ function Loader({dataConfig, validatedURLParams}){
           let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
           locMaxUmiThreshold2 = locMaxUmiThreshold2>0?locMaxUmiThreshold2:0.1;
           setMaxUmiThreshold2(locMaxUmiThreshold2);
-          if (umiUpperThreshold2===1.0){ // do not reset if upperThresold already provided by URL params
+
+          if (urlUmiUpperThreshold2 !==null){ // use URL params if provided
+            setUmiUpperThreshold2(urlUmiUpperThreshold2);
+            setUrlUmiUpperThreshold2(null);
+          }else{
             setUmiUpperThreshold2(locMaxUmiThreshold2);
+          }
+          if (urlUmiLowerThreshold2 !== null){ // use URL params if provided
+            setUmiLowerThreshold2(urlUmiLowerThreshold2);
+            setUrlUmiLowerThreshold2(null);
+          }else{
+            setUmiLowerThreshold2(0.01);
           }
 
           // create unifiedData
@@ -422,7 +485,7 @@ function Loader({dataConfig, validatedURLParams}){
 
         // update state of unifiedData
         setUnifiedData(readData);
-        console.log("chosenGene2 not included", chosenGene2, 'unifiedData', unifiedData, geneOptions);
+        console.log("chosenGene2 not included", chosenGene2, 'unifiedData', unifiedData, geneOptions, readData);
         if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
           setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
         }
@@ -433,6 +496,19 @@ function Loader({dataConfig, validatedURLParams}){
     }
 
   }, [chosenGene2, unifiedData.length]); // adding unifiedData for URLParam case unifiedData is delayed (won't also lead to unnecessary loads)
+
+
+  // signal the URL param case is ready for gene2 processing
+  useEffect(()=>{
+    if (unifiedData.length>1 && signalRawDataLoaded===false){
+      if (viaURL){
+          setDataLoadStatus((p)=>({...p, gene:p.gene-1, metadata:p.metadata-1})); 
+          setSignalRawDataLoaded(true);
+      }
+    }      
+      
+
+  }, [unifiedData.length]);
 
   // loading new counts on new gene selection for chosenGene2 - only for cases when both gene and puck are not loaded at same time - todo - remove redundant code
   useEffect( ()=>{ 
@@ -453,9 +529,25 @@ function Loader({dataConfig, validatedURLParams}){
           let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
           locMaxUmiThreshold2 = locMaxUmiThreshold2>0?locMaxUmiThreshold2:0.1;
           setMaxUmiThreshold2(locMaxUmiThreshold2);
-          if (umiUpperThreshold2===1.0){ // do not reset if upperThresold already provided by URL params
+
+          // if (urlUmiUpperThreshold2 !==null){ // use URL params if provided
+          //   setUmiUpperThreshold2(urlUmiUpperThreshold2);
+          //   setUrlUmiUpperThreshold2(null);
+          // }else{
+          //   setUmiUpperThreshold2(locMaxUmiThreshold2);
+          // }
+          // if (urlUmiLowerThreshold2 !== null){ // use URL params if provided
+          //   setUmiLowerThreshold2(urlUmiLowerThreshold2);
+          //   setUrlUmiLowerThreshold2(null);
+          // }else{
+          //   setUmiLowerThreshold2(0.01);
+          // }
+
+          if (viaURL==false){
             setUmiUpperThreshold2(locMaxUmiThreshold2);
+            setUmiLowerThreshold2(0.01);
           }
+          
 
           // create unifiedData
           let readData = null;
@@ -470,11 +562,12 @@ function Loader({dataConfig, validatedURLParams}){
 
           // update state of unifiedData
           setUnifiedDataTmp1(readData);
-          console.log('chosenGene2 included', readData);
-
+          console.log('chosenGene2 included', readData, unifiedData, urlUmiUpperThreshold2, urlUmiLowerThreshold2);
+          
           setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
         }
         fetchData();
+        setViaURL(false);
       }else{
 
         // create unifiedData
@@ -495,7 +588,7 @@ function Loader({dataConfig, validatedURLParams}){
       
     }
 
-  }, [chosenGene2]);
+  }, [chosenGene2, signalRawDataLoaded]);
 
 
   // recreate unifiedData on change of umiUpperThreshold or umiLowerThreshold for matching the colormap to active range
@@ -507,6 +600,7 @@ function Loader({dataConfig, validatedURLParams}){
         logcnt1: Math.log(unifiedData[index].count + 1 - umiLowerThreshold)/Math.log(umiUpperThreshold+1)
       }));
       setUnifiedData(readData);
+    console.log("set1 ", readData, unifiedData, chosenGene2)
     }    
 
   }, [umiLowerThreshold, umiUpperThreshold]);
