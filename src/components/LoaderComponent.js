@@ -95,7 +95,6 @@ function Loader({dataConfig, validatedURLParams}){
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
 
-  const [signalRawDataLoaded, setSignalRawDataLoaded] = useState(false); // used to signal a gene2's useEffect that initial data load run is complete (unifiedData is set)
   const viaURL = useStore(state => state.viaURL); // conveys whether the user has entered the page via a URL
   const setViaURL = useStore(state => state.setViaURL);
 
@@ -297,8 +296,6 @@ function Loader({dataConfig, validatedURLParams}){
             logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
           }));
 
-        console.log('yess')
-
       }else{ // just fetch and update geneData1
 
         // load metadata for gene1
@@ -333,13 +330,12 @@ function Loader({dataConfig, validatedURLParams}){
         }));
       }       
       setUnifiedData(readData);
-      if (coordsData.length>1){
+      if (coordsData.length>1 && (!geneOptions.includes(chosenGene2[0]))){
         setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1})); 
         }
     }
     
     if (chosenPuckid.gene === chosenGene[0]){
-      console.log('YESS')
       fetchData();
     }else{
       setChosenGene([chosenPuckid.gene]); // update gene to match the gene set by region enrichment component
@@ -411,7 +407,9 @@ function Loader({dataConfig, validatedURLParams}){
         console.log('readData', readData);
 
         if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+          if (!geneOptions.includes(chosenGene2[0])){ // delay increment until gene2 is loaded
+            setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+            }
         }
       }
       fetchData();
@@ -497,22 +495,10 @@ function Loader({dataConfig, validatedURLParams}){
 
   }, [chosenGene2, unifiedData.length]); // adding unifiedData for URLParam case unifiedData is delayed (won't also lead to unnecessary loads)
 
-
-  // signal the URL param case is ready for gene2 processing
-  useEffect(()=>{
-    if (unifiedData.length>1 && signalRawDataLoaded===false){
-      if (viaURL){
-          setSignalRawDataLoaded(true);
-      }
-          setDataLoadStatus((p)=>({...p, gene:p.gene-1, metadata:p.metadata-1})); // urlParams case
-    }      
-      
-
-  }, [unifiedData.length]);
-
   // loading new counts on new gene selection for chosenGene2 - only for cases when both gene and puck are not loaded at same time - todo - remove redundant code
   useEffect( ()=>{ 
     if(chosenPuckid.gene === chosenGene[0]){
+      if (unifiedData.length>1){
       if (geneOptions.includes(chosenGene2[0])){
         // create filename string using gene name and puckid
 
@@ -543,7 +529,7 @@ function Loader({dataConfig, validatedURLParams}){
           //   setUmiLowerThreshold2(0.01);
           // }
 
-          if (viaURL==false){
+          if (viaURL===false){
             setUmiUpperThreshold2(locMaxUmiThreshold2);
             setUmiLowerThreshold2(0.01);
           }
@@ -562,7 +548,7 @@ function Loader({dataConfig, validatedURLParams}){
 
           // update state of unifiedData
           setUnifiedDataTmp1(readData);
-          console.log('chosenGene2 included', readData, unifiedData, urlUmiUpperThreshold2, urlUmiLowerThreshold2);
+          console.log('chosenGene2 included', readData.length, unifiedData.length, urlUmiUpperThreshold2, urlUmiLowerThreshold2);
           
           setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
         }
@@ -580,15 +566,24 @@ function Loader({dataConfig, validatedURLParams}){
         // update state of unifiedData
         setUnifiedData(readData);
         console.log("chosenGene2 not included", chosenGene2, 'unifiedData', unifiedData, geneOptions);
-        if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
-          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
-        }
+        // if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
+        //   console.log('notinc')
+        //   setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+        // }
 
       }
-      
+     } 
     }
+    
 
-  }, [chosenGene2, signalRawDataLoaded]);
+  }, [chosenGene2, unifiedData.length]);
+
+  useEffect(()  => {
+    if (!geneOptions.includes(chosenGene2[0])&&unifiedData.length>1){
+          setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+      }
+
+  }, [chosenGene2]);
 
 
   // recreate unifiedData on change of umiUpperThreshold or umiLowerThreshold for matching the colormap to active range
