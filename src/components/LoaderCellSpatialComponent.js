@@ -378,6 +378,7 @@ function LoaderCellSpatial({dataConfig}){
   // loading new scores on chosenCell2 selection
   useEffect(()=>{
 
+    if (unifiedData.length>1)
     if (cellOptions.includes(chosenCell2[0])){
 
       // read cell data
