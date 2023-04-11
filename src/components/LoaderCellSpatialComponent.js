@@ -623,7 +623,7 @@ function LoaderCellSpatial({dataConfig}){
           </Col>
           <Col xs="1">
             <Form.Check 
-              defaultChecked={wireframeStatus}
+              defaultChecked={nisslStatus}
             type={'checkbox'}
             id={`nis-checkbox`}
             label={`Nissl`}

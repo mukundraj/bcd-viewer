@@ -51,6 +51,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
 
+  const setOpacityValCSC = useCSComponentStore(state => state.setOpacityVal);
+
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
 
 
@@ -213,7 +215,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setFbarActiveDataName(urlParams.fbd);
       setNisslStatus(urlParams.nisslStatus);
       setWireframeStatus(urlParams.wireframeStatus);
-      setOpacityVal(urlParams.opacity);
+      setOpacityValCSC(urlParams.opacity);
       setScoreLowerThreshold(urlParams.thl);
       setScoreUpperThreshold(urlParams.thh);
       setScoreLowerThreshold2(urlParams.thl2);
