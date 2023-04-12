@@ -15,6 +15,14 @@ export const useCSComponentStore = create(set => ({
         setMaxScoreThreshold2: (val) => set({maxScoreThreshold2:val}),
         opacityVal:1.0,
         setOpacityVal: (val) => set({opacityVal:val}),
+        urlScoreLowerThreshold: null,
+        setUrlScoreLowerThreshold: (val) => set({urlScoreLowerThreshold:val}),
+        urlScoreUpperThreshold: null,
+        setUrlScoreUpperThreshold: (val) => set({urlScoreUpperThreshold:val}),
+        urlScoreLowerThreshold2: null,
+        setUrlScoreLowerThreshold2: (val) => set({urlScoreLowerThreshold2:val}),
+        urlScoreUpperThreshold2: null,
+        setUrlScoreUpperThreshold2: (val) => set({urlScoreUpperThreshold2:val}),
     }));
 
 export const useCSCPersistStore = create(persist(set => ({

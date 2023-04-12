@@ -57,6 +57,15 @@ function LoaderCellSpatial({dataConfig}){
   const scoreUpperThreshold2 = useCSCPersistStore(state => state.scoreUpperThreshold2);
   const setScoreUpperThreshold2 = useCSCPersistStore(state => state.setScoreUpperThreshold2);
 
+  const urlScoreLowerThreshold = useCSComponentStore(state => state.urlScoreLowerThreshold);
+  const setUrlScoreLowerThreshold = useCSComponentStore(state => state.setUrlScoreLowerThreshold);
+  const urlScoreUpperThreshold = useCSComponentStore(state => state.urlScoreUpperThreshold);
+  const setUrlScoreUpperThreshold = useCSComponentStore(state => state.setUrlScoreUpperThreshold);
+  const urlScoreLowerThreshold2 = useCSComponentStore(state => state.urlScoreLowerThreshold2);
+  const setUrlScoreLowerThreshold2 = useCSComponentStore(state => state.setUrlScoreLowerThreshold2);
+  const urlScoreUpperThreshold2 = useCSComponentStore(state => state.urlScoreUpperThreshold2);
+  const setUrlScoreUpperThreshold2 = useCSComponentStore(state => state.setUrlScoreUpperThreshold2);
+
   const opacityVal = useCSComponentStore(state => state.opacityVal);
   const setOpacityVal = useCSComponentStore(state => state.setOpacityVal);
   
@@ -257,14 +266,33 @@ function LoaderCellSpatial({dataConfig}){
           let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
           locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
           setMaxScoreThreshold(locMaxScoreThreshold);
-          setScoreUpperThreshold(locMaxScoreThreshold);
+          if (urlScoreUpperThreshold !== null){ // if URL has scoreUpperThreshold, use that instead
+            setScoreUpperThreshold(urlScoreUpperThreshold);
+            setUrlScoreUpperThreshold(null);
+          }else{
+            setScoreUpperThreshold(locMaxScoreThreshold); // use maxScoreThreshold as default
+          }
+          if (urlScoreLowerThreshold !== null){ // if URL has scoreLowerThreshold, use that
+            setScoreLowerThreshold(urlScoreLowerThreshold);
+            setUrlScoreLowerThreshold(null);
+          }
           // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
           let rowIdx2 = cellNameToIdx[chosenCell2[0]];
           if (rowIdx2 !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
             let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
             locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
             setMaxScoreThreshold2(locMaxScoreThreshold2);
-            setScoreUpperThreshold2(locMaxScoreThreshold2);
+
+            if (urlScoreUpperThreshold2 !== null){ // if URL has scoreUpperThreshold, use that instead)
+              setScoreUpperThreshold2(urlScoreUpperThreshold2);
+              setUrlScoreUpperThreshold2(null);
+            }else{
+              setScoreUpperThreshold2(locMaxScoreThreshold2); // use maxScoreThreshold as default
+            }
+            if (urlScoreLowerThreshold2 !== null){ // if URL has scoreLowerThreshold, use that
+              setScoreLowerThreshold2(urlScoreLowerThreshold2);
+              setUrlScoreLowerThreshold2(null);
+            }
 
             const [cellData, cellData2] = await Promise.all([
               zloader.getDataRow("cellxbead.zarr/X", rowIdx),
@@ -290,7 +318,17 @@ function LoaderCellSpatial({dataConfig}){
           locMaxScoreThreshold = locMaxScoreThreshold>0 ? locMaxScoreThreshold : 0.0011;
           // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
           setMaxScoreThreshold(locMaxScoreThreshold);
-          setScoreUpperThreshold(locMaxScoreThreshold);
+          console.log("urlScoreUpperThreshold ", urlScoreUpperThreshold, scoreUpperThreshold,coordsData.length);
+          if (urlScoreUpperThreshold !== null){ // if URL has scoreUpperThreshold, use that instead
+            setScoreUpperThreshold(urlScoreUpperThreshold);
+            setUrlScoreUpperThreshold(null);
+          }else{
+            setScoreUpperThreshold(locMaxScoreThreshold); // use maxScoreThreshold as default
+          }
+          if (urlScoreLowerThreshold !== null){ // if URL has scoreLowerThreshold, use that
+            setScoreLowerThreshold(urlScoreLowerThreshold);
+            setUrlScoreLowerThreshold(null);
+          }
           console.log("scoreLowerThreshold", scoreLowerThreshold);
 
           readData = coordsData.map((obj, index) => ({
@@ -309,7 +347,9 @@ function LoaderCellSpatial({dataConfig}){
     }
 
     if (chosenPuckid.cell === chosenCell[0]){
-      fetchData();
+      if (coordsData.length>1){
+        fetchData();
+        }
     }else{
       console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCell", chosenCell);
       setChosenCell([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
@@ -337,6 +377,7 @@ function LoaderCellSpatial({dataConfig}){
         console.log("locMaxScoreThreshold", locMaxScoreThreshold);
         setMaxScoreThreshold(locMaxScoreThreshold);
         setScoreUpperThreshold(locMaxScoreThreshold);
+        setScoreLowerThreshold(0.3);
 
         // create unifiedData
         let readData = null;

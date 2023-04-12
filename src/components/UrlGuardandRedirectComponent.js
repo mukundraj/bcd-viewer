@@ -67,14 +67,19 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
 
   // CS component related
-  const setScoreLowerThreshold = useCSCPersistStore(state => state.setScoreLowerThreshold);
-  const setScoreUpperThreshold = useCSCPersistStore(state => state.setScoreUpperThreshold);
-  const setScoreLowerThreshold2 = useCSCPersistStore(state => state.setScoreLowerThreshold2);
-  const setScoreUpperThreshold2 = useCSCPersistStore(state => state.setScoreUpperThreshold2);
+  // const setScoreLowerThreshold = useCSCPersistStore(state => state.setScoreLowerThreshold);
+  // const setScoreUpperThreshold = useCSCPersistStore(state => state.setScoreUpperThreshold);
+  // const setScoreLowerThreshold2 = useCSCPersistStore(state => state.setScoreLowerThreshold2);
+  // const setScoreUpperThreshold2 = useCSCPersistStore(state => state.setScoreUpperThreshold2);
   const setMaxScoreThreshold = useCSComponentStore(state => state.setMaxScoreThreshold);
   const setMaxScoreThreshold2 = useCSComponentStore(state => state.setMaxScoreThreshold2);
   const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
   const setChosenCell2 = useCSComponentStore(state => state.setChosenCell2);
+
+  const setUrlScoreLowerThreshold = useCSComponentStore(state => state.setUrlScoreLowerThreshold);
+  const setUrlScoreUpperThreshold = useCSComponentStore(state => state.setUrlScoreUpperThreshold);
+  const setUrlScoreLowerThreshold2 = useCSComponentStore(state => state.setUrlScoreLowerThreshold2);
+  const setUrlScoreUpperThreshold2 = useCSComponentStore(state => state.setUrlScoreUpperThreshold2);
 
   const [regidToNameMap, setRegidToNameMap] = useState(null);
 
@@ -216,10 +221,10 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setNisslStatus(urlParams.nisslStatus);
       setWireframeStatus(urlParams.wireframeStatus);
       setOpacityValCSC(urlParams.opacity);
-      setScoreLowerThreshold(urlParams.thl);
-      setScoreUpperThreshold(urlParams.thh);
-      setScoreLowerThreshold2(urlParams.thl2);
-      setScoreUpperThreshold2(urlParams.thh2);
+      setUrlScoreLowerThreshold(urlParams.thl);
+      setUrlScoreUpperThreshold(urlParams.thh);
+      setUrlScoreLowerThreshold2(urlParams.thl2);
+      setUrlScoreUpperThreshold2(urlParams.thh2);
       setMaxScoreThreshold(urlParams.mth1);
       setMaxScoreThreshold2(urlParams.mth2);
       setMinFrac(urlParams.minfrac);
