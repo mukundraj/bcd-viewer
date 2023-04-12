@@ -548,7 +548,7 @@ function Loader({dataConfig, validatedURLParams}){
 
           // update state of unifiedData
           setUnifiedDataTmp1(readData);
-          console.log('chosenGene2 included', readData.length, unifiedData.length, urlUmiUpperThreshold2, urlUmiLowerThreshold2);
+          console.log('chosenGene2 included', chosenGene2, readData.length, unifiedData.length, urlUmiUpperThreshold2, urlUmiLowerThreshold2);
           
           setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
         }
@@ -564,6 +564,7 @@ function Loader({dataConfig, validatedURLParams}){
         }));
 
         // update state of unifiedData
+
         setUnifiedData(readData);
         console.log("chosenGene2 not included", chosenGene2, 'unifiedData', unifiedData, geneOptions);
         // if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
@@ -578,9 +579,11 @@ function Loader({dataConfig, validatedURLParams}){
 
   }, [chosenGene2, unifiedData.length]);
 
+  // update loader after second gene removed
   useEffect(()  => {
     if (!geneOptions.includes(chosenGene2[0])&&unifiedData.length>1){
           setDataLoadStatus((p)=>({...p, gene:p.gene+1, metadata:p.metadata+1}));
+      console.log('gene removeds')
       }
 
   }, [chosenGene2]);
@@ -602,7 +605,7 @@ function Loader({dataConfig, validatedURLParams}){
 
   // recreate unifiedData on change of umiUpperThreshold2 or umiLowerThreshold2 for matching the colormap to active range
   useEffect(()=>{
-    if (chosenGene2.length>0){
+    if (chosenGene2.length>0 && unifiedDataTmp1.length>1){ // testing unifiedDataTmp1.length>1 to avoid extra pass that caused progress bar overshoot on first time addition of second gene
       let readData = unifiedDataTmp1.map((obj, index) => ({
         ...obj,
         logcnt2: Math.log(unifiedDataTmp1[index].count2 +1 - umiLowerThreshold2)/Math.log(umiUpperThreshold2+1)
