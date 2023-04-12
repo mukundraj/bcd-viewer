@@ -146,7 +146,7 @@ function SingleCell({dataConfig}){
 
     // iterate over coolGenesFiltered and move them to top of allGenes
     for (let i=0; i<coolGenesFiltered.length; i++){
-      let idx = allGenesCopy.findIndex(x => x === coolGenes[i]);
+      let idx = allGenesCopy.findIndex(x => x === coolGenesFiltered[i]);
       if (idx !== -1){
         let gene = allGenesCopy[idx];
         allGenesCopy.splice(idx, 1);
