@@ -475,31 +475,31 @@ function LoaderCellSpatial({dataConfig}){
 
   }, [chosenCell2]);
 
-  // recreate unifiedData on change of upperThreshold or lowerThreshold for matching the colormap to active range
-  useEffect(()=>{
+  // // recreate unifiedData on change of upperThreshold or lowerThreshold for matching the colormap to active range
+  // useEffect(()=>{
 
-    if (chosenCell2.length>0){
-      let readData = unifiedData.map((obj, index) => ({
-        ...obj,
-        logcnt1: Math.log(unifiedData[index].count + 1 - scoreLowerThreshold)/Math.log(scoreUpperThreshold+1)
-      }));
-      setUnifiedData(readData);
-    }    
+  //   if (chosenCell2.length>0){
+  //     let readData = unifiedData.map((obj, index) => ({
+  //       ...obj,
+  //       logcnt1: Math.log(unifiedData[index].count + 1 - scoreLowerThreshold)/Math.log(scoreUpperThreshold+1)
+  //     }));
+  //     setUnifiedData(readData);
+  //   }    
 
-  }, [scoreLowerThreshold, scoreUpperThreshold]);
+  // }, [scoreLowerThreshold, scoreUpperThreshold]);
 
-  // recreate unifiedData on change of upperThreshold2 or lowerThreshold2 for matching the colormap to active range
-  useEffect(()=>{
-    if (chosenCell2.length>0){
-      let readData = unifiedData.map((obj, index) => ({
-        ...obj,
-        logcnt2: Math.log(unifiedData[index].count2 +1 - scoreLowerThreshold2)/Math.log(scoreUpperThreshold2+1)
-      }));
-      setUnifiedData(readData);
-      console.log("set2 ", readData);
-    }  
+  // // recreate unifiedData on change of upperThreshold2 or lowerThreshold2 for matching the colormap to active range
+  // useEffect(()=>{
+  //   if (chosenCell2.length>0){
+  //     let readData = unifiedData.map((obj, index) => ({
+  //       ...obj,
+  //       logcnt2: Math.log(unifiedData[index].count2 +1 - scoreLowerThreshold2)/Math.log(scoreUpperThreshold2+1)
+  //     }));
+  //     setUnifiedData(readData);
+  //     console.log("set2 ", readData);
+  //   }  
 
-  }, [scoreLowerThreshold2, scoreUpperThreshold2]);
+  // }, [scoreLowerThreshold2, scoreUpperThreshold2]);
 
   // loading frequency bar plot data on change of chosenCell
   useEffect(()=>{
