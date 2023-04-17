@@ -67,7 +67,7 @@ function SingleCell({dataConfig}){
   const prevMultiSelections = useRef([]);
   const cellTypeColumn = [{"label":"celltype \t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
   const cellClassColumn = [{"label":"cellclass \t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure \t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
+  const topStructureColumn = [{"label":"topstructure \t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
   const geneSetCoverColumn = [{"label":"gene_set_cover \t\t\t\t\t\t\t", "accessor":"gs"}] // tabs maintain col width, consequently col height
   const neurotransBinaryColumn = [{"label":"neurotrans_binary \t\t\t\t\t\t\t", "accessor":"nt"}] // tabs maintain col width, consequently col height
   const neuropepColumn = [{"label":"neuropep \t\t\t\t\t\t\t", "accessor":"np"}] // tabs maintain col width, consequently col height
@@ -407,7 +407,7 @@ function SingleCell({dataConfig}){
           // add property to each object of tableDataFilteredTmp
           tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
             // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
-            draft['tr'] = draft['tr']+`, src:${String(cellIdxsInRegion[x.cid])}`;  // composition percentage
+            draft['tr'] = draft['tr']+`, cp:${String(Math.round(Math.min(1, cellIdxsInRegion[x.cid])*100))}%`;  // composition percentage
           }));
         }
 
