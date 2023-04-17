@@ -381,7 +381,28 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if(chosenCell2.length>0){ // if a comparison cell is also selected
+        if (chosenCell2.length>0 && unifiedData.length!==coordsData.length){ // cell2 data is present but stale, need to be reloaded
+
+          // read cell2 data
+          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
+          const cellData2 = await zloader.getDataRow("cellxbead.zarr/X", rowIdx2);
+
+          // read metadata for cell2
+        let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
+        locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
+
+          // create unified data including cell2 data
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            count:  cellData[index], 
+            count2: cellData2[index],
+            logcnt1: Math.log(cellData[index] + 1)/Math.log(locMaxScoreThreshold+1),
+            logcnt2: Math.log(cellData2[index] + 1)/Math.log(locMaxScoreThreshold2+1),
+          }));
+
+
+        }
+        else if(chosenCell2.length>0){ // if a comparison cell is also selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
             count:  cellData[index], 

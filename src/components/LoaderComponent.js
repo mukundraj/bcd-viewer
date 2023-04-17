@@ -389,7 +389,7 @@ function Loader({dataConfig, validatedURLParams}){
           let geneDataUrl2 = `${basePath}${dpathGeneExprs}/puck${chosenPuckid.pid}/gene_${chosenGene2[0]}.csv`
           const geneData2 = await load(geneDataUrl2, [CSVLoader]);
 
-          // read and set metadata for gene2
+          // read metadata for gene2
           let metaDataUrl2 = `${basePath}${dpathGeneExprs}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
           let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
           let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
