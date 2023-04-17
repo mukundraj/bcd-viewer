@@ -335,10 +335,10 @@ function Loader({dataConfig, validatedURLParams}){
         }
     }
     
-    if (chosenPuckid.gene === chosenGene[0]){
+    if (chosenPuckid.gene === chosenGene[0]){ // loading gene data when not triggered by region enrichment
       fetchData();
     }else{
-      setChosenGene([chosenPuckid.gene]); // update gene to match the gene set by region enrichment component
+      setChosenGene([chosenPuckid.gene]); // only update gene to match the gene set by region enrichment component
     }
 
   }, [coordsData]);
@@ -382,7 +382,29 @@ function Loader({dataConfig, validatedURLParams}){
 
         // create unifiedData
         let readData = null;
-        if(chosenGene2.length>0){ // if a comparison gene is also selected
+
+        // if unifiedData.length != coordsData.length, then gene2 data is stale due to pid change-> reload gene2 data for current puck
+        if (chosenGene2.length>0 && (unifiedData.length !== coordsData.length)){ // gene2 data present but is stale
+          // read gene2 data
+          let geneDataUrl2 = `${basePath}${dpathGeneExprs}/puck${chosenPuckid.pid}/gene_${chosenGene2[0]}.csv`
+          const geneData2 = await load(geneDataUrl2, [CSVLoader]);
+
+          // read and set metadata for gene2
+          let metaDataUrl2 = `${basePath}${dpathGeneExprs}/puck${chosenPuckid.pid}/metadata_gene_${chosenGene2[0]}.json`
+          let metaData2 = await fetch(metaDataUrl2).then(response => response.json());
+          let locMaxUmiThreshold2 = parseFloat(metaData2[maxCountMetadataKey]);
+          locMaxUmiThreshold2 = locMaxUmiThreshold>0?locMaxUmiThreshold:0.1;
+
+          // create unifiedData including gene2
+          readData = coordsData.map((obj, index) => ({
+            ...obj,
+            ...geneData[index], 
+            count2: geneData2[index],
+            logcnt1: Math.log(geneData[index].count + 1)/Math.log(locMaxUmiThreshold+1),
+            logcnt2: Math.log(geneData2[index].count + 1)/Math.log(locMaxUmiThreshold2+1),
+          }));
+
+        } else if(chosenGene2.length>0){ // if a comparison gene is also selected (and comparison gene data not stale due to NO pid change)
           readData = coordsData.map((obj, index) => ({
             ...obj,
             ...geneData[index], 
