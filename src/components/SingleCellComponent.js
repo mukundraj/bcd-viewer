@@ -642,7 +642,7 @@ function SingleCell({dataConfig}){
           <Col className="" xs="9">
             {columns.length>0?
               <>
-                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={16} handleSorting={handleSorting}/>
+                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
                 <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
                 <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
                 <Table columns={geneSetCoverColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
