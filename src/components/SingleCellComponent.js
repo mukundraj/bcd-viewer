@@ -395,10 +395,13 @@ function SingleCell({dataConfig}){
     headerGroups,
     rows,
     prepareRow,
+    allColumns,
   } = useTable({
     columns,
     data,
-    initialState: { sortBy: [{id: 'ct', desc: true}] }
+    initialState: { sortBy: [{id: 'ct', desc: true}],
+      hiddenColumns: ['cc', 'tr']
+    }
   }, 
   useSortBy)
 
@@ -406,6 +409,20 @@ function SingleCell({dataConfig}){
 
   // Render the UI for table
   return (
+    <>
+    <div>
+        <div>
+        </div>
+        {allColumns.map(column => (
+          <span key={column.id} style={{padding:'0px 10px'}}>
+            <label>
+              <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
+              {column.render('Header')}
+            </label>
+          </span>
+        ))}
+        <br />
+      </div>
     <table {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
@@ -438,6 +455,7 @@ function SingleCell({dataConfig}){
         })}
       </tbody>
     </table>
+    </>
   )
 }
 
