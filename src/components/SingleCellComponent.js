@@ -22,7 +22,7 @@ import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {useQuery} from 'react-query'
-import { useTable } from 'react-table'
+import { useTable, useSortBy } from 'react-table'
 
 
 function SingleCell({dataConfig}){
@@ -360,7 +360,23 @@ function SingleCell({dataConfig}){
     {
       Header: 'class',
       accessor: 'cc',
-    }
+    },
+    {
+      Header: 'topstructure',
+      accessor: 'tr',
+    },
+    {
+      Header: 'geneset',
+      accessor: 'gs',
+    },
+    {
+      Header: 'neurotrans_binary',
+      accessor: 'nt',
+    },
+    {
+      Header: 'neuropep',
+      accessor: 'np',
+    },
   ], [columns]);
 
   // sort table once tableData is updated with selected genes data
@@ -382,7 +398,11 @@ function SingleCell({dataConfig}){
   } = useTable({
     columns,
     data,
-  })
+    initialState: { sortBy: [{id: 'ct', desc: true}] }
+  }, 
+  useSortBy)
+
+  const firstPageRows = rows.slice(0, maxCellTypes);
 
   // Render the UI for table
   return (
@@ -391,13 +411,22 @@ function SingleCell({dataConfig}){
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+              <th {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                {/* Add a sort direction indicator */}
+                <span>
+                  {column.isSorted
+                    ? column.isSortedDesc
+                      ? ' 🔽'
+                      : ' 🔼'
+                      : ''}
+                  </span>
+              </th>
             ))}
           </tr>
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
+        {firstPageRows.map((row, i) => {
           prepareRow(row)
           return (
             <tr {...row.getRowProps()}>
