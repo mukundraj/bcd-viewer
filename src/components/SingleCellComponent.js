@@ -1,5 +1,5 @@
 import Breadcrumbs from './BreadcrumbsComponent'
-import {useEffect, useRef } from 'react';
+import {useEffect, useRef, useMemo } from 'react';
 import {getUrl, fetchJson} from "../shared/common"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ZarrLoader from "../loaders/ZarrLoader"
@@ -8,7 +8,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
-import Table from './table/TableComponent'
+// import Table from './table/TableComponent'
 import {useStore, usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
 import {useSCComponentPersistStore} from '../store/SCComponentStore'
@@ -22,6 +22,7 @@ import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {useQuery} from 'react-query'
+import { useTable } from 'react-table'
 
 
 function SingleCell({dataConfig}){
@@ -274,7 +275,7 @@ function SingleCell({dataConfig}){
       if (sortField===""){
         const scol_idx = col_idxs[0]+1;
         setSortField(scol_idx);
-        handleSorting(scol_idx, order, sortByToggleVal); // also sets tableDataSorted
+        // handleSorting(scol_idx, order, sortByToggleVal); // also sets tableDataSorted
       }
     }
 
@@ -325,7 +326,7 @@ function SingleCell({dataConfig}){
           setTableDataSorted(tableDataTmp);
         }else{
           // Removig field that is not current sortField
-          handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
+          // handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
         }
 
       }else if (multiSelections.length>0 && prevMultiSelections.current.length>0){ // page reload case
@@ -351,202 +352,65 @@ function SingleCell({dataConfig}){
 
   },[multiSelections, rawTableData]);
 
+  const rtColumns = useMemo(() => [ // react-table columns
+    {
+      Header: 'Celltype',
+      accessor: 'ct',
+    },
+    {
+      Header: 'class',
+      accessor: 'cc',
+    }
+  ], [columns]);
+
   // sort table once tableData is updated with selected genes data
   useEffect(()=>{
     
-        handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
+        console.log('testData', tableData, 'columns', columns);
+        // handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
 
   },[tableData, sortField, order]);
 
-  const tableDataSorted = useStore(state => state.tableDataSorted);
+  function Table({ columns, data }) {
+  // Use the state and functions returned from useTable to build UI
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({
+    columns,
+    data,
+  })
 
-  // filter tableDataSorted based on cellClassSelection
-  useEffect(()=>{
-    console.log('cellClassSelection ', cellClassSelection, 'tableData');
-    console.log('selectedRegIds', selectedRegIds);
-    console.log('selectedRegions', selectedRegions);
-
-    let wantedCelltypes = new Set();
-
-    // iterate over selectedRegIds
-    for (let i=0; i<selectedRegIds.length; i++){
-      if (!!regionToCelltype){
-        console.log('selectedRegIds ', selectedRegIds[i]);
-        const cellIdxsInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
-        console.log('cellIdxsInRegion', cellIdxsInRegion)
-        // for (const cidx of cellIdxInRegion){
-        for (const cidx in cellIdxsInRegion){
-          // wantedCelltypes.add(cidx);
-          if (cellIdxsInRegion[cidx]>minCompoPct){
-            wantedCelltypes.add(parseInt(cidx));
-          }
-        }
-      }
-    }
-    console.log('wantedCelltypes', wantedCelltypes.size, wantedCelltypes, tableDataSorted.length);
-    
-    
-
-    if (cellClassSelection.length>0){
-      // let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0] && x.pct>minCompoPct);
-      let tableDataFilteredTmp = tableDataSorted.filter(x => x.cc===cellClassSelection[0]);
-
-      // filter further if wanted celltypes are identified, else no further filtering
-      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
-        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
-      }
-      setTableDataFiltered(tableDataFilteredTmp);
-    }else{
-      let tableDataFilteredTmp = tableDataSorted;
-      // filter further if wanted celltypes are identified, else no further filtering
-      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
-        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
-
-        if (selectedRegIds.length>0 && !!regionToCelltype){
-          const cellIdxsInRegion = regionToCelltype[selectedRegIds[0]]; // cell idx among mapped region of chosen region
-          // add property to each object of tableDataFilteredTmp
-          tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
-            // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
-            draft['tr'] = draft['tr']+`, cp:${String(Math.round(Math.min(1, cellIdxsInRegion[x.cid])*100))}%`;  // composition percentage
-          }));
-        }
-
-      }
-      setTableDataFiltered(tableDataFilteredTmp);
-    }
-
-  }, [tableDataSorted, cellClassSelection, selectedRegIds, minCompoPct]);
-
-  // updates downsampledTableData based on chosen genes; needed for OverviewPlots
-  useEffect(()=>{
-
-    // update downsampledTableData based on selected genes
-    let downsample = (numSamples, tableDataSorted) => {
-
-      // let downsampledTableDataTmp = [{accessor:1, dataPct: [], dataAvg: []}];
-      console.log('tableDataSorted', tableDataSorted);
-
-      const downsampledTableDataTmp = produce(downsampledTableData, (draft)=>{
-
-        // create an array with keys of downsampledTableData
-        let curDownsampledAccessors = Object.keys(draft);
-        console.log('curDownsampledAccessors', curDownsampledAccessors, downsampledTableData);
-
-        
-        // create an array with accessor property of columns
-        let curColAccessors = columns.map(x=>x.accessor);
-
-
-        // add accessor to downsampled data if not already present
-        for (let i=0; i<columns.length; i++){
-          // check if columns[i].accessor is in curDownsampledAccessors
-          if (!curDownsampledAccessors.includes(columns[i].accessor.toString()) ){
-
-            // check accessor is a key in first object of tableDataSorted
-            if (tableDataSorted[0].hasOwnProperty(columns[i].accessor)){
-
-              console.log('accessor does not exist, adding ', columns[i].accessor);
-
-              // prepare dataPct and dataAvg arrays
-              // let inpDataPctAvg = [];
-              // prepare dataCnts array
-              let inpDataCnts = [];
-
-              // iterate over tableDataFiltered
-              for (let j=0; j<tableDataSorted.length; j++){
-                // inpDataPctAvg.push([tableDataSorted[j][columns[i].accessor], tableDataSorted[j][-columns[i].accessor]]);
-
-                inpDataCnts.push(tableDataSorted[j]['c'+columns[i].accessor]);
-              }
-
-              // let dwndDataPct = LTOB(inpDataPct, numSamples);
-              // let dwndDataAvg = LTOB(inpDataAvg, numSamples);
-              // let dwndData = LTOB(inpDataPctAvg, numSamples);
-
-              // console.log('dwnd', dwndData);
-
-              // add accessor and data
-              // draft[columns[i].accessor] = [{ct: 10}, {ct: 10}, {ct: 30}, {ct:20},{ct:25}];
-              // draft[columns[i].accessor] = [1,3,4,2,5,6,3,4,7,8,9, 18,5,2,3,4,1,7,19];
-
-              inpDataCnts = inpDataCnts.filter(x=>x>0);
-              inpDataCnts = inpDataCnts.map(x=>Math.log10(x));
-
-              draft[columns[i].accessor] = inpDataCnts;
-            }
-
-          }
-        }    
-        
-        // remove accessor from downsampled data if not present in columns
-        for (let i=0; i<curDownsampledAccessors.length; i++){
-
-          // check if curDownsampledAccessors[i] is in colAccessors
-          if (!curColAccessors.includes(parseInt(curDownsampledAccessors[i]))){
-            console.log('accessor extranuous, removing ', curDownsampledAccessors[i]);
-
-            // remove ith element from draft
-            delete draft[curDownsampledAccessors[i]];
-          }
-        }
-
-      });
-
-        console.log('columns', columns, downsampledTableData, downsampledTableDataTmp);
-
-      return downsampledTableDataTmp;
-
-    };
-
-    // console.log('tableDataSorted', tableDataSorted);
-    // prepare downsampled data and update in component's store
-    let numSamples = 500;
-    // let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
-    if (tableDataSorted.length>0){
-      let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
-      setDownsampledTableData(downsampledTableDataTmp);
-    }
-
-  }, [columns, tableDataSorted]);
- 
-  const [handleSorting] = useSortableTable(tableData);
-  // const tableDataSorted = useStore(state => state.tableDataSorted);
-  useEffect(()=>{
-    console.log("sortByToggleVal ", sortByToggleVal, 'tableData', tableData, 'tableDataFiltered', tableDataFiltered);
-    handleSorting(sortField, order, sortByToggleVal);
-  }, [sortField, order, tableData, sortByToggleVal])
- 
-
-  // compute and set normalizer Z
-  useEffect(()=>{
-
-    let proportionVals = [], avgVals = [];
-    let curShown = tableDataFiltered.slice(0, maxCellTypes);
-    curShown.map(x=>{
-    let curAccessors = columns.map(c=>c.accessor);
-      for (let i=0; i<curAccessors.length;i++){
-        proportionVals.push(x[curAccessors[i]]);
-        avgVals.push(x[-curAccessors[i]]);
-      }
-    });
-    
-    // console.log(proportionVals,"|", Math.max(...proportionVals), avgVals,"|", Math.max(...avgVals));
-
-    if (adaptNormalizerStatus){
-      setMaxProportionalVal(Math.max(...proportionVals)||Number.MIN_VALUE);
-      setMaxAvgVal(Math.max(...avgVals));
-    }else{
-      setMaxProportionalVal(1);
-      setMaxAvgVal(globalMaxAvgVal);
-    }
-
-  }, [tableDataFiltered, columns, maxCellTypes, selectedRegIds, adaptNormalizerStatus]);
-
-  useEffect(()=>{
-
-    console.log('tableDataFiltered', tableDataFiltered);
-
-  }, [tableDataFiltered])
+  // Render the UI for table
+  return (
+    <table {...getTableProps()}>
+      <thead>
+        {headerGroups.map(headerGroup => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map(column => (
+              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map((row, i) => {
+          prepareRow(row)
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map(cell => {
+                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+              })}
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+  )
+}
 
   return(
     <>
@@ -641,16 +505,9 @@ function SingleCell({dataConfig}){
         <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
           <Col className="" xs="9">
             {columns.length>0?
-              <>
-                <Table columns={cellTypeColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={14} handleSorting={handleSorting}/>
-                <Table columns={cellClassColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={topStructureColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={geneSetCoverColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={neurotransBinaryColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={neuropepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={neuropepRecepColumn} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={8} handleSorting={handleSorting}/>
-                <Table columns={columns} tableDataSorted={tableDataFiltered} maxCellTypes={maxCellTypes} width={29} handleSorting={handleSorting}/>
-              </>:null}
+              <div style={{overflow:"scroll", height:'70vh'}}>
+                <Table columns={rtColumns} data={tableData} />
+              </div>:null}
           </Col>
           <Col xs="3">
             <Row style={{marginTop:"10px"}}>
