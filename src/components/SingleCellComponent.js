@@ -23,6 +23,7 @@ import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {useQuery} from 'react-query'
 import { useTable, useSortBy } from 'react-table'
+import BTable from 'react-bootstrap/Table';
 
 
 function SingleCell({dataConfig}){
@@ -356,6 +357,7 @@ function SingleCell({dataConfig}){
     {
       Header: 'Celltype',
       accessor: 'ct',
+      disableSortBy: true,
     },
     {
       Header: 'class',
@@ -387,6 +389,14 @@ function SingleCell({dataConfig}){
 
   },[tableData, sortField, order]);
 
+
+  // produces cell contents to render based on column and cell value
+  const renderCell = (cell) => {
+
+
+
+  }
+
   function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build UI
   const {
@@ -399,8 +409,8 @@ function SingleCell({dataConfig}){
   } = useTable({
     columns,
     data,
-    initialState: { sortBy: [{id: 'ct', desc: true}],
-      hiddenColumns: ['cc', 'tr']
+    initialState: { sortBy: [{id: 'gs', desc: true}],
+      hiddenColumns: ['cc', 'tr'],
     }
   }, 
   useSortBy)
@@ -423,12 +433,12 @@ function SingleCell({dataConfig}){
         ))}
         <br />
       </div>
-    <table {...getTableProps()}>
+    <BTable striped bordered hover size="sm" {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+              <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>{column.render('Header')}
                 {/* Add a sort direction indicator */}
                 <span>
                   {column.isSorted
@@ -448,13 +458,13 @@ function SingleCell({dataConfig}){
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                return <td {...cell.getCellProps()}>{cell.column.id==='ct'?cell.render('Cell'):cell.value}</td>
               })}
             </tr>
           )
         })}
       </tbody>
-    </table>
+    </BTable>
     </>
   )
 }
