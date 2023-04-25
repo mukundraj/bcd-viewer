@@ -104,6 +104,9 @@ function SingleCell({dataConfig}){
   const setRegionTreeJson = usePersistStore(state => state.setRegionTreeJson);
   const [regionTree, setRegionTree] = useState(null);
 
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
+
   // set page title
   useEffect(() => {
     // ReactGA.send({ hitType: "pageview", page: "/singlecell" });
@@ -379,6 +382,10 @@ function SingleCell({dataConfig}){
       Header: 'neuropep',
       accessor: 'np',
     },
+    {
+      Header: 'receptor',
+      accessor: 'npr',
+    },
   ], [columns]);
 
   // sort table once tableData is updated with selected genes data
@@ -390,10 +397,67 @@ function SingleCell({dataConfig}){
   },[tableData, sortField, order]);
 
 
+  const toCellSpatial = (celltype) => {
+
+      // navigate('/cellspatial', {state:{celltype:celltype}});
+
+      // get freqBar data for this celltype to derminne maxima puckid
+    const fetchData = async (celltype) => {
+      let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
+      const readData = await fetch(fbarsDataUrl)
+        .then(response => response.json())
+        .then(readData => {
+          // find maxima pid
+          const counts = readData.sorted_puckwise_cnts.map(o => o.cnt);
+          const maxIdx = counts.indexOf(Math.max(...counts));
+          const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
+
+          setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype});
+          // navigate('/cellspatial');
+          window.open('/cellspatial', '_blank'); // https://stackoverflow.com/questions/71793116/open-new-tab-with-usenavigate-hook-in-react
+          return readData;
+        } )
+        .catch(error => {
+          alert("Could not find spatial data for this cell type");
+          console.log(error);
+          return undefined;
+        });
+
+    }
+
+      // get celltype freqbar data and set maxima pid
+      fetchData(celltype);
+
+  }
+
   // produces cell contents to render based on column and cell value
   const renderCell = (cell) => {
 
+    // console.log('cell', cell)
 
+    // populate celltype column
+    if (cell.column.id==='ct'){
+      if (cell.row.original.st==='Y'){
+        return <button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cell.value)}}>{cell.value}</button>
+      }else{
+        return <span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{cell.value}</span>
+      }
+    }
+    // populate metadata columns
+    else if (cell.column.id==='cc' || cell.column.id==='tr' || cell.column.id==='gs' || cell.column.id==='nt' || cell.column.id==='np' || cell.column.id==='npr'){
+      return <span style={{borderWidth:"0", fontSize:12}}>{cell.value}</span>
+
+    }
+    // populate dotplot columns
+    else{
+
+
+    }
+
+
+
+    
+    return cell.column.id==='ct'?cell.render('Cell'):cell.value
 
   }
 
@@ -410,7 +474,7 @@ function SingleCell({dataConfig}){
     columns,
     data,
     initialState: { sortBy: [{id: 'gs', desc: true}],
-      hiddenColumns: ['cc', 'tr'],
+      hiddenColumns: ['nt', 'np', 'npr'],
     }
   }, 
   useSortBy)
@@ -458,7 +522,7 @@ function SingleCell({dataConfig}){
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.column.id==='ct'?cell.render('Cell'):cell.value}</td>
+                return <td {...cell.getCellProps()}>{renderCell(cell)}</td>
               })}
             </tr>
           )
