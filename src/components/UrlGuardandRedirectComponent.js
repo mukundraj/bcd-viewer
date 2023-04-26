@@ -159,7 +159,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         regids: regidsTmp,
         genes: searchParams.get('genes').split(','),
         order: searchParams.get('order'),
-        sortField: searchParams.get('sortField')===''?'':parseInt(searchParams.get('sortField')),
+        sortField: searchParams.get('sortField')===''?'':searchParams.get('sortField'),
         cellClassSelection: searchParams.get('cellClassSelection'),
         sortByToggleVal: parseInt(searchParams.get('sortByToggleVal')),
         maxCellTypes: parseInt(searchParams.get('maxCellTypes')),

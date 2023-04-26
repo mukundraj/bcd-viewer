@@ -74,7 +74,6 @@ function SingleCell({dataConfig}){
   const neurotransBinaryColumn = [{"label":"neurotrans_binary \t\t\t\t\t\t\t", "accessor":"nt"}] // tabs maintain col width, consequently col height
   const neuropepColumn = [{"label":"neuropep \t\t\t\t\t\t\t", "accessor":"np"}] // tabs maintain col width, consequently col height
   const neuropepRecepColumn = [{"label":"receptor_neuropep \t\t\t\t\t\t\t", "accessor":"npr"}] // tabs maintain col width, consequently col height
-  const setTableDataSorted = useStore(state => state.setTableDataSorted);
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
   const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
@@ -267,8 +266,8 @@ function SingleCell({dataConfig}){
 
         const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
         tableDataTmp = tableDataTmp.map((x,i)=>produce(x, draft=>{
-          draft[scol_idx] = dataCol[i];
-          draft[-scol_idx] = avgDataCol[i];
+          draft[String(scol_idx)] = [dataCol[i],avgDataCol[i]] ;
+          // draft[String(-scol_idx)] = avgDataCol[i];
           draft['c'+String(scol_idx)] = countDataCol[i];
         }));
 
@@ -276,11 +275,11 @@ function SingleCell({dataConfig}){
 
       setTableData(tableDataTmp);
 
-      if (sortField===""){
-        const scol_idx = col_idxs[0]+1;
-        setSortField(scol_idx);
-        // handleSorting(scol_idx, order, sortByToggleVal); // also sets tableDataSorted
-      }
+      // if (sortField===""){
+      //   const scol_idx = col_idxs[0]+1;
+      //   setSortField(String(scol_idx));
+      //   // handleSorting(scol_idx, order, sortByToggleVal); // also sets tableDataSorted
+      // }
     }
 
     // identify newly added or removed gene and update tableData accordingly
@@ -298,11 +297,15 @@ function SingleCell({dataConfig}){
           // fetchData(colIdx); // reminder: async function
           // adding gene entry to columns array
           const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
-          columnsTmp.push({"label":added[i], "accessor":scolIdx, "sortable":true});
+          columnsTmp.push({"Header":added[i], "accessor":String(scolIdx), "isDotplot":true});
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
         fetchData(col_idxs, tableDataTmp);
         setColumns(columnsTmp);
+
+        if (multiSelections.length===1){
+          setSortField(String(col_idxs[0]+1));
+        }
 
       }else if(prevMultiSelections.current.length>multiSelections.length){ // gene removed
         removed = prevMultiSelections.current.filter(x => !multiSelections.includes(x));
@@ -310,53 +313,37 @@ function SingleCell({dataConfig}){
         let colIdx = geneOptions.indexOf(removed[0]);
         const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
         let tableDataTmp = tableData.map((x,i)=>produce(x, draft=>{
-          delete draft[scolIdx];
-          delete draft[-scolIdx];
+          delete draft[String(scolIdx)];
+          // delete draft[String(-scolIdx)];
           delete draft['c'+String(scolIdx)];
         }));
         setTableData(tableDataTmp);
 
         // removing gene entry from column array
-        let columnsTmp = columns.filter(x=>x.accessor!==scolIdx);
+        let columnsTmp = columns.filter(x=>x.accessor!==String(scolIdx));
         setColumns(columnsTmp);
-
+        
         let sortFieldAfterGeneRemoval = "";
         if (columnsTmp.length>0){
           sortFieldAfterGeneRemoval = columnsTmp.at(-1).accessor;
         }
-        if (sortField===scolIdx){
+        if (sortField===String(scolIdx)){
           // Removing the current sortField
           setSortField(sortFieldAfterGeneRemoval);
-          setTableDataSorted(tableDataTmp);
         }else{
           // Removig field that is not current sortField
           // handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
         }
 
-      }else if (multiSelections.length>0 && prevMultiSelections.current.length>0){ // page reload case
-
-        // // iterate over added
-        let columnsTmp = [];
-        let col_idxs = [];
-        multiSelections.forEach((gene, i)=>{
-          let colIdx = geneOptions.indexOf(gene);
-          col_idxs.push(colIdx);
-          // adding gene entry to columns array
-          const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
-          columnsTmp.push({"label":gene, "accessor":scolIdx, "sortable":true});
-        });
-
-        let tableDataTmp = rawTableData.map(x=>x);
-        fetchData(col_idxs, tableDataTmp); // reminder: async function
-        setColumns(columnsTmp);
-      }    
+      }
+      prevMultiSelections.current=multiSelections;
     }
 
-    prevMultiSelections.current=multiSelections;
 
   },[multiSelections, rawTableData]);
 
-  const rtColumns = useMemo(() => [ // react-table columns
+  const rtColumns = useMemo(() => {
+    const tmpRtCols = [ // react-table columns
     {
       Header: 'Celltype',
       accessor: 'ct',
@@ -386,12 +373,35 @@ function SingleCell({dataConfig}){
       Header: 'receptor',
       accessor: 'npr',
     },
-  ], [columns]);
+  ]
+    const tmpColumns = columns.map(col=>({
+      ...col, 
+  "sortType": (rowA, rowB, columnId) => {
+    if(order==='desc'){
+      if (sortByToggleVal===-1){
+        return (rowA.values[columnId][0] - rowB.values[columnId][0]);
+      }else{
+        return (rowA.values[columnId][1] - rowB.values[columnId][1]);
+      }
+    }else{
+      if (sortByToggleVal===-1){
+        return (rowB.values[columnId][0] - rowA.values[columnId][0]);
+      }else{
+        return (rowB.values[columnId][1] - rowA.values[columnId][1]);
+      }
+    } 
+    }}));
+
+    tmpRtCols.push(...tmpColumns);
+
+    return tmpRtCols;
+
+  }, [columns.length, sortByToggleVal, order]);
 
   // sort table once tableData is updated with selected genes data
   useEffect(()=>{
     
-        console.log('testData', tableData, 'columns', columns);
+        console.log('tableData', tableData, 'columns', columns, 'rtColumns', rtColumns, prevMultiSelections);
         // handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
 
   },[tableData, sortField, order]);
@@ -450,18 +460,18 @@ function SingleCell({dataConfig}){
     }
     // populate dotplot columns
     else{
-
+      return cell.value?`${cell.value[0]}, ${cell.value[1]}`:null;
 
     }
 
 
 
     
-    return cell.column.id==='ct'?cell.render('Cell'):cell.value
+    // return cell.column.id==='ct'?cell.render('Cell'):cell.value
 
   }
 
-  function Table({ columns, data }) {
+  function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder }) {
   // Use the state and functions returned from useTable to build UI
   const {
     getTableProps,
@@ -470,10 +480,13 @@ function SingleCell({dataConfig}){
     rows,
     prepareRow,
     allColumns,
+    setSortBy,
+    state: { sortBy },
   } = useTable({
     columns,
     data,
-    initialState: { sortBy: [{id: 'gs', desc: true}],
+    initialState: { 
+      // sortBy: [{id: 'gs', desc: false}],
       hiddenColumns: ['nt', 'np', 'npr'],
     }
   }, 
@@ -481,20 +494,43 @@ function SingleCell({dataConfig}){
 
   const firstPageRows = rows.slice(0, maxCellTypes);
 
+    useEffect(()=>{
+      // if(sortBy[0].id!==sortField && sortBy[0].id!=='gs'){
+      setSortBy([{id: sortField, desc: sortOrder==='desc'?true:false}]);
+      console.log('sortField', sortField, 'sortBy', sortBy);
+      // }   
+    },[sortField]); // sortField set on adding/removing new gene
+
+    useEffect(()=>{
+      console.log('sortBy', sortBy, 'sortField', sortField);
+      // set sortField
+      if (sortBy.length>0){
+        setSortField(sortBy[0].id);
+        setSortOrder(sortBy[0].desc?'desc':'asc');
+
+      }    
+
+    },[sortBy]); // sortBy chages
+  
+
   // Render the UI for table
   return (
     <>
     <div>
         <div>
         </div>
-        {allColumns.map(column => (
+        {allColumns.map(column => {
+          if (!column.isDotplot) // only show checkboxes for non dotplot columns
+          return (
           <span key={column.id} style={{padding:'0px 10px'}}>
             <label>
               <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
               {column.render('Header')}
             </label>
           </span>
-        ))}
+        )
+          else return null;
+      })}
         <br />
       </div>
     <BTable striped bordered hover size="sm" {...getTableProps()}>
@@ -627,7 +663,7 @@ function SingleCell({dataConfig}){
           <Col className="" xs="9">
             {columns.length>0?
               <div style={{overflow:"scroll", height:'70vh'}}>
-                <Table columns={rtColumns} data={tableData} />
+                <Table columns={rtColumns} data={tableData} sortField={sortField} setSortField={setSortField}sortOrder={order} setSortOrder={setOrder}/>
               </div>:null}
           </Col>
           <Col xs="3">
