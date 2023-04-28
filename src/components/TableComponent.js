@@ -3,7 +3,7 @@ import { useTable, useSortBy } from 'react-table'
 import BTable from 'react-bootstrap/Table';
 import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
-import {useFilters} from 'react-table/dist/react-table.development';
+import {useFilters, useBlockLayout} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
 
 
@@ -107,7 +107,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
     const count = preFilteredRows.length
 
     return (
-      <input
+      <input style={{width:'100%', height:'100%', fontSize:12}}
         value={filterValue || ''}
         onChange={e => {
           setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
@@ -169,7 +169,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
     disableSortRemove: true,
   }, 
   useFilters,
-  useSortBy
+  useSortBy,
+  useBlockLayout,
   )
 
     useEffect(()=>{
@@ -255,14 +256,14 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
             {headerGroup.headers.map(column => (
               <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>{column.render('Header')}
                 {/* Add a sort direction indicator */}
-                <span>
+                <div>
                   {column.isSorted
                     ? column.isSortedDesc
                       ? ' 🔽'
                       : ' 🔼'
                       : ''}
 
-                  </span>
+                </div>
                 {/* Render the columns filter UI */}
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
               </th>

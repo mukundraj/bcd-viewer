@@ -198,7 +198,7 @@ function SingleCell({dataConfig}){
       setGeneOptions(dataGenes);
       setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i], "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i], "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i], "npr":dataNeuroPepRecep[i]}}) // cid:celltype idx
       setRawTableData(initTableData);
       // setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -291,7 +291,9 @@ function SingleCell({dataConfig}){
           columnsTmp.push({"Header":added[i], 
                           "accessor":String(scolIdx),
                           "isDotplot":true,
-                          "disableFilters":true,});
+                          "disableFilters":true,
+                            maxWidth:100
+                        });
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
         fetchData(col_idxs, tableDataTmp);
@@ -366,7 +368,7 @@ function SingleCell({dataConfig}){
 
   // Render a multi-select box
   return (
-    <select
+    <select style={{width:'100%', height:'100%', fontSize:12}}
       value={filterValue}
       onChange={e => {
         setFilter(e.target.value || undefined)
@@ -396,17 +398,20 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       Filter: SelectColumnFilter,
       filter: 'includes',
+      maxWidth:100
     },
     {
       Header: 'topstructure',
       accessor: 'tr',
       disableSortBy: true,
+      maxWidth:110
     },
     {
       Header: 'geneset',
       accessor: 'gs',
       disableSortBy: true,
       filter: 'fuzzyText',
+      maxWidth:120
     },
     {
       Header: 'neurotrans_binary',
