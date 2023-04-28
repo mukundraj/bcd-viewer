@@ -489,17 +489,18 @@ function SingleCell({dataConfig}){
         </Row>
         {columns.length>0?
         <Row className="mt-2">
-          <Col xs="2">Select a cell class:</Col>
-          <Col xs="2">
-            <Typeahead
-              id="cellclass-typeahead"
-              labelKey="name"
-              onChange={setCellClassSelection}
-              options={cellClassOptions}
-              placeholder="Currently showing all cell classes..."
-              selected={cellClassSelection}
-            />
-          </Col>
+          <Col xs="4"></Col>
+          {/* <Col xs="2">Select a cell class:</Col> */}
+          {/* <Col xs="2"> */}
+          {/*   <Typeahead */}
+          {/*     id="cellclass-typeahead" */}
+          {/*     labelKey="name" */}
+          {/*     onChange={setCellClassSelection} */}
+          {/*     options={cellClassOptions} */}
+          {/*     placeholder="Currently showing all cell classes..." */}
+          {/*     selected={cellClassSelection} */}
+          {/*   /> */}
+          {/* </Col> */}
           {selectedRegIds.length>0?<>
           <Col xs="2">Min composition %: </Col>
           <Col xs="2">
