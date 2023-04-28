@@ -288,7 +288,10 @@ function SingleCell({dataConfig}){
           // fetchData(colIdx); // reminder: async function
           // adding gene entry to columns array
           const scolIdx = colIdx+1; // shifted col_idx to avoid zero with no corresponding negative value
-          columnsTmp.push({"Header":added[i], "accessor":String(scolIdx), "isDotplot":true});
+          columnsTmp.push({"Header":added[i], 
+                          "accessor":String(scolIdx),
+                          "isDotplot":true,
+                          "disableFilters":true,});
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
         fetchData(col_idxs, tableDataTmp);
@@ -359,26 +362,36 @@ function SingleCell({dataConfig}){
     {
       Header: 'class',
       accessor: 'cc',
+      disableSortBy: true,
     },
     {
       Header: 'topstructure',
       accessor: 'tr',
+      disableSortBy: true,
     },
     {
       Header: 'geneset',
       accessor: 'gs',
+      disableSortBy: true,
+      filter: 'fuzzyText',
     },
     {
       Header: 'neurotrans_binary',
       accessor: 'nt',
+      disableSortBy: true,
+      filter: 'fuzzyText',
     },
     {
       Header: 'neuropep',
       accessor: 'np',
+      disableSortBy: true,
+      filter: 'fuzzyText',
     },
     {
       Header: 'receptor',
       accessor: 'npr',
+      disableSortBy: true,
+      filter: 'fuzzyText',
     },
   ]
     const tmpColumns = columns.map(col=>({

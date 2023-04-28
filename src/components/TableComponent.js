@@ -3,6 +3,8 @@ import { useTable, useSortBy } from 'react-table'
 import BTable from 'react-bootstrap/Table';
 import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
+import {useFilters} from 'react-table/dist/react-table.development';
+import {matchSorter} from 'match-sorter'
 
   const toCellSpatial = (celltype, chosenPuckid, setChosenPuckid) => {
 
@@ -62,6 +64,14 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
 }
 
 
+function fuzzyTextFilterFn(rows, id, filterValue) {
+  return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
+}
+
+// Let the table remove the filter if the string is empty
+fuzzyTextFilterFn.autoRemove = val => !val
+
+
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
 maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal}) 
 {
@@ -71,6 +81,51 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal})
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
 
 
+  // Define a default UI for filtering
+  function DefaultColumnFilter({
+    column: { filterValue, preFilteredRows, setFilter },
+  }) {
+    const count = preFilteredRows.length
+
+    return (
+      <input
+        value={filterValue || ''}
+        onChange={e => {
+          setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
+        }}
+        placeholder={`Search ${count} records...`}
+      />
+    )
+  }
+
+
+    const filterTypes = useMemo(
+    () => ({
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      },
+    }),
+    []
+  )
+
+  const defaultColumn = useMemo(
+    () => ({
+      // Let's set up our default Filter UI
+      Filter: DefaultColumnFilter,
+    }),
+    []
+  )
 
 
   // Use the state and functions returned from useTable to build UI
@@ -86,13 +141,17 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal})
   } = useTable({
     columns,
     data,
+    defaultColumn, 
+    filterTypes,
     initialState: { 
       // sortBy: [{id: 'gs', desc: false}],
       hiddenColumns: ['nt', 'np', 'npr'],
     }, 
     disableSortRemove: true,
   }, 
-  useSortBy)
+  useFilters,
+  useSortBy
+  )
 
     useEffect(()=>{
       // set sortField
@@ -183,7 +242,10 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal})
                       ? ' 🔽'
                       : ' 🔼'
                       : ''}
+
                   </span>
+                {/* Render the columns filter UI */}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
               </th>
             ))}
           </tr>
