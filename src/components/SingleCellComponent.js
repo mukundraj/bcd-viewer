@@ -388,6 +388,7 @@ function SingleCell({dataConfig}){
       Header: 'Celltype',
       accessor: 'ct',
       disableSortBy: true,
+      filter: 'fuzzyText',
     },
     {
       Header: 'class',
