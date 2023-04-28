@@ -6,6 +6,29 @@ import {useSCComponentStore} from '../store/SCComponentStore'
 import {useFilters} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
 
+
+
+function fuzzyTextFilterFn(rows, id, filterValue) {
+  return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
+}
+
+// Let the table remove the filter if the string is empty
+fuzzyTextFilterFn.autoRemove = val => !val
+
+
+export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
+maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal}) 
+{
+
+  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
+  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
+  const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
+  const currentColorMap = useSCComponentStore(state => state.currentColorMap);
+  const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
+
+
+  let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
+
   const toCellSpatial = (celltype, chosenPuckid, setChosenPuckid) => {
 
 
@@ -38,6 +61,8 @@ import {matchSorter} from 'match-sorter'
 
   }
 
+
+  let radius = 15;
 // produces cell contents to render based on column and cell value
 const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
 
@@ -57,28 +82,22 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
   }
   // populate dotplot columns
   else{
-    return cell.value?`${cell.value[0]}, ${cell.value[1]}`:null;
+
+    const pct = cell.value[0];
+    const avg = cell.value[1];
+    const tData = pct/maxProportionalVal;
+    const rFactor = isNaN(tData)?0:tData;
+    return (
+      <span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(avg)}} className="dot sctooltip">
+        <span className="sctooltiptext">{Math.round(avg*100)/100}, {Math.round(pct*100)}%</span>
+      </span>
+    )
+
+    // return cell.value?`${cell.value[0]}, ${cell.value[1]}`:null;
 
   }
 
 }
-
-
-function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
-}
-
-// Let the table remove the filter if the string is empty
-fuzzyTextFilterFn.autoRemove = val => !val
-
-
-export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal}) 
-{
-
-  const chosenPuckid = usePersistStore(state => state.chosenPuckid);
-  const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
-  const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
 
 
   // Define a default UI for filtering

@@ -93,7 +93,7 @@ th.down {
 /* for instant tooltip */
 
 .sctooltip {
-  /* position: relative; */
+  position: relative;
   display: inline-block;
   /* border-bottom: 1px dotted black; */
 }
