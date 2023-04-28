@@ -35,6 +35,8 @@ export const useStore = create(set => ({
     setMaxColVals: (val)=>set({maxColVals:val}), //  change to maxRows
     scTableScrollTop:0, 
     setScTableScrollTop: (val)=>set({scTableScrollTop:val}),
+    tableDataSorted: [],
+    setTableDataSorted: (val)=>set({tableDataSorted:val}),
     order:"desc",  // retained for use in RegEnrichComponent
     setOrder: (val)=>set({order:val}), // retained for use in RegEnrichComponent
     currentREgene: "None",

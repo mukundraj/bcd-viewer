@@ -8,7 +8,6 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 import produce from "immer";
-// import Table from './table/TableComponent'
 import {useStore, usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
 import {useSCComponentPersistStore} from '../store/SCComponentStore'
@@ -22,8 +21,7 @@ import GeneOverviewsComponent from './singlecell/GeneOverviewsComponent'
 import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {useQuery} from 'react-query'
-import { useTable, useSortBy } from 'react-table'
-import BTable from 'react-bootstrap/Table';
+import Table from './TableComponent'
 
 
 function SingleCell({dataConfig}){
@@ -67,13 +65,6 @@ function SingleCell({dataConfig}){
   const [regionToCelltype, setRegionToCelltype] = useState(()=>{});
   const [cellClassOptions, setCellClassOptions] = useState(()=>[]);
   const prevMultiSelections = useRef([]);
-  const cellTypeColumn = [{"label":"celltype \t\t", "accessor":"ct"}] // tabs maintain col width, consequently col height
-  const cellClassColumn = [{"label":"cellclass \t\t", "accessor":"cc"}] // tabs maintain col width, consequently col height
-  const topStructureColumn = [{"label":"topstructure \t\t\t\t\t", "accessor":"tr"}] // tabs maintain col width, consequently col height
-  const geneSetCoverColumn = [{"label":"gene_set_cover \t\t\t\t\t\t\t", "accessor":"gs"}] // tabs maintain col width, consequently col height
-  const neurotransBinaryColumn = [{"label":"neurotrans_binary \t\t\t\t\t\t\t", "accessor":"nt"}] // tabs maintain col width, consequently col height
-  const neuropepColumn = [{"label":"neuropep \t\t\t\t\t\t\t", "accessor":"np"}] // tabs maintain col width, consequently col height
-  const neuropepRecepColumn = [{"label":"receptor_neuropep \t\t\t\t\t\t\t", "accessor":"npr"}] // tabs maintain col width, consequently col height
   const setCurrentColorMap = useSCComponentStore(state => state.setCurrentColorMap);
   const maxAvgVal = useSCComponentStore(state => state.maxAvgVal);
   const setMaxAvgVal = useSCComponentStore(state => state.setMaxAvgVal);
@@ -266,7 +257,7 @@ function SingleCell({dataConfig}){
 
         const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
         tableDataTmp = tableDataTmp.map((x,i)=>produce(x, draft=>{
-          draft[String(scol_idx)] = [dataCol[i],avgDataCol[i]] ;
+          draft[String(scol_idx)] = [parseFloat(dataCol[i]),parseFloat(avgDataCol[i])] ;
           // draft[String(-scol_idx)] = avgDataCol[i];
           draft['c'+String(scol_idx)] = countDataCol[i];
         }));
@@ -302,7 +293,6 @@ function SingleCell({dataConfig}){
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
         fetchData(col_idxs, tableDataTmp);
         setColumns(columnsTmp);
-
         if (multiSelections.length===1){
           setSortField(String(col_idxs[0]+1));
         }
@@ -330,7 +320,8 @@ function SingleCell({dataConfig}){
         if (sortField===String(scolIdx)){
           // Removing the current sortField
           setSortField(sortFieldAfterGeneRemoval);
-        }else{
+        }
+        else{
           // Removig field that is not current sortField
           // handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
         }
@@ -341,6 +332,22 @@ function SingleCell({dataConfig}){
 
 
   },[multiSelections, rawTableData]);
+
+  // sort table once tableData is updated with selected genes data
+  useEffect(()=>{
+    
+        // console.log('tableData', tableData, 'columns', columns, 'rtColumns', rtColumns, prevMultiSelections);
+        // handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
+
+  },[tableData, sortField, order]);
+  
+  useEffect(()=>{
+
+    setTableDataFiltered(tableData);
+
+  },[tableData]);
+
+
 
   const rtColumns = useMemo(() => {
     const tmpRtCols = [ // react-table columns
@@ -376,198 +383,30 @@ function SingleCell({dataConfig}){
   ]
     const tmpColumns = columns.map(col=>({
       ...col, 
-  "sortType": (rowA, rowB, columnId) => {
-    if(order==='desc'){
+  "sortType": (rowA, rowB, columnId, desc) => {
+    // console.log('rowA', rowA, rowB);
+    // if(desc){
       if (sortByToggleVal===-1){
         return (rowA.values[columnId][0] - rowB.values[columnId][0]);
       }else{
         return (rowA.values[columnId][1] - rowB.values[columnId][1]);
       }
-    }else{
-      if (sortByToggleVal===-1){
-        return (rowB.values[columnId][0] - rowA.values[columnId][0]);
-      }else{
-        return (rowB.values[columnId][1] - rowA.values[columnId][1]);
-      }
-    } 
+    // }
+    // else{
+    //   if (sortByToggleVal===-1){
+    //     return (rowB.values[columnId][0] - rowA.values[columnId][0]);
+    //   }else{
+    //     return (rowB.values[columnId][1] - rowA.values[columnId][1]);
+    //   }
+    // } 
     }}));
 
     tmpRtCols.push(...tmpColumns);
 
     return tmpRtCols;
 
-  }, [columns.length, sortByToggleVal, order]);
+  }, [tableData, sortByToggleVal]); // note 'order' is not explicity dependency here
 
-  // sort table once tableData is updated with selected genes data
-  useEffect(()=>{
-    
-        console.log('tableData', tableData, 'columns', columns, 'rtColumns', rtColumns, prevMultiSelections);
-        // handleSorting(sortField, order, sortByToggleVal); // also sets tableDataSorted
-
-  },[tableData, sortField, order]);
-
-
-  const toCellSpatial = (celltype) => {
-
-      // navigate('/cellspatial', {state:{celltype:celltype}});
-
-      // get freqBar data for this celltype to derminne maxima puckid
-    const fetchData = async (celltype) => {
-      let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
-      const readData = await fetch(fbarsDataUrl)
-        .then(response => response.json())
-        .then(readData => {
-          // find maxima pid
-          const counts = readData.sorted_puckwise_cnts.map(o => o.cnt);
-          const maxIdx = counts.indexOf(Math.max(...counts));
-          const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
-
-          setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype});
-          // navigate('/cellspatial');
-          window.open('/cellspatial', '_blank'); // https://stackoverflow.com/questions/71793116/open-new-tab-with-usenavigate-hook-in-react
-          return readData;
-        } )
-        .catch(error => {
-          alert("Could not find spatial data for this cell type");
-          console.log(error);
-          return undefined;
-        });
-
-    }
-
-      // get celltype freqbar data and set maxima pid
-      fetchData(celltype);
-
-  }
-
-  // produces cell contents to render based on column and cell value
-  const renderCell = (cell) => {
-
-    // console.log('cell', cell)
-
-    // populate celltype column
-    if (cell.column.id==='ct'){
-      if (cell.row.original.st==='Y'){
-        return <button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cell.value)}}>{cell.value}</button>
-      }else{
-        return <span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{cell.value}</span>
-      }
-    }
-    // populate metadata columns
-    else if (cell.column.id==='cc' || cell.column.id==='tr' || cell.column.id==='gs' || cell.column.id==='nt' || cell.column.id==='np' || cell.column.id==='npr'){
-      return <span style={{borderWidth:"0", fontSize:12}}>{cell.value}</span>
-
-    }
-    // populate dotplot columns
-    else{
-      return cell.value?`${cell.value[0]}, ${cell.value[1]}`:null;
-
-    }
-
-
-
-    
-    // return cell.column.id==='ct'?cell.render('Cell'):cell.value
-
-  }
-
-  function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder }) {
-  // Use the state and functions returned from useTable to build UI
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    allColumns,
-    setSortBy,
-    state: { sortBy },
-  } = useTable({
-    columns,
-    data,
-    initialState: { 
-      // sortBy: [{id: 'gs', desc: false}],
-      hiddenColumns: ['nt', 'np', 'npr'],
-    }
-  }, 
-  useSortBy)
-
-  const firstPageRows = rows.slice(0, maxCellTypes);
-
-    useEffect(()=>{
-      // if(sortBy[0].id!==sortField && sortBy[0].id!=='gs'){
-      setSortBy([{id: sortField, desc: sortOrder==='desc'?true:false}]);
-      console.log('sortField', sortField, 'sortBy', sortBy);
-      // }   
-    },[sortField]); // sortField set on adding/removing new gene
-
-    useEffect(()=>{
-      console.log('sortBy', sortBy, 'sortField', sortField);
-      // set sortField
-      if (sortBy.length>0){
-        setSortField(sortBy[0].id);
-        setSortOrder(sortBy[0].desc?'desc':'asc');
-
-      }    
-
-    },[sortBy]); // sortBy chages
-  
-
-  // Render the UI for table
-  return (
-    <>
-    <div>
-        <div>
-        </div>
-        {allColumns.map(column => {
-          if (!column.isDotplot) // only show checkboxes for non dotplot columns
-          return (
-          <span key={column.id} style={{padding:'0px 10px'}}>
-            <label>
-              <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
-              {column.render('Header')}
-            </label>
-          </span>
-        )
-          else return null;
-      })}
-        <br />
-      </div>
-    <BTable striped bordered hover size="sm" {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>{column.render('Header')}
-                {/* Add a sort direction indicator */}
-                <span>
-                  {column.isSorted
-                    ? column.isSortedDesc
-                      ? ' 🔽'
-                      : ' 🔼'
-                      : ''}
-                  </span>
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {firstPageRows.map((row, i) => {
-          prepareRow(row)
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{renderCell(cell)}</td>
-              })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </BTable>
-    </>
-  )
-}
 
   return(
     <>
@@ -663,7 +502,14 @@ function SingleCell({dataConfig}){
           <Col className="" xs="9">
             {columns.length>0?
               <div style={{overflow:"scroll", height:'70vh'}}>
-                <Table columns={rtColumns} data={tableData} sortField={sortField} setSortField={setSortField}sortOrder={order} setSortOrder={setOrder}/>
+                <Table columns={rtColumns} data={tableData} sortField={sortField} setSortField={setSortField} sortOrder={order} 
+                    setSortOrder={setOrder} 
+                    adaptNormalizerStatus={adaptNormalizerStatus}
+                    maxCellTypes={maxCellTypes}
+                    setMaxAvgVal={setMaxAvgVal}
+                    globalMaxAvgVal={globalMaxAvgVal}
+                    sortByToggleVal={sortByToggleVal}
+                />
               </div>:null}
           </Col>
           <Col xs="3">
