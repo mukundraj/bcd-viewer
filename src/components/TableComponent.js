@@ -141,10 +141,11 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal})
       setMaxAvgVal(Math.max(...avgVals));
 
     }else{
+      console.log('proportionVals', 1, globalMaxAvgVal);
       setMaxProportionalVal(1);
       setMaxAvgVal(globalMaxAvgVal);
     }
-  },[sortBy, columns.length, maxCellTypes]);
+  },[sortBy, columns.length, maxCellTypes, adaptNormalizerStatus]);
 
 
   
