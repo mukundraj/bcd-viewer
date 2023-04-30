@@ -7,9 +7,31 @@ import {useFilters, useBlockLayout} from 'react-table/dist/react-table.developme
 import {matchSorter} from 'match-sorter'
 
 
+function fuzzySearchMultipleWords(
+  rows, // array of data [{a: "a", b: "b"}, {a: "c", b: "d"}]
+  filterValue, // potentially multi-word search string "two words"
+  keys, // keys to search ["a", "b"]
+) {
+  if (!filterValue || !filterValue.length) {
+    return rows
+  }
+
+  const terms = filterValue.split(' ')
+  if (!terms) {
+    return rows
+  }
+  console.log(rows, keys, filterValue, terms);
+
+  // reduceRight will mean sorting is done by score for the _first_ entered word.
+  return terms.reduceRight(
+    (results, term) => matchSorter(results, term, keys),
+    rows,
+  )
+}
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
+  // let keys = [row => row.values[id]];
+  return fuzzySearchMultipleWords(rows, filterValue, { keys: [row=>row.values[id]]})
 }
 
 // Let the table remove the filter if the string is empty
