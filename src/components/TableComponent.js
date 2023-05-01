@@ -20,7 +20,6 @@ function fuzzySearchMultipleWords(
   if (!terms) {
     return rows
   }
-  console.log(rows, keys, filterValue, terms);
 
   // reduceRight will mean sorting is done by score for the _first_ entered word.
   return terms.reduceRight(
@@ -86,7 +85,7 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal})
 
   let radius = 15;
 // produces cell contents to render based on column and cell value
-const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
+const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => {
 
 
   // populate celltype column
@@ -107,10 +106,10 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
 
     const pct = cell.value[0];
     const avg = cell.value[1];
-    const tData = pct/maxProportionalVal;
+    const tData = Math.min(1,pct/maxProportionalVal); // min function to deal dom flicker fleetingly showing giant dots
     const rFactor = isNaN(tData)?0:tData;
     return (
-      <span style={{width:rFactor*radius, height:rFactor*radius, backgroundColor:computedColor(avg)}} className="dot sctooltip">
+      <span style={{width:`${rFactor*radius}px`, height:`${rFactor*radius}px`, backgroundColor:computedColor(avg)}} className="dot sctooltip">
         <span className="sctooltiptext">{Math.round(avg*100)/100}, {Math.round(pct*100)}%</span>
       </span>
     )
@@ -299,7 +298,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid) => {
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{renderCell(cell, chosenPuckid, setChosenPuckid)}</td>
+                return <td {...cell.getCellProps()}>{renderCell(cell, chosenPuckid, setChosenPuckid, maxProportionalVal)}</td>
               })}
             </tr>
           )
