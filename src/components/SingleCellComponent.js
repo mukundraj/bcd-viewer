@@ -348,9 +348,43 @@ function SingleCell({dataConfig}){
   
   useEffect(()=>{
 
-    setTableDataFiltered(tableData);
+    let wantedCelltypes = new Set();
 
-  },[tableData]);
+    // iterate over selectedRegIds
+    for (let i=0; i<selectedRegIds.length; i++){
+      if (!!regionToCelltype){
+        console.log('selectedRegIds ', selectedRegIds[i]);
+        const cellIdxsInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
+        console.log('cellIdxsInRegion', cellIdxsInRegion)
+        // for (const cidx of cellIdxInRegion){
+        for (const cidx in cellIdxsInRegion){
+          // wantedCelltypes.add(cidx);
+          if (cellIdxsInRegion[cidx]>minCompoPct){
+            wantedCelltypes.add(parseInt(cidx));
+          }
+        }
+      }
+    }
+
+    let tableDataFilteredTmp = tableData;
+    // filter further if wanted celltypes are identified, else no further filtering
+    if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+      tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+
+      if (selectedRegIds.length>0 && !!regionToCelltype){
+        const cellIdxsInRegion = regionToCelltype[selectedRegIds[0]]; // cell idx among mapped region of chosen region
+        // add property to each object of tableDataFilteredTmp
+        tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
+          // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
+          draft['tr'] = draft['tr']+`, cp:${String(Math.round(Math.min(1, cellIdxsInRegion[x.cid])*100))}%`;  // composition percentage
+        }));
+      }
+
+    }
+    setTableDataFiltered(tableDataFilteredTmp);
+
+
+  },[tableData, selectedRegIds, minCompoPct]);
 
 
   function SelectColumnFilter({
@@ -456,7 +490,7 @@ function SingleCell({dataConfig}){
 
     return tmpRtCols;
 
-  }, [tableData, sortByToggleVal]); // note 'order' is not explicity dependency here
+  }, [tableDataFiltered, sortByToggleVal]); // note 'order' is not explicity dependency here
 
 
   return(
@@ -554,7 +588,7 @@ function SingleCell({dataConfig}){
           <Col className="" xs="9">
             {columns.length>0?
               <div style={{overflow:"scroll", height:'70vh'}}>
-                <Table columns={rtColumns} data={tableData} sortField={sortField} setSortField={setSortField} sortOrder={order} 
+                <Table columns={rtColumns} data={tableDataFiltered} sortField={sortField} setSortField={setSortField} sortOrder={order} 
                     setSortOrder={setOrder} 
                     adaptNormalizerStatus={adaptNormalizerStatus}
                     maxCellTypes={maxCellTypes}
