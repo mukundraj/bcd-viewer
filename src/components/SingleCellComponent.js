@@ -421,7 +421,7 @@ function SingleCell({dataConfig}){
   const rtColumns = useMemo(() => {
     const tmpRtCols = [ // react-table columns
     {
-      Header: 'Celltype',
+      Header: 'cell cluster',
       accessor: 'ct',
       disableSortBy: true,
       filter: 'fuzzyText',
@@ -435,32 +435,32 @@ function SingleCell({dataConfig}){
       maxWidth:100
     },
     {
-      Header: 'topstructure',
+      Header: 'brain area',
       accessor: 'tr',
       disableSortBy: true,
       maxWidth:110
     },
     {
-      Header: 'geneset',
+      Header: 'defining gene set',
       accessor: 'gs',
       disableSortBy: true,
       filter: 'fuzzyText',
       maxWidth:120
     },
     {
-      Header: 'neurotrans_binary',
+      Header: 'neurotransmitters',
       accessor: 'nt',
       disableSortBy: true,
       filter: 'fuzzyText',
     },
     {
-      Header: 'neuropep',
+      Header: 'neuropeptides',
       accessor: 'np',
       disableSortBy: true,
       filter: 'fuzzyText',
     },
     {
-      Header: 'receptor',
+      Header: 'neuropeptide-receptors',
       accessor: 'npr',
       disableSortBy: true,
       filter: 'fuzzyText',
