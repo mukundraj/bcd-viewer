@@ -469,21 +469,11 @@ function SingleCell({dataConfig}){
     const tmpColumns = columns.map(col=>({
       ...col, 
   "sortType": (rowA, rowB, columnId, desc) => {
-    // console.log('rowA', rowA, rowB);
-    // if(desc){
       if (sortByToggleVal===-1){
         return (rowA.values[columnId][0] - rowB.values[columnId][0]);
       }else{
         return (rowA.values[columnId][1] - rowB.values[columnId][1]);
       }
-    // }
-    // else{
-    //   if (sortByToggleVal===-1){
-    //     return (rowB.values[columnId][0] - rowA.values[columnId][0]);
-    //   }else{
-    //     return (rowB.values[columnId][1] - rowA.values[columnId][1]);
-    //   }
-    // } 
     }}));
 
     tmpRtCols.push(...tmpColumns);
@@ -492,6 +482,82 @@ function SingleCell({dataConfig}){
 
   }, [tableDataFiltered, sortByToggleVal]); // note 'order' is not explicity dependency here
 
+  useEffect(()=>{
+
+     // update downsampledTableData based on selected genes
+    let downsample = (numSamples, tableData) => {
+
+      // let downsampledTableDataTmp = [{accessor:1, dataPct: [], dataAvg: []}];
+
+      const downsampledTableDataTmp = produce(downsampledTableData, (draft)=>{
+
+        // create an array with keys of downsampledTableData
+        let curDownsampledAccessors = Object.keys(draft);
+
+        // add accessor to downsampled data if not already present
+        for (let i=0; i<columns.length; i++){
+          // check if columns[i].accessor is in curDownsampledAccessors
+          if (!curDownsampledAccessors.includes(columns[i].accessor.toString()) ){
+
+            // check accessor is a key in first object of tableData
+            if (tableData[0].hasOwnProperty(columns[i].accessor)){
+
+              console.log('accessor does not exist, adding ', columns[i].accessor);
+
+              // prepare dataPct and dataAvg arrays
+              // let inpDataPctAvg = [];
+              // prepare dataCnts array
+              let inpDataCnts = [];
+
+              // iterate over tableDataFiltered
+              for (let j=0; j<tableData.length; j++){
+
+                inpDataCnts.push(tableData[j]['c'+columns[i].accessor]);
+              }
+
+              inpDataCnts = inpDataCnts.filter(x=>x>0);
+              inpDataCnts = inpDataCnts.map(x=>Math.log10(x));
+
+              draft[columns[i].accessor] = inpDataCnts;
+            }
+
+          }
+        }    
+
+        // create an array with accessor property of columns
+        let curColAccessors = columns.map(x=>x.accessor);
+        console.log('curDownsampledAccessors', curDownsampledAccessors, downsampledTableData, curColAccessors);
+        
+        // remove accessor from downsampled data if not present in columns
+        for (let i=0; i<curDownsampledAccessors.length; i++){
+
+          // check if curDownsampledAccessors[i] is in colAccessors
+          if (!curColAccessors.includes(curDownsampledAccessors[i])){
+            console.log('accessor extranuous, removing ', curDownsampledAccessors[i]);
+
+            // remove ith element from draft
+            delete draft[curDownsampledAccessors[i]];
+          }
+        }
+
+      });
+
+      return downsampledTableDataTmp;
+
+    };
+
+    // console.log('tableDataSorted', tableDataSorted);
+    // prepare downsampled data and update in component's store
+    let numSamples = 500;
+    // let downsampledTableDataTmp = downsample(numSamples, tableDataSorted);
+    if (tableData.length>0){
+      console.log('curdown here before downsampledTableData', downsampledTableData);
+      let downsampledTableDataTmp = downsample(numSamples, tableData);
+      console.log('curdown here downsampledDataTmp', downsampledTableDataTmp);
+      setDownsampledTableData(downsampledTableDataTmp);
+    }
+
+  },[columns, tableData]);
 
   return(
     <>
@@ -576,10 +642,10 @@ function SingleCell({dataConfig}){
           {columns.length>0?
             <>
               <Col xs="9">
-                <div style={{float:'left', width:'70%'}}>&nbsp;</div>
-                <div style={{ float:'left', width:'29%'}}>
-                  <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/>
-                </div>
+                {/* <div style={{float:'left', width:'70%'}}>&nbsp;</div> */}
+                {/* <div style={{ float:'left', width:'29%'}}> */}
+                {/*   <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/> */}
+                {/* </div> */}
               </Col>
               <Col cs="3"></Col>
             </>:null}
@@ -594,7 +660,7 @@ function SingleCell({dataConfig}){
                     maxCellTypes={maxCellTypes}
                     setMaxAvgVal={setMaxAvgVal}
                     globalMaxAvgVal={globalMaxAvgVal}
-                    sortByToggleVal={sortByToggleVal}
+                    downsampledTableData={downsampledTableData}
                 />
               </div>:null}
           </Col>

@@ -5,6 +5,7 @@ import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
 import {useFilters, useBlockLayout} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
+import GeneOverviewPlot from './singlecell/GeneOverviewPlotComponent.js';
 
 
 function fuzzySearchMultipleWords(
@@ -38,7 +39,7 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-maxCellTypes, setMaxAvgVal, globalMaxAvgVal, sortByToggleVal}) 
+maxCellTypes, setMaxAvgVal, globalMaxAvgVal, downsampledTableData}) 
 {
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
@@ -275,7 +276,9 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>{column.render('Header')}
+              <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>
+                {(column.isDotplot && Array.isArray(downsampledTableData[column.id]))?<div><GeneOverviewPlot downsampledData={downsampledTableData[column.id]} numCols={0} /></div> : null}
+                {column.render('Header')}
                 {/* Add a sort direction indicator */}
                 <div>
                   {column.isSorted
