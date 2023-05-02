@@ -56,8 +56,10 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, downsampledTableData})
 
   let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
 
-  const toCellSpatial = (celltype, chosenPuckid, setChosenPuckid) => {
+  const toCellSpatial = (inp_celltype, chosenPuckid, setChosenPuckid) => {
 
+    const celltype = inp_celltype.replaceAll('-','_'); // replace all occurrences of - with _ in celltype
+    // const celltype = inp_celltype.replace(/-/g,'_'); // also works 
 
       // get freqBar data for this celltype to derminne maxima puckid
     const fetchData = async (celltype) => {
@@ -76,7 +78,7 @@ maxCellTypes, setMaxAvgVal, globalMaxAvgVal, downsampledTableData})
           return readData;
         } )
         .catch(error => {
-          alert("Could not find spatial data for this cell type");
+          alert(`Could not find spatial data for this cell type ${celltype}`);
           console.log(error);
           return undefined;
         });
