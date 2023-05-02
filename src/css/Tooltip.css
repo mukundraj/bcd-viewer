@@ -1,7 +1,8 @@
 #tooltip-top > .tooltip-inner {
   background-color: #ffffff;
   color: #000000;
-  border: thin solid #062e56;
+  /* border: thin solid #062e56; */
+  border: thin solid #aaaaaa;
   /* border: 0; */
   /* margin: 0; */
   /* padding: 0; */
@@ -9,7 +10,7 @@
 }
 
 #tooltip-top {
-  border: 1px;
+  border: 1px solid #aaaaaa;
   margin: 2px;
   padding: 2px;
 }

@@ -22,6 +22,11 @@ import {load} from '@loaders.gl/core';
 import {CSVLoader} from '@loaders.gl/csv';
 import {useQuery} from 'react-query'
 import Table from './TableComponent'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import '../css/Tooltip.css'
 
 
 function SingleCell({dataConfig}){
@@ -293,7 +298,7 @@ function SingleCell({dataConfig}){
                           "isDotplot":true,
                           "disableFilters":true,
                             maxWidth:100,
-                          "helpText":`Dotplot column for gene ${added[i]} expression in each cell type. Click to sort cell clusters by this gene or toggle ascending/descending order. Histogram shows the frequency of ${added[i]} appearing in cell clusters (yaxis) versus log expression counts (xaxis) for this ${added[i]}.`
+                          "helpText":`Dotplot column for gene '${added[i]}' expression in each cell type. Click to sort cell clusters by this gene or toggle ascending/descending order. Histogram below shows the frequency of '${added[i]}' appearing in cell clusters (yaxis) versus log of avg expression of '${added[i]}' in those clusters (xaxis).`
                         });
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
@@ -426,7 +431,7 @@ function SingleCell({dataConfig}){
       accessor: 'ct',
       disableSortBy: true,
       filter: 'fuzzyText',
-      helpText: 'Cell cluster name',
+      helpText: 'Currently assigned cluster names. Rows that have clusters that have been spatially mapped can be clicked to see their spatial localization. Rows with clusters that have not been spatially mapped are shown faded and are not clickable.'
     },
     {
       Header: 'class',
@@ -585,7 +590,11 @@ function SingleCell({dataConfig}){
               }}
             />
           </Col>
-          <Col xs="2">Max #celltypes:</Col>
+          <Col xs="2">Max #celltypes: &nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Specify maximum number of records (rows) to be displayed at a time (default is 10). This value can be used to adjust colormap (to improve contrast) for the dotplot when normalization set to 'Adaptive'.</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+          </Col>
           <Col xs="2">
             <RangeSlider
               value={maxCellTypes}
@@ -613,7 +622,11 @@ function SingleCell({dataConfig}){
           {/*   /> */}
           {/* </Col> */}
           {selectedRegIds.length>0?<>
-          <Col xs="2">Min composition %: </Col>
+          <Col xs="2">Min composition %: &nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Specity percent threshold to filter out those cell clusters from the table that do not have at the least specified percent of cells located within selected CCF region </Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+          </Col>
           <Col xs="2">
             <RangeSlider
               value={minCompoPct*100}
@@ -625,7 +638,10 @@ function SingleCell({dataConfig}){
             />
           </Col> </>:<Col xs="4"></Col>}
           <Col xs="1">
-            Normalizer: 
+            Normalizer: &nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Select whether avg/pct expression values should be normalized by maximum among clusters currently displayed in table ('Adaptive') or global maximum ('Fixed') for rendering dotplot)</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
           <Col xs="1">
             <BootstrapSwitchButton 
@@ -703,11 +719,20 @@ function SingleCell({dataConfig}){
                 </>:null
               }
             </Row>
+            <Row style={{marginTop:'20px', marginBottom:'10px'}}>
+              <span>
+                Filter by brain (CCF) region &nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Filter cell clusters shown in table by region (any region specified in Allen Common Coordinate Framework can be chosen). If a region is selected below, only those cell clusters found to be present within that region are shown in the table.</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+              </span>
+            </Row>
             <Row>
               <Dendrogram
                 showDendrobar={false}
                 divWidth="100%" divHeight="100%"
                 sbarWidth={100} sbarHeight={240}
+                mode={'radioSelect'} // only one region at a time to be consistent with composition pct shown
               />
             </Row>
           </Col>

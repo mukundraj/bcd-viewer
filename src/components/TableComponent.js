@@ -286,7 +286,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
               <th {...column.getHeaderProps(column.getSortByToggleProps())} title="" >
                 {column.render('Header')}&nbsp;
                 <OverlayTrigger overlay={<Tooltip id="tooltip-top">{column.helpText}</Tooltip>}>
-                <FontAwesomeIcon icon={faCircleQuestion} size="sm"/>
+                <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                   </OverlayTrigger>
                 {(column.isDotplot && Array.isArray(downsampledTableData[column.id]))?<div><GeneOverviewPlot downsampledData={downsampledTableData[column.id]} numCols={0} /></div> : null}
                 {/* Add a sort direction indicator */}

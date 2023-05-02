@@ -855,6 +855,7 @@ function Loader({dataConfig, validatedURLParams}){
           showDendrobar={true}
           divWidth="70%" divHeight="60%"
           sbarWidth={100} sbarHeight={100}
+          mode="multiSelect"
         />
         <RegEnrich setDataLoadStatus={setDataLoadStatus}
                   regEnrichZarrPath={`${basePath}${regEnrichZarrPath}`}

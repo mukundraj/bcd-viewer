@@ -139,6 +139,7 @@ function Dendrogram(props){
             keepChildrenOnSearch={false}
             showDropdown="initial"
             searchPredicate={searchPredicate}
+            mode={props.mode}
           />
         </Scrollbars>
       </div>
