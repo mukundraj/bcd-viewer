@@ -6,6 +6,11 @@ import {useSCComponentStore} from '../store/SCComponentStore'
 import {useFilters, useBlockLayout} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
 import GeneOverviewPlot from './singlecell/GeneOverviewPlotComponent.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import '../css/Tooltip.css'
 
 
 function fuzzySearchMultipleWords(
@@ -276,17 +281,19 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>
+              <th {...column.getHeaderProps(column.getSortByToggleProps())} title="" >
+                {column.render('Header')}&nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">{column.helpText}</Tooltip>}>
+                <FontAwesomeIcon icon={faCircleQuestion} size="sm"/>
+                  </OverlayTrigger>
                 {(column.isDotplot && Array.isArray(downsampledTableData[column.id]))?<div><GeneOverviewPlot downsampledData={downsampledTableData[column.id]} numCols={0} /></div> : null}
-                {column.render('Header')}
                 {/* Add a sort direction indicator */}
-                <div>
+                <div title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>
                   {column.isSorted
                     ? column.isSortedDesc
                       ? ' 🔽'
                       : ' 🔼'
                       : ''}
-
                 </div>
                 {/* Render the columns filter UI */}
                   <div>{column.canFilter ? column.render('Filter') : null}</div>

@@ -1,0 +1,20 @@
+#tooltip-top > .tooltip-inner {
+  background-color: #ffffff;
+  color: #000000;
+  border: thin solid #062e56;
+  /* border: 0; */
+  /* margin: 0; */
+  /* padding: 0; */
+  text-align: center;
+}
+
+#tooltip-top {
+  border: 1px;
+  margin: 2px;
+  padding: 2px;
+}
+
+#tooltip-top > .tooltip-arrow {
+  /* border-top: 5px solid #062e56; */
+  visibility: hidden;
+}

@@ -292,7 +292,8 @@ function SingleCell({dataConfig}){
                           "accessor":String(scolIdx),
                           "isDotplot":true,
                           "disableFilters":true,
-                            maxWidth:100
+                            maxWidth:100,
+                          "helpText":`Dotplot column for gene ${added[i]} expression in each cell type. Click to sort cell clusters by this gene or toggle ascending/descending order. Histogram shows the frequency of ${added[i]} appearing in cell clusters (yaxis) versus log expression counts (xaxis) for this ${added[i]}.`
                         });
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
@@ -425,6 +426,7 @@ function SingleCell({dataConfig}){
       accessor: 'ct',
       disableSortBy: true,
       filter: 'fuzzyText',
+      helpText: 'Cell cluster name',
     },
     {
       Header: 'class',
@@ -432,20 +434,23 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       Filter: SelectColumnFilter,
       filter: 'includes',
-      maxWidth:100
+      maxWidth:100,
+      helpText: 'Cell class',
     },
     {
       Header: 'brain area',
       accessor: 'tr',
       disableSortBy: true,
-      maxWidth:110
+      maxWidth:110,
+      helpText: 'Brain area name',
     },
     {
       Header: 'defining gene set',
       accessor: 'gs',
       disableSortBy: true,
       filter: 'fuzzyText',
-      maxWidth:120
+      maxWidth:120,
+      helpText: 'Set of genes that can be used to uniquely identify for corresponding cell cluster in first column',
     },
     {
       Header: 'neurotransmitters',
