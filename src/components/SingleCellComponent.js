@@ -455,25 +455,28 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       maxWidth:120,
-      helpText: 'Set of genes that can be used to uniquely identify for corresponding cell cluster in first column',
+      helpText: 'A set of genes that uniquely identify the corresponding cell cluster in first column. Search box below allows to select rows by presence of one or more genes of interest.',
     },
     {
       Header: 'neurotransmitters',
       accessor: 'nt',
       disableSortBy: true,
       filter: 'fuzzyText',
+      helpText: 'Neurotransmitters',
     },
     {
       Header: 'neuropeptides',
       accessor: 'np',
       disableSortBy: true,
       filter: 'fuzzyText',
+      helpText: 'Neuropeptides',
     },
     {
       Header: 'neuropeptide-receptors',
       accessor: 'npr',
       disableSortBy: true,
       filter: 'fuzzyText',
+      helpText: 'Neuropeptide receptors',
     },
   ]
     const tmpColumns = columns.map(col=>({
