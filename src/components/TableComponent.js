@@ -35,8 +35,11 @@ function fuzzySearchMultipleWords(
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  // let keys = [row => row.values[id]];
-  return fuzzySearchMultipleWords(rows, filterValue, { keys: [row=>row.values[id]]})
+
+  let keys = [{threshold:matchSorter.rankings.WORD_STARTS_WITH, key:row => row.values[id].replace(/-/g,' ')}] // replacing - with space for cell cluster column
+
+  return fuzzySearchMultipleWords(rows, filterValue, {keys:keys})
+  // return matchSorter(rows, filterValue, { keys: [row=>row.values[id]})
 }
 
 // Let the table remove the filter if the string is empty
