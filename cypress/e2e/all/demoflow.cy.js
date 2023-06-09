@@ -23,33 +23,45 @@ describe('demo flow tests', () => {
 
     // second gene GAD2
 
-    // screenshot
+    // screenshot and checks
 
     // uncheck GAD2
 
     // select select Midbrain raphe nuclei
 
-    // jump to slide 79 using arrow next to checkbox
+    // jump to slide 62 using arrow next to checkbox
+    
+    // check for values in top bar of regionwise barplot (pid 62, cptkr 91)
+    
+    // goto slide 63 using carousel
 
-    // screenshot
-
+    // check for values in for_Puck ID display - should be 063
+    
+    // come back to slide 62 using regionwise barplot
+    
+    // check for values in top bar of regionwise barplot
 
     // set region enrichment 0.15 and 0.010, select Tph2, ensure jump to puck74
 
-    // screenshot
-
-
+    // screenshot and checks for top values in RegEnrich table
+    
+    // check for top value in top bar of regionwise barplot - should be pid: 76 and cptkr:43
 
   });
 
   it('Test singlecell', () => {
     cy.visit('/singlecell')
 
-    // test rbfox3 with triangular nuclues of septum, should jump to cellspatial automatically
+    // test rbfox3 with triangular nuclues of septum
 
-    // in CellSpatial ensure Ex_Sln_Sost_2 selected
+    // check table values
 
-    // screenshot
+    // in CellSpatial ensure Ex_Sln_Sost_2 appears on table
+
+    // screenshot and checks
+    
+    // click on Ex_Sln_Sost_2, should jump to cell spatial automatically
+
 
   })
 
@@ -62,7 +74,7 @@ describe('demo flow tests', () => {
 
     // click serex
 
-    // screenshot
+    // screenshot and checks
 
   })
 
