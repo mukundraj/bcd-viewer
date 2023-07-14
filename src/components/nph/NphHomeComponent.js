@@ -46,7 +46,7 @@ function NphHome(props){
         logged in Terra. </p>
       <h4>Contact</h4>
       <p style={{textAlign:"justify"}}>
-        For questions and comments, please contact Vahid H Gazestani [vgazesta at broadinstitute org]
+        For questions and comments, please contact Evan Macosko [emacosko at broadinstitute org]
       </p>
       </div>
     {/* </Scrollbars> */}
