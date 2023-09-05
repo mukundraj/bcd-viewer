@@ -22,17 +22,23 @@ Your app is ready to be deployed!
 
 To build and deploy to main location.
 
-May been execution permissions one time. `chmod u+x ./scripts/deploy_main.sh`
+May need execution permissions one time. `chmod u+x ./scripts/deploy_main.sh`
+
+### `yarn deploy:test`
+
+To build and deploy to test location.
+
+May need execution permissions one time. `chmod u+x ./scripts/deploy_test.sh`
 
 ### `yarn deploy:demo`
 
-To build and deploy to demo location.
+To build and deploy to demo location. Provides anonymous deployment if needed.
 
-May been execution permissions one time. `chmod u+x ./scripts/deploy_demo.sh`
+May need execution permissions one time. `chmod u+x ./scripts/deploy_demo.sh`
 
 ### `yarn start:instrumentation`
 
-To start dev app with code coverage intrumentation. The report is saved at
+To start dev app with code coverage instrumentation. The report is saved at
 `./coverage/lcov-report/index.html`.
 
 ### `yarn cypress:open`
