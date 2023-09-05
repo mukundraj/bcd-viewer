@@ -60,6 +60,10 @@ Furthermore, we have created a notebook that showcases the routine analyses and
         Note that the links may not work properly if you have not logged in Terra.
         </p>
 
+        <h5>Quick Data Downloads</h5>
+
+        <p> The datasets can be directly downloaded  <i>without</i> any login requirement <a href="https://zenodo.org/record/8319719" target="_blank" rel="noreferrer">here</a>. </p>
+
       <h4>Contact</h4>
       <p style={{textAlign:"justify"}}>
         For questions and comments, please contact Evan Macosko [emacosko at broadinstitute org]
