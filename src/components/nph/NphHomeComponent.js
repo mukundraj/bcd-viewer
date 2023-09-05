@@ -35,15 +35,31 @@ function NphHome(props){
       <img src={nphflow} style={{width:'100%'}} alt="NPH flowchart" />
       <h4>Data access</h4>
       <p style={{textAlign:"justify"}}>
-        All generated single cell data and the results of our integrative analysis of 28 single cell 
-        studies are currently available as a Terra workbook. This includes sample annotations, 
-        cell identifiers (e.g., cell barcodes), quality metrics, and cell type annotations from 
-        integrative analysis. We have also included functionality to perform several analyses in 
-        a fast and efficient way, including: examination of the integration solutions, performing 
-        marker analysis across all of the datasets, and exploring differentially expressed genes.
-        To access data, you need to register an account at <a href="https://terra.bio/" target="_blank">Terra</a>. Once registered and 
-        logged in, you can access the workbook <a href="https://app.terra.bio/#workspaces/help-terra/International_Neuroimmune_Consortium_Workshop_2022/analysis/launch/integrative_analysis.ipynb" target="_blank">here</a>. Note that the link may not work properly if you have not 
-        logged in Terra. </p>
+
+
+        All generated single cell data and the results of our integrative
+        analysis of 28 single cell studies are currently available as a Terra
+        workbook. This includes sample annotations, cell identifiers (e.g.,
+        cell barcodes), quality metrics, and cell type annotations from
+        integrative analysis.
+
+To access data, you need first to register an account at <a href="https://terra.bio/" target="_blank" rel="noreferrer">Terra</a>. Once registered
+        and logged in, you can access the data and utilize the developed
+        pipelines <a href="https://app.terra.bio/#workspaces/fbrihuman/sconline_integrative_analysis" target="_blank" rel="noreferrer">here</a>.
+      </p>
+
+        <p>
+Furthermore, we have created a notebook that showcases the routine analyses and
+        exploration of the data in a fast and efficient way, including:
+        examination of the integration solutions, performing marker analysis
+        across all of the datasets, and exploring differentially expressed
+        genes, accessible <a href="https://app.terra.bio/#workspaces/help-terra/International_Neuroimmune_Consortium_Workshop_2022/analysis/launch/integrative_analysis.ipynb" target="_blank" rel="noreferrer">here</a>.
+        </p>
+
+        <p>
+        Note that the links may not work properly if you have not logged in Terra.
+        </p>
+
       <h4>Contact</h4>
       <p style={{textAlign:"justify"}}>
         For questions and comments, please contact Evan Macosko [emacosko at broadinstitute org]
