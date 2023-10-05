@@ -111,6 +111,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   else if (cell.column.id==='cc' || cell.column.id==='tr' || cell.column.id==='gs' || cell.column.id==='nt' || cell.column.id==='np' || cell.column.id==='npr'){
     return <span style={{borderWidth:"0", fontSize:12}}>{cell.value}</span>
 
+  }else if (cell.column.id==='cld'){
+          return <span style={{borderWidth:"0", fontSize:12}}>&nbsp;{cell.value}</span>
   }
   // populate dotplot columns
   else{
@@ -196,7 +198,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     filterTypes,
     initialState: { 
       // sortBy: [{id: 'gs', desc: false}],
-      hiddenColumns: ['nt', 'np', 'npr'],
+      hiddenColumns: ['nt', 'np', 'npr', 'cld'],
     }, 
     disableSortRemove: true,
   }, 

@@ -174,7 +174,10 @@ function SingleCell({dataConfig}){
           dataGeneSetCover, 
           dataNeuroTrans, 
           dataNeuroPep, 
-          dataNeuroPepRecep] = await Promise.all(
+          dataNeuroPepRecep, 
+          dataClades,
+          dataCladeAnno
+      ] = await Promise.all(
         [zloader.getFlatArrDecompressed("/var/genes"),
           zloader.getFlatArrDecompressed("/obs/clusters"), 
           zloader.getFlatArrDecompressed("/metadata/cellclasses"), 
@@ -189,7 +192,8 @@ function SingleCell({dataConfig}){
           zloader.getFlatArrDecompressed("/metadata/neuroTrans"),
           zloader.getFlatArrDecompressed("/metadata/neuroPep"),
           zloader.getFlatArrDecompressed("/metadata/neuroPepRecep"),
-          zloader.getFlatArrDecompressed("/metadata/neuroPepRecep")
+          zloader.getFlatArrDecompressed("/metadata/clades"),
+          zloader.getFlatArrDecompressed("/metadata/cladeAnnotations")
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -203,7 +207,7 @@ function SingleCell({dataConfig}){
       setGeneOptions(dataGenes);
       setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' ')}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' '), "cld":`${dataClades[i]}: ${dataCladeAnno[i]}`}}) // cid:celltype idx
       setRawTableData(initTableData);
       // setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -477,6 +481,13 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Neuropeptide receptors',
+    },
+    {
+      Header: 'clades',
+      accessor: 'cld',
+      disableSortBy: true,
+      filter: 'fuzzyText',
+      helpText: 'Clades info',
     },
   ]
     const tmpColumns = columns.map(col=>({
