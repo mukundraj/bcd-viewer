@@ -44,6 +44,7 @@
     "tree-util": "^1.0.7",
     "use-react-router-breadcrumbs": "^3.2.1",
     "web-vitals": "^2.1.0",
+    "yarn": "^1.22.19",
     "zarr": "^0.5.2",
     "zustand": "^4.0.0-rc.1"
   },
