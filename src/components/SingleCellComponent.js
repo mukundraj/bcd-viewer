@@ -607,9 +607,11 @@ function SingleCell({dataConfig}){
               }}
             />
           </Col>
-           <Col xs="1">
-            Normalizer: &nbsp;
-                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Select whether avg/pct expression values should be normalized by maximum among clusters currently displayed in table ('Adaptive') or global maximum ('Fixed') for rendering dotplot)</Tooltip>}>
+
+          {columns.length>0?<>
+           <Col xs="2">
+             Normalizer: &nbsp;
+                <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">Select whether avg/pct expression values should be normalized by maximum among clusters currently displayed in table ('Adaptive') or global maximum ('Fixed') for rendering dotplot)</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>
           </Col>
@@ -621,6 +623,7 @@ function SingleCell({dataConfig}){
           </Col>
           <Col xs="2">
           </Col>
+          </>:null}
         </Row>
         {columns.length>0?
         <Row className="mt-2">
@@ -705,6 +708,8 @@ function SingleCell({dataConfig}){
                 <Colorbar style={{marginTop:"5px"}} max={maxAvgVal} cells={7} setCurrentColorMap={setCurrentColorMap} barWidth={26}/> </> :null
               }
             </Row>
+
+            {columns.length>0?<>
             <Row style={{marginTop:"25px"}}>
               {maxProportionalVal>0? 
                 <>
@@ -741,6 +746,7 @@ function SingleCell({dataConfig}){
                 mode={'radioSelect'} // only one region at a time to be consistent with composition pct shown
               />
             </Row>
+            </>:null}
           </Col>
         </Row>
       </div>
