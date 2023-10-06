@@ -1,5 +1,5 @@
 import {useEffect, useRef, useMemo } from 'react';
-import { useTable, useSortBy } from 'react-table'
+import { useTable, useSortBy, usePagination } from 'react-table'
 import BTable from 'react-bootstrap/Table';
 import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
@@ -187,11 +187,20 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
+    // rows,
     prepareRow,
     allColumns,
     setSortBy,
-    state: { sortBy },
+    pageOptions,
+    pageCount,
+    page,
+    state: { sortBy, pageIndex, pageSize },
+    gotoPage,
+    previousPage,
+    nextPage,
+    setPageSize,
+    canPreviousPage,
+    canNextPage,
   } = useTable({
     columns,
     data,
@@ -205,6 +214,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   }, 
   useFilters,
   useSortBy,
+  usePagination,
   useBlockLayout,
   )
 
@@ -232,7 +242,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     },[sortField]); // sortField set on adding/removing new gene
 
 
-  const firstPageRows = rows.slice(0, maxCellTypes);
+  // const firstPageRows = rows.slice(0, maxCellTypes);
+  const firstPageRows = page.slice(0, pageSize);
 
     useEffect(()=>{
     let proportionVals = [], avgVals = [];
@@ -259,7 +270,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
       setMaxProportionalVal(1);
       setMaxAvgVal(globalMaxAvgVal);
     }
-  },[sortBy, columns.length, maxCellTypes, adaptNormalizerStatus]);
+  },[sortBy, columns.length, pageSize, adaptNormalizerStatus]);
 
 
   // get all ids in allColumns
@@ -317,7 +328,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {firstPageRows.map((row, i) => {
+        {
+          page.map((row, i) => {
           prepareRow(row)
           return (
             <tr {...row.getRowProps()}>
@@ -329,6 +341,50 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
         })}
       </tbody>
     </BTable>
+      <div>
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {'>>'}
+        </button>{' '}
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{' '}
+        </span>
+        <span>
+          | Go to page:{' '}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              gotoPage(page)
+            }}
+            style={{ width: '100px' }}
+          />
+        </span>{' '}
+        <select
+          value={pageSize}
+          onChange={e => {
+            setPageSize(Number(e.target.value))
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
     </>
   )
 }
