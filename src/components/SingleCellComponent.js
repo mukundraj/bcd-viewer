@@ -672,7 +672,7 @@ function SingleCell({dataConfig}){
               <Col cs="3"></Col>
             </>:null}
         </Row>
-        <Row className="d-flex" style={{flexDirection:"row", flexGrow:1}}>
+        <Row className="d-flex pt-2" style={{flexDirection:"row", flexGrow:1}}>
           <Col className="" xs="9">
             {columns.length>0?
               <div style={{overflow:"scroll", height:'70vh'}}>

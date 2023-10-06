@@ -301,46 +301,48 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
       })}
         <br />
       </div>
-    <BTable striped bordered hover size="sm" {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} title="" >
-                {column.render('Header')}&nbsp;
-                <OverlayTrigger overlay={<Tooltip id="tooltip-top">{column.helpText}</Tooltip>}>
-                <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
-                  </OverlayTrigger>
-                {(column.isDotplot && Array.isArray(downsampledTableData[column.id]))?<div><GeneOverviewPlot downsampledData={downsampledTableData[column.id]} numCols={0} /></div> : null}
-                {/* Add a sort direction indicator */}
-                <div title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>
-                  {column.isSorted
-                    ? column.isSortedDesc
-                      ? ' 🔽'
-                      : ' 🔼'
-                      : ''}
-                </div>
-                {/* Render the columns filter UI */}
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
-              </th>
+      <div className="pt-4">
+        <BTable striped bordered hover size="sm" {...getTableProps()}>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} title="" >
+                    {column.render('Header')}&nbsp;
+                    <OverlayTrigger overlay={<Tooltip id="tooltip-top">{column.helpText}</Tooltip>}>
+                      <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                    </OverlayTrigger>
+                    {(column.isDotplot && Array.isArray(downsampledTableData[column.id]))?<div><GeneOverviewPlot downsampledData={downsampledTableData[column.id]} numCols={0} /></div> : null}
+                    {/* Add a sort direction indicator */}
+                    <div title={column.canSort ? `Toggle sort by ${column.render('Header')}` : ""}>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' 🔽'
+                          : ' 🔼'
+                          : ''}
+                    </div>
+                    {/* Render the columns filter UI */}
+                    <div>{column.canFilter ? column.render('Filter') : null}</div>
+                  </th>
+                ))}
+              </tr>
             ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {
-          page.map((row, i) => {
-          prepareRow(row)
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{renderCell(cell, chosenPuckid, setChosenPuckid, maxProportionalVal)}</td>
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {
+              page.map((row, i) => {
+                prepareRow(row)
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => {
+                      return <td {...cell.getCellProps()}>{renderCell(cell, chosenPuckid, setChosenPuckid, maxProportionalVal)}</td>
+                    })}
+                  </tr>
+                )
               })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </BTable>
+          </tbody>
+        </BTable>
+      </div>
       <div>
         <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
           {'<<'}
