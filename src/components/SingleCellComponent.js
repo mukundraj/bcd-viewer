@@ -46,9 +46,6 @@ function SingleCell({dataConfig}){
     }
   });
 
-  const maxCellTypes = useSCComponentPersistStore(state => state.maxCellTypes);
-  const setMaxCellTypes = useSCComponentPersistStore(state => state.setMaxCellTypes);
-
   const minCompoPct = useSCComponentPersistStore(state => state.minCompoPct);
   const setMinCompoPct = useSCComponentPersistStore(state => state.setMinCompoPct);
 
@@ -608,21 +605,19 @@ function SingleCell({dataConfig}){
               }}
             />
           </Col>
-          <Col xs="2">Max #celltypes: &nbsp;
-                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Specify maximum number of records (rows) to be displayed at a time (default is 10). This value can be used to adjust colormap (to improve contrast) for the dotplot when normalization set to 'Adaptive'.</Tooltip>}>
+           <Col xs="1">
+            Normalizer: &nbsp;
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Select whether avg/pct expression values should be normalized by maximum among clusters currently displayed in table ('Adaptive') or global maximum ('Fixed') for rendering dotplot)</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>
           </Col>
+          <Col xs="1">
+            <BootstrapSwitchButton 
+              checked={adaptNormalizerStatus} onstyle="outline-primary" offstyle="outline-secondary" width={70}
+              onlabel="Adapt" offlabel="Fix" 
+              onChange={(checked) => {if (checked){ setAdaptNormalizerStatus(true)}else{setAdaptNormalizerStatus(false)}}}/>
+          </Col>
           <Col xs="2">
-            <RangeSlider
-              value={maxCellTypes}
-              onChange={e => setMaxCellTypes(e.target.value)}
-              min={0}
-              max={130}
-              step={1}
-              tooltipPlacement="top"
-              id="maxCellTypesSlider"
-            />
           </Col>
         </Row>
         {columns.length>0?
@@ -655,18 +650,6 @@ function SingleCell({dataConfig}){
               tooltipPlacement="top"
             />
           </Col> </>:<Col xs="4"></Col>}
-          <Col xs="1">
-            Normalizer: &nbsp;
-                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Select whether avg/pct expression values should be normalized by maximum among clusters currently displayed in table ('Adaptive') or global maximum ('Fixed') for rendering dotplot)</Tooltip>}>
-                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
-                </OverlayTrigger>
-          </Col>
-          <Col xs="1">
-            <BootstrapSwitchButton 
-              checked={adaptNormalizerStatus} onstyle="outline-primary" offstyle="outline-secondary" width={70}
-              onlabel="Adapt" offlabel="Fix" 
-              onChange={(checked) => {if (checked){ setAdaptNormalizerStatus(true)}else{setAdaptNormalizerStatus(false)}}}/>
-          </Col>
           <Col xs="2">
             {/* <RangeSlider */}
             {/*   value={minCompoPct} */}
@@ -696,7 +679,6 @@ function SingleCell({dataConfig}){
                 <Table columns={rtColumns} data={tableDataFiltered} sortField={sortField} setSortField={setSortField} sortOrder={order} 
                     setSortOrder={setOrder} 
                     adaptNormalizerStatus={adaptNormalizerStatus}
-                    maxCellTypes={maxCellTypes}
                     setMaxAvgVal={setMaxAvgVal}
                     globalMaxAvgVal={globalMaxAvgVal}
                     downsampledTableData={downsampledTableData}

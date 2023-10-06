@@ -25,8 +25,6 @@ export const useSCComponentPersistStore = create(persist(set => ({
                 toggleSortByToggleVal: () => set((state)=>({sortByToggleVal:-1*state.sortByToggleVal})),
                 cellClassSelection: [],
                 setCellClassSelection: (val) => set({cellClassSelection:val}),
-                maxCellTypes: 10,
-                setMaxCellTypes: (val) => set({maxCellTypes:val}),
                 minCompoPct: 0.25,
                 setMinCompoPct: (val) => set({minCompoPct:val}),
                 adaptNormalizerStatus: true,
