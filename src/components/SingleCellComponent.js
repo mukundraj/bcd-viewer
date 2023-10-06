@@ -102,6 +102,10 @@ function SingleCell({dataConfig}){
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
 
+
+  const initialHiddenCols = useSCComponentPersistStore(state => state.initialHiddenCols); // for Table component
+  const setHiddenCols = useSCComponentPersistStore(state => state.setHiddenCols); // to be passed to Table component
+
   // set page title
   useEffect(() => {
     // ReactGA.send({ hitType: "pageview", page: "/singlecell" });
@@ -696,6 +700,8 @@ function SingleCell({dataConfig}){
                     setMaxAvgVal={setMaxAvgVal}
                     globalMaxAvgVal={globalMaxAvgVal}
                     downsampledTableData={downsampledTableData}
+                    initialHiddenCols={initialHiddenCols}
+                    setHiddenCols={setHiddenCols}
                 />
               </div>:null}
           </Col>

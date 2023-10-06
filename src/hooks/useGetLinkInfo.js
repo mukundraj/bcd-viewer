@@ -37,6 +37,8 @@ const useGetLinkInfo = () => {
     const maxCellTypes = useSCComponentPersistStore(state => state.maxCellTypes);
     const minCompoPct = useSCComponentPersistStore(state => state.minCompoPct);
     const adaptNormalizerStatus = useSCComponentPersistStore(state => state.adaptNormalizerStatus);
+    const hiddenCols = useSCComponentPersistStore(state => state.hiddenCols);
+    const hiddenColsStr = hiddenCols.join(',');
     // const downsampledTableData = useSCComponentPersistStore(state => state.downsampledTableData);
 
 
@@ -78,7 +80,7 @@ const useGetLinkInfo = () => {
 
         const genes = multiSelections.map((gene) => gene).join(',');
 
-        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&maxCellTypes=${maxCellTypes}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}`
+        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&maxCellTypes=${maxCellTypes}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}&hiddenColsStr=${hiddenColsStr}`
         // console.log('link', link);
         return link;
     }

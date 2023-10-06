@@ -3,6 +3,7 @@ import { useTable, useSortBy } from 'react-table'
 import BTable from 'react-bootstrap/Table';
 import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
+import {useSCComponentPersistStore} from '../store/SCComponentStore'
 import {useFilters, useBlockLayout} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
 import GeneOverviewPlot from './singlecell/GeneOverviewPlotComponent.js';
@@ -47,7 +48,7 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-maxCellTypes, setMaxAvgVal, globalMaxAvgVal, downsampledTableData}) 
+maxCellTypes, setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols}) 
 {
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
@@ -198,7 +199,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     filterTypes,
     initialState: { 
       // sortBy: [{id: 'gs', desc: false}],
-      hiddenColumns: ['nt', 'np', 'npr', 'cld'],
+      hiddenColumns: initialHiddenCols,
     }, 
     disableSortRemove: true,
   }, 
@@ -261,6 +262,12 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   },[sortBy, columns.length, maxCellTypes, adaptNormalizerStatus]);
 
 
+  // get all ids in allColumns
+  let allIds = allColumns.map(column=>column.id);
+
+  // get hidden column ids  
+  let hiddenIds = allColumns.filter(column=>column.isVisible===false).map(column=>column.id);
+  setHiddenCols(hiddenIds);
   
 
   // Render the UI for table

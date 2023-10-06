@@ -52,6 +52,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
 
   const setOpacityValCSC = useCSComponentStore(state => state.setOpacityVal);
+  const setInitialHiddenCols = useSCComponentPersistStore(state => state.setInitialHiddenCols);
 
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
 
@@ -165,6 +166,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         maxCellTypes: parseInt(searchParams.get('maxCellTypes')),
         minCompoPct: parseFloat(searchParams.get('minCompoPct')),
         adaptNormalizerStatus: searchParams.get('adaptNormalizerStatus')==='true',
+        hiddenColsStr: searchParams.get('hiddenColsStr'),
+        hiddenCols: searchParams.get('hiddenColsStr').split(','),
       }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
       console.log('urlParams', urlParams);
@@ -184,6 +187,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
+      setInitialHiddenCols(urlParams.hiddenCols);
 
       return {status: true, path: '/singlecell'}
 
