@@ -33,6 +33,10 @@ export const useSCComponentPersistStore = create(persist(set => ({
                 setInitialHiddenCols: (val) => set({initialHiddenCols:val}),
                 hiddenCols: [], // hidden columns after user interaction
                 setHiddenCols: (val) => set({hiddenCols:val}),
+                initPageSize: 10,
+                setInitPageSize: (val) => set({initPageSize:val}),
+                curPageSize: 10,
+                setCurPageSize: (val) => set({curPageSize:val}),
                 // downsampledTableData:{},
                 // setDownsampledTableData: (val) => set({downsampledTableData:val}),
 

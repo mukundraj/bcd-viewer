@@ -53,6 +53,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   const setOpacityValCSC = useCSComponentStore(state => state.setOpacityVal);
   const setInitialHiddenCols = useSCComponentPersistStore(state => state.setInitialHiddenCols);
+  const setInitPageSize = useSCComponentPersistStore(state => state.setInitPageSize);
 
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
 
@@ -62,7 +63,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setOrder = useSCComponentPersistStore(state => state.setOrder);
   const setSortField = useSCComponentPersistStore(state => state.setSortField);
   const setSortByToggleVal = useSCComponentPersistStore(state => state.setSortByToggleVal);
-  const setMaxCellTypes = useSCComponentPersistStore(state => state.setMaxCellTypes);
   const setMinCompoPct = useSCComponentPersistStore(state => state.setMinCompoPct);
   const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
   const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
@@ -163,11 +163,11 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         sortField: searchParams.get('sortField')===''?'':searchParams.get('sortField'),
         cellClassSelection: searchParams.get('cellClassSelection'),
         sortByToggleVal: parseInt(searchParams.get('sortByToggleVal')),
-        maxCellTypes: parseInt(searchParams.get('maxCellTypes')),
         minCompoPct: parseFloat(searchParams.get('minCompoPct')),
         adaptNormalizerStatus: searchParams.get('adaptNormalizerStatus')==='true',
         hiddenColsStr: searchParams.get('hiddenColsStr'),
         hiddenCols: searchParams.get('hiddenColsStr').split(','),
+        initPageSize: parseInt(searchParams.get('initPageSize')),
       }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
       console.log('urlParams', urlParams);
@@ -179,7 +179,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         setCellClassSelection([urlParams.cellClassSelection]);
       }
       setSortByToggleVal(urlParams.sortByToggleVal);
-      setMaxCellTypes(urlParams.maxCellTypes);
       setMinCompoPct(urlParams.minCompoPct);
       setOrder(urlParams.order);
       setSortField(urlParams.sortField);
@@ -188,6 +187,8 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
       setInitialHiddenCols(urlParams.hiddenCols);
+      setInitPageSize(urlParams.initPageSize);
+
 
       return {status: true, path: '/singlecell'}
 

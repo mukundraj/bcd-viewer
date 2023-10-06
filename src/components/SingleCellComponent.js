@@ -102,6 +102,8 @@ function SingleCell({dataConfig}){
 
   const initialHiddenCols = useSCComponentPersistStore(state => state.initialHiddenCols); // for Table component
   const setHiddenCols = useSCComponentPersistStore(state => state.setHiddenCols); // to be passed to Table component
+  const initPageSize = useSCComponentPersistStore(state => state.initPageSize); // for Table component
+  const setCurPageSize = useSCComponentPersistStore(state => state.setCurPageSize); // for Table component
 
   // set page title
   useEffect(() => {
@@ -684,6 +686,8 @@ function SingleCell({dataConfig}){
                     downsampledTableData={downsampledTableData}
                     initialHiddenCols={initialHiddenCols}
                     setHiddenCols={setHiddenCols}
+                    initPageSize={initPageSize}
+                    setCurPageSize={setCurPageSize}
                 />
               </div>:null}
           </Col>

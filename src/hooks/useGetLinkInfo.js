@@ -34,11 +34,11 @@ const useGetLinkInfo = () => {
     const sortField = useSCComponentPersistStore(state => state.sortField);
     const cellClassSelection = useSCComponentPersistStore(state => state.cellClassSelection);
     const sortByToggleVal = useSCComponentPersistStore(state => state.sortByToggleVal);
-    const maxCellTypes = useSCComponentPersistStore(state => state.maxCellTypes);
     const minCompoPct = useSCComponentPersistStore(state => state.minCompoPct);
     const adaptNormalizerStatus = useSCComponentPersistStore(state => state.adaptNormalizerStatus);
     const hiddenCols = useSCComponentPersistStore(state => state.hiddenCols);
     const hiddenColsStr = hiddenCols.join(',');
+    const curPageSize = useSCComponentPersistStore(state => state.curPageSize);
     // const downsampledTableData = useSCComponentPersistStore(state => state.downsampledTableData);
 
 
@@ -80,7 +80,7 @@ const useGetLinkInfo = () => {
 
         const genes = multiSelections.map((gene) => gene).join(',');
 
-        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&maxCellTypes=${maxCellTypes}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}&hiddenColsStr=${hiddenColsStr}`
+        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}&hiddenColsStr=${hiddenColsStr}&initPageSize=${curPageSize}`
         // console.log('link', link);
         return link;
     }

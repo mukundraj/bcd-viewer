@@ -48,7 +48,7 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols}) 
+setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols, initPageSize, setCurPageSize}) 
 {
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
@@ -209,6 +209,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     initialState: { 
       // sortBy: [{id: 'gs', desc: false}],
       hiddenColumns: initialHiddenCols,
+      pageSize: initPageSize
     }, 
     disableSortRemove: true,
   }, 
@@ -378,6 +379,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
           value={pageSize}
           onChange={e => {
             setPageSize(Number(e.target.value))
+            setCurPageSize(Number(e.target.value)) // set curPageSize in persist store for GetLink
           }}
         >
           {[10, 20, 30, 40, 50].map(pageSize => (
