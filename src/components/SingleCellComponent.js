@@ -486,7 +486,7 @@ function SingleCell({dataConfig}){
       helpText: 'Neuropeptide receptors',
     },
     {
-      Header: 'clades',
+      Header: 'metacluster',
       accessor: 'cld',
       disableSortBy: true,
       filter: 'fuzzyText',
