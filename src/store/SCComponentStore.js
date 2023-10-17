@@ -29,7 +29,7 @@ export const useSCComponentPersistStore = create(persist(set => ({
                 setMinCompoPct: (val) => set({minCompoPct:val}),
                 adaptNormalizerStatus: true,
                 setAdaptNormalizerStatus: (val) => set({adaptNormalizerStatus:val}),
-                initialHiddenCols: ['nt', 'np', 'npr'], // initial hidden columns
+                initialHiddenCols: ['nt', 'np', 'npr', 'amd'], // initial hidden columns
                 setInitialHiddenCols: (val) => set({initialHiddenCols:val}),
                 hiddenCols: [], // hidden columns after user interaction
                 setHiddenCols: (val) => set({hiddenCols:val}),

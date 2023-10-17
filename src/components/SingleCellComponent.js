@@ -179,7 +179,8 @@ function SingleCell({dataConfig}){
           dataNeuroPep, 
           dataNeuroPepRecep, 
           dataClades,
-          dataCladeAnno
+          dataCladeAnno,
+          dataAddnlMetadata
       ] = await Promise.all(
         [zloader.getFlatArrDecompressed("/var/genes"),
           zloader.getFlatArrDecompressed("/obs/clusters"), 
@@ -196,7 +197,8 @@ function SingleCell({dataConfig}){
           zloader.getFlatArrDecompressed("/metadata/neuroPep"),
           zloader.getFlatArrDecompressed("/metadata/neuroPepRecep"),
           zloader.getFlatArrDecompressed("/metadata/clades"),
-          zloader.getFlatArrDecompressed("/metadata/cladeAnnotations")
+          zloader.getFlatArrDecompressed("/metadata/cladeAnnotations"),
+          zloader.getFlatArrDecompressed("/metadata/additionalMetadata")
           ]); 
 
       // let dataX = await zloader.getDataColumn("z1.zarr/X", 0);
@@ -210,7 +212,7 @@ function SingleCell({dataConfig}){
       setGeneOptions(dataGenes);
       setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' '), "cld":`${dataClades[i]}: ${dataCladeAnno[i]}`}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' '), "cld":`${dataClades[i]}: ${dataCladeAnno[i]}`, "amd": dataAddnlMetadata[i]}}) // cid:celltype idx
       setRawTableData(initTableData);
       // setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -491,6 +493,14 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Clades info',
+    },
+    {
+      Header: 'additionalMetadata',
+      accessor: 'amd',
+      disableSortBy: true,
+      // filter: 'fuzzyText',
+      helpText: 'Additional metadata',
+      disableSelector: true, // to disable from appearing as a toggle option. Data only use for info box in cell cluster column
     },
   ]
     const tmpColumns = columns.map(col=>({

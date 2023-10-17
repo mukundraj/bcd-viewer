@@ -8,7 +8,7 @@ import {useFilters, useBlockLayout} from 'react-table/dist/react-table.developme
 import {matchSorter} from 'match-sorter'
 import GeneOverviewPlot from './singlecell/GeneOverviewPlotComponent.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
@@ -102,10 +102,17 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
 
   // populate celltype column
   if (cell.column.id==='ct'){
+    const amd = cell.row.allCells[8].value; // retrive additionalMetadata value for this cluster
     if (cell.row.original.st==='Y'){
-      return <button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cell.value, chosenPuckid, setChosenPuckid)}}>{cell.value}</button>
+      return <><button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cell.value, chosenPuckid, setChosenPuckid)}}>{cell.value}</button> &nbsp;
+        {amd!==""? <OverlayTrigger overlay={<Tooltip id="tooltip-top">{amd}</Tooltip>}>
+                <FontAwesomeIcon icon={faCircleInfo} size="sm" color="#aaaaaa"/>
+        </OverlayTrigger>:null} </>
     }else{
-      return <span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{cell.value}</span>
+      return <><span style={{borderWidth:"0", fontSize:12, color:'#CCD1D1'}}>&nbsp;{cell.value}</span>&nbsp;
+        {amd!==""? <OverlayTrigger overlay={<Tooltip id="tooltip-top">{amd}</Tooltip>}>
+                <FontAwesomeIcon icon={faCircleInfo} size="sm" color="#aaaaaa"/>
+        </OverlayTrigger>:null} </>
     }
   }
   // populate metadata columns
@@ -289,7 +296,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
         <div>
         </div>
         {allColumns.map(column => {
-          if (!column.isDotplot) // only show checkboxes for non dotplot columns
+          if (!column.isDotplot && !column.disableSelector) // only show checkboxes for non dotplot columns and not disabled
           return (
           <span key={column.id} style={{padding:'0px 10px'}}>
             <label>
