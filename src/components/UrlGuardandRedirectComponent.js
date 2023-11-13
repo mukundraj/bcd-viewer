@@ -44,7 +44,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const dendroData = usePersistStore(state => state.dendroData);
   const setDendroData = usePersistStore(state => state.setDendroData);
   const regionTreeNodePaths = usePersistStore(state => state.regionTreeNodePaths);
-  const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodePaths);
 
   const setMinFrac = useStore(state => state.setMinFrac);
   const setMaxFrac = useStore(state => state.setMaxFrac);
@@ -239,22 +238,23 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setSelectedRegIds(urlParams.regids);
 
       return {status: true, path: '/cellspatial'}
-    }
+    } // end of if else chain of path checks
 
 
 
     return {status: false, path: null};
-  }
+  } // checkParams function ends
 
 
   useEffect(() => {
     if (searchParams) {
-      fetchData();
+      fetchData(); // sets regidToNameMap
    }
   }, [searchParams]);
 
   useEffect(() => {
     if (regidToNameMap){
+      console.log('regidToNameMap', regidToNameMap);
       const urlParamStatusTmp = checkParams(searchParams);
       console.log('urlParamStatusTmp', urlParamStatusTmp)
       setUrlParamStatus(urlParamStatusTmp);
@@ -277,6 +277,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
   return (
     <>
+      {urlParamStatus.status&&dendroData.length>1?null:console.log('urlParamStatus', urlParamStatus, 'dendroDatalen', dendroData.length)}
       {urlParamStatus.status&&dendroData.length>1?<Navigate to={urlParamStatus.path}/>:
       <div>
       <h5>Reading URL parameters... </h5>
