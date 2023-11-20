@@ -57,6 +57,7 @@ setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHidde
   const currentColorMap = useSCComponentStore(state => state.currentColorMap);
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
 
+  const hiddenCols = useSCComponentPersistStore(state => state.hiddenCols);
 
   let computedColor = (cFactor) => currentColorMap(cFactor); // cFactor = colorFactor
 
@@ -281,12 +282,21 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   },[sortBy, columns.length, pageSize, adaptNormalizerStatus]);
 
 
-  // get all ids in allColumns
-  let allIds = allColumns.map(column=>column.id);
+  // // get all ids in allColumns
+  // let allIds = allColumns.map(column=>column.id);
 
-  // get hidden column ids  
-  let hiddenIds = allColumns.filter(column=>column.isVisible===false).map(column=>column.id);
-  setHiddenCols(hiddenIds);
+let hiddenIds = allColumns.filter(column=>column.isVisible===false).map(column=>column.id);
+
+useEffect(()=>{
+
+  // if hiddenCols not same as hiddenIds, set hiddenCols to hiddenIds
+  // important check to prevent infinite loop
+  if (hiddenCols.length!==hiddenIds.length || !hiddenCols.every((value, index) => value === hiddenIds[index])){  
+
+    setHiddenCols(hiddenIds);
+  }
+
+},[JSON.stringify(hiddenIds)]) // hiddenCols changes
   
 
   // Render the UI for table

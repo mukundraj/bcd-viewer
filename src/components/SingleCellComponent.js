@@ -103,6 +103,7 @@ function SingleCell({dataConfig}){
 
 
   const initialHiddenCols = useSCComponentPersistStore(state => state.initialHiddenCols); // for Table component
+  const setInitialHiddenCols = useSCComponentPersistStore(state => state.setInitialHiddenCols); // for Table component
   const setHiddenCols = useSCComponentPersistStore(state => state.setHiddenCols); // to be passed to Table component
   const initPageSize = useSCComponentPersistStore(state => state.initPageSize); // for Table component
   const setCurPageSize = useSCComponentPersistStore(state => state.setCurPageSize); // for Table component
@@ -512,6 +513,7 @@ function SingleCell({dataConfig}){
       accessor: 'ct',
       disableSortBy: true,
       filter: 'fuzzyText',
+      disableSelector: aggregateBy==='none'?false:true,
       helpText: 'Currently assigned cluster names. Rows that have clusters that have been spatially mapped can be clicked to see their spatial localization. Rows with clusters that have not been spatially mapped are shown faded and are not clickable.'
     },
     {
@@ -522,6 +524,7 @@ function SingleCell({dataConfig}){
       filter: 'includes',
       maxWidth:100,
       helpText: 'Cell class',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'brain area',
@@ -529,6 +532,7 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       maxWidth:110,
       helpText: 'Brain area name',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'defining gene set',
@@ -537,6 +541,7 @@ function SingleCell({dataConfig}){
       filter: 'fuzzyText',
       maxWidth:120,
       helpText: 'A set of genes that uniquely identify the corresponding cell cluster in first column. Search box below allows to select rows by presence of one or more genes of interest.',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'neurotransmitters',
@@ -544,6 +549,7 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Neurotransmitters',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'neuropeptides',
@@ -551,6 +557,7 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Neuropeptides',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'neuropeptide-receptors',
@@ -558,6 +565,7 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Neuropeptide receptors',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'metacluster',
@@ -565,6 +573,7 @@ function SingleCell({dataConfig}){
       disableSortBy: true,
       filter: 'fuzzyText',
       helpText: 'Clades info',
+      disableSelector: aggregateBy==='none'?false:true,
     },
     {
       Header: 'additionalMetadata',
@@ -668,6 +677,26 @@ function SingleCell({dataConfig}){
 
   },[columns, tableData]);
 
+  
+  const handleAggrByChange = (aggbyval) => {
+
+    setAggregateBy(aggbyval);
+    if (aggbyval==='none'){
+
+      setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
+
+    }else if (aggbyval==='cellclass'){
+      
+
+      setInitialHiddenCols(['cld', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+
+    }else if (aggbyval==='metacluster'){
+
+      setInitialHiddenCols(['cc', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+    }
+
+  }
+
   return(
     <>
       <Breadcrumbs/>
@@ -763,7 +792,7 @@ function SingleCell({dataConfig}){
                     label="None (show all clusters)"
                     type="radio"
                     id="aggradio=1"
-                    onChange={()=>{setAggregateBy("none"); }}
+                    onChange={()=>{handleAggrByChange("none");}}
                   />
                   <Form.Check
                     inline
@@ -772,7 +801,7 @@ function SingleCell({dataConfig}){
                     label="CellClass"
                     type="radio"
                     id="aggradio-2"
-                    onChange={()=>{setAggregateBy("cellclass"); }}
+                    onChange={()=>{handleAggrByChange("cellclass"); }}
                   />
                   <Form.Check
                     inline
@@ -781,7 +810,7 @@ function SingleCell({dataConfig}){
                     label="MetaCluster"
                     type="radio"
                     id="aggradio-3"
-                    onChange={()=>{setAggregateBy("metacluster"); }}
+                    onChange={()=>{handleAggrByChange("metacluster"); }}
                   />
                   </div>
                 </Form>
