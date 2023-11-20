@@ -31,7 +31,7 @@ import '../css/Tooltip.css'
 
 function SingleCell({dataConfig}){
 
-  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap} = dataConfig;
+  const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap, dpathAggrScZarr} = dataConfig;
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -84,6 +84,8 @@ function SingleCell({dataConfig}){
   const setMaxColVals = useStore(state => state.setMaxColVals);
 
   let scPathInBucket = `${basePath}${dpathScZarr}`;
+  const aggrScPathInBucket = `${basePath}${dpathAggrScZarr}`
+
   const maxProportionalVal = useSCComponentStore(state => state.maxProportionalVal);
   const setMaxProportionalVal = useSCComponentStore(state => state.setMaxProportionalVal);
   
@@ -104,6 +106,8 @@ function SingleCell({dataConfig}){
   const setHiddenCols = useSCComponentPersistStore(state => state.setHiddenCols); // to be passed to Table component
   const initPageSize = useSCComponentPersistStore(state => state.initPageSize); // for Table component
   const setCurPageSize = useSCComponentPersistStore(state => state.setCurPageSize); // for Table component
+
+  const [aggregateBy, setAggregateBy] = useState("none"); // for aggegateBy radio buttons
 
   // set page title
   useEffect(() => {
@@ -221,10 +225,48 @@ function SingleCell({dataConfig}){
 
     }
 
-    fetchData();
-    prevMultiSelections.current = [];
+    const fetchAggrData = async () => {
 
-  }, []);
+      let zloader = new ZarrLoader({zarrPathInBucket: aggrScPathInBucket});
+
+      const aggMetadataPath = aggregateBy==='metacluster'?'clades':'cellclasses';
+
+      let [aggMetadata] = await Promise.all(
+        [
+          zloader.getFlatArrDecompressed(`/metadata/${aggMetadataPath}`),
+        ]
+      )
+
+      let initTableData = new Array(aggMetadata.length).fill({})
+
+
+      if (aggregateBy==='metacluster'){
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "cld":aggMetadata[i]}}) // cid:celltype idx
+      console.log('loaded ', aggMetadataPath, aggMetadata, initTableData, initTableData.length);
+      setRawTableData(initTableData);
+
+      }else{ // aggregateBy is cellclass
+        initTableData = initTableData.map((x,i)=>{return {"id":i, "cc":aggMetadata[i]}}) // cid:celltype idx
+        console.log('loaded ', aggMetadataPath, aggMetadata, initTableData, initTableData.length);
+        setRawTableData(initTableData);
+
+      }
+        
+
+    }
+
+    if (aggregateBy === 'none'){
+      setTableData([]); // clear tableData to force update from rawTableData
+      fetchData();
+    }else{ // aggregateBy is either cellclass or metacluster
+      setTableData([]); // clear tableData to force update from rawTableData
+      fetchAggrData(); // sets rawTableData
+    }
+
+
+    // prevMultiSelections.current = [];
+
+  }, [aggregateBy]);
 
   // update geneOptionsForDisplay when multiSelections changes
   useEffect(()=>{
@@ -261,13 +303,13 @@ function SingleCell({dataConfig}){
 
   // updating tableData json array on change in selected genes
   useEffect(()=>{
-    const fetchData = async (col_idxs, tableDataTmp) => {
+    const fetchData = async (col_idxs, tableDataTmp, zarrPath, zarrPrefix) => {
 
       for (const col_idx of col_idxs){
-        let zloader = new ZarrLoader({zarrPathInBucket:scPathInBucket});
-        let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn("/nz_pct/X", col_idx),
-                                                    zloader.getDataColumn("/avg/X", col_idx), 
-                                                    zloader.getDataColumn("/counts/X", col_idx)]);
+        let zloader = new ZarrLoader({zarrPathInBucket:zarrPath});
+        let [dataCol, avgDataCol, countDataCol] = await Promise.all([zloader.getDataColumn(`${zarrPrefix}/nz_pct/X`, col_idx),
+                                                    zloader.getDataColumn(`${zarrPrefix}/avg/X`, col_idx), 
+                                                    zloader.getDataColumn(`${zarrPrefix}/counts/X`, col_idx)]); // counts needed for GeneOverviewPlot
 
         const scol_idx = col_idx+1; // shifted col_idx to avoid zero with no corresponding negative value
         tableDataTmp = tableDataTmp.map((x,i)=>produce(x, draft=>{
@@ -311,7 +353,16 @@ function SingleCell({dataConfig}){
                         });
         });
         let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
-        fetchData(col_idxs, tableDataTmp);
+
+        if (aggregateBy==='none'){
+          const zarrPrefix = '';
+          fetchData(col_idxs, tableDataTmp, scPathInBucket, zarrPrefix);
+
+        }else{ // aggregateBy is either cellclass or metacluster
+          const zarrPrefix = aggregateBy==='metacluster'?'clades':'cellclasses';
+          fetchData(col_idxs, tableDataTmp, aggrScPathInBucket, zarrPrefix);
+        }
+
         setColumns(columnsTmp);
         if (multiSelections.length===1){
           setSortField(String(col_idxs[0]+1));
@@ -346,6 +397,21 @@ function SingleCell({dataConfig}){
           // handleSorting(sortField, order, sortByToggleVal); // calls setTableDataSorted internally
         }
 
+      }else{ // no change in gene selection but reload data due to aggregateBy change
+
+          const col_idxs = multiSelections.map(x=>geneOptions.indexOf(x));
+          // const scolIdxs = col_idxs.map(x=>x+1); // shifted col_idx to avoid zero with no corresponding negative value
+          let tableDataTmp = tableData.length===0?rawTableData.map(x=>x):tableData.map(x=>x); // diff inits for first and following times
+          
+          if (aggregateBy==='none'){
+            const zarrPrefix = '';
+            fetchData(col_idxs, tableDataTmp, scPathInBucket, zarrPrefix);
+
+          }else{ // aggregateBy is either cellclass or metacluster
+            const zarrPrefix = aggregateBy==='metacluster'?'clades':'cellclasses';
+            fetchData(col_idxs, tableDataTmp, aggrScPathInBucket, zarrPrefix);
+          }
+
       }
       prevMultiSelections.current=multiSelections;
     }
@@ -361,42 +427,48 @@ function SingleCell({dataConfig}){
 
   },[tableData, sortField, order]);
   
+  // filters based on region
   useEffect(()=>{
 
+    if (aggregateBy==='none'){
     let wantedCelltypes = new Set();
 
     // iterate over selectedRegIds
-    for (let i=0; i<selectedRegIds.length; i++){
-      if (!!regionToCelltype){
-        console.log('selectedRegIds ', selectedRegIds[i]);
-        const cellIdxsInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
-        console.log('cellIdxsInRegion', cellIdxsInRegion)
-        // for (const cidx of cellIdxInRegion){
-        for (const cidx in cellIdxsInRegion){
-          // wantedCelltypes.add(cidx);
-          if (cellIdxsInRegion[cidx]>minCompoPct){
-            wantedCelltypes.add(parseInt(cidx));
+      for (let i=0; i<selectedRegIds.length; i++){
+        if (!!regionToCelltype){
+          console.log('selectedRegIds ', selectedRegIds[i]);
+          const cellIdxsInRegion = regionToCelltype[selectedRegIds[i]]; // cell idx among mapped region of chosen region
+          console.log('cellIdxsInRegion', cellIdxsInRegion)
+          // for (const cidx of cellIdxInRegion){
+          for (const cidx in cellIdxsInRegion){
+            // wantedCelltypes.add(cidx);
+            if (cellIdxsInRegion[cidx]>minCompoPct){
+              wantedCelltypes.add(parseInt(cidx));
+            }
           }
         }
       }
-    }
 
-    let tableDataFilteredTmp = tableData;
-    // filter further if wanted celltypes are identified, else no further filtering
-    if (wantedCelltypes.size>0 || selectedRegIds.length>0){
-      tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
+      let tableDataFilteredTmp = tableData;
+      // filter further if wanted celltypes are identified, else no further filtering
+      if (wantedCelltypes.size>0 || selectedRegIds.length>0){
+        tableDataFilteredTmp = tableDataFilteredTmp.filter(x => wantedCelltypes.has(x.cid))
 
-      if (selectedRegIds.length>0 && !!regionToCelltype){
-        const cellIdxsInRegion = regionToCelltype[selectedRegIds[0]]; // cell idx among mapped region of chosen region
-        // add property to each object of tableDataFilteredTmp
-        tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
-          // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
-          draft['tr'] = draft['tr']+`, cp:${String(Math.round(Math.min(1, cellIdxsInRegion[x.cid])*100))}%`;  // composition percentage
-        }));
+        if (selectedRegIds.length>0 && !!regionToCelltype){
+          const cellIdxsInRegion = regionToCelltype[selectedRegIds[0]]; // cell idx among mapped region of chosen region
+          // add property to each object of tableDataFilteredTmp
+          tableDataFilteredTmp = tableDataFilteredTmp.map(x=>produce(x, draft=>{
+            // draft['cpct'] = 'c:'+String(cellIdxsInRegion[x.cid]);  // composition percentage
+            draft['tr'] = draft['tr']+`, cp:${String(Math.round(Math.min(1, cellIdxsInRegion[x.cid])*100))}%`;  // composition percentage
+          }));
+        }
+
       }
+      setTableDataFiltered(tableDataFilteredTmp);
 
+    }else{
+      setTableDataFiltered(tableData);
     }
-    setTableDataFiltered(tableDataFilteredTmp);
 
 
   },[tableData, selectedRegIds, minCompoPct]);
@@ -678,11 +750,41 @@ function SingleCell({dataConfig}){
         <Row>
           {columns.length>0?
             <>
-              <Col xs="9">
-                {/* <div style={{float:'left', width:'70%'}}>&nbsp;</div> */}
-                {/* <div style={{ float:'left', width:'29%'}}> */}
-                {/*   <GeneOverviewsComponent columns={columns} downsampledTableData={downsampledTableData}/> */}
-                {/* </div> */}
+              <Col xs="2">
+                Aggregate cell clusters by:
+              </Col>
+              <Col xs="7">
+                <Form>
+                  <div>
+                  <Form.Check
+                    inline
+                    checked={aggregateBy==="none"}
+                    name="aggradio"
+                    label="None (show all clusters)"
+                    type="radio"
+                    id="aggradio=1"
+                    onChange={()=>{setAggregateBy("none"); }}
+                  />
+                  <Form.Check
+                    inline
+                    checked={aggregateBy==="cellclass"}
+                    name="aggradio"
+                    label="CellClass"
+                    type="radio"
+                    id="aggradio-2"
+                    onChange={()=>{setAggregateBy("cellclass"); }}
+                  />
+                  <Form.Check
+                    inline
+                    checked={aggregateBy==="metacluster"}
+                    name="aggradio"
+                    label="MetaCluster"
+                    type="radio"
+                    id="aggradio-3"
+                    onChange={()=>{setAggregateBy("metacluster"); }}
+                  />
+                  </div>
+                </Form>
               </Col>
               <Col cs="3"></Col>
             </>:null}

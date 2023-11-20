@@ -20,6 +20,7 @@ export const DATACONFIGS =
       dpathMappedCellTypesToIdx: "/batch_230131/singlecell_data/s2/s2_regtocell_230208/mappedCellType_to_idx.json",
       dpathRegionToCelltype: "/batch_230131/singlecell_data/s2/s2_regtocell_230208/region_to_celltype.json",
       dpathIdAcroNameMap: "/batch_230131/singlecell_data/s1/idAcroNameMap/idAcroNameMap.csv",
+      dpathAggrScZarr: "/batch_231112/single_cell/v3/aggedSCdata.zarr",
     },
     {
 
