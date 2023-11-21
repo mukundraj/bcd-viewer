@@ -682,6 +682,14 @@ function SingleCell({dataConfig}){
   },[columns, tableData]);
 
   
+  // reset initialHiddenCols on page reload - for page reload from an aggregateBy state
+  useEffect(()=>{
+
+    setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
+
+  },[]);
+
+  // handler function for aggregateBy radio buttons
   const handleAggrByChange = (aggbyval) => {
 
     setAggregateBy(aggbyval);
