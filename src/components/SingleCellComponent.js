@@ -232,9 +232,13 @@ function SingleCell({dataConfig}){
 
       const aggMetadataPath = aggregateBy==='metacluster'?'clades':'cellclasses';
 
-      let [aggMetadata] = await Promise.all(
+      const cladeOnlyAnnoPromise = aggregateBy==='metacluster'?zloader.getFlatArrDecompressed(`/metadata/cladesAnnotations`):Promise.resolve(); // fetches data in case of clades only
+
+
+      let [aggMetadata, aggCladeAnno] = await Promise.all(
         [
           zloader.getFlatArrDecompressed(`/metadata/${aggMetadataPath}`),
+          cladeOnlyAnnoPromise, // fetches cladeAnnotations in case of clades only
         ]
       )
 
@@ -242,7 +246,7 @@ function SingleCell({dataConfig}){
 
 
       if (aggregateBy==='metacluster'){
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "cld":aggMetadata[i]}}) // cid:celltype idx
+        initTableData = initTableData.map((x,i)=>{return {"id":i, "cld":`${aggMetadata[i]}: ${aggCladeAnno[i]}`}}) // cid:celltype idx
       console.log('loaded ', aggMetadataPath, aggMetadata, initTableData, initTableData.length);
       setRawTableData(initTableData);
 
