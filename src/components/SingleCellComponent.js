@@ -863,42 +863,45 @@ function SingleCell({dataConfig}){
             </Row>
 
             {columns.length>0?<>
-            <Row style={{marginTop:"25px"}}>
-              {maxProportionalVal>0? 
+              <Row style={{marginTop:"25px"}}>
+                {maxProportionalVal>0? 
+                  <>
+                    <Form.Check
+                      value="sortbypercentexp"
+                      type="radio"
+                      aria-label="sort by percent exp"
+                      label="Sort by PercentExpression"
+                      onChange={toggleSortByToggleVal}
+                      checked={sortByToggleVal===-1}
+                    />
+                    <div style={{marginTop:"5px"}}>
+                      <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
+                      <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
+                      <div><span className="dotlegend"><span className="dot" style={{width:"8px", height:"8px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
+                      <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"4px", height:"4px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
+                    </div>
+                  </>:null
+                }
+              </Row>
+              {aggregateBy==='none'?
                 <>
-                  <Form.Check
-                    value="sortbypercentexp"
-                    type="radio"
-                    aria-label="sort by percent exp"
-                    label="Sort by PercentExpression"
-                    onChange={toggleSortByToggleVal}
-                    checked={sortByToggleVal===-1}
-                  />
-                  <div style={{marginTop:"5px"}}>
-                    <div><span className="dotlegend"><span className="dot" style={{width:"16px", height:"16px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*100)} %</div>
-                    <div><span className="dotlegend"><span className="dot" style={{width:"12px", height:"12px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*75)} %</div>
-                    <div><span className="dotlegend"><span className="dot" style={{width:"8px", height:"8px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*50)} %</div>
-                    <div><span className="dotlegend" style={{textAlign:"center"}}><span className="dot" style={{width:"4px", height:"4px", backgroundColor:"gray"}}></span></span>{Math.round(maxProportionalVal*25)} %</div>
-                  </div>
-                </>:null
-              }
-            </Row>
-            <Row style={{marginTop:'20px', marginBottom:'10px'}}>
-              <span>
-                Filter by brain (CCF) region &nbsp;
-                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Filter cell clusters shown in table by region (any region specified in Allen Common Coordinate Framework can be chosen). If a region is selected below, only those cell clusters found to be present within that region are shown in the table.</Tooltip>}>
-                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
-                </OverlayTrigger>
-              </span>
-            </Row>
-            <Row>
-              <Dendrogram
-                showDendrobar={false}
-                divWidth="100%" divHeight="100%"
-                sbarWidth={100} sbarHeight={240}
-                mode={'radioSelect'} // only one region at a time to be consistent with composition pct shown
-              />
-            </Row>
+                  <Row style={{marginTop:'20px', marginBottom:'10px'}}>
+                    <span>
+                      Filter by brain (CCF) region &nbsp;
+                      <OverlayTrigger overlay={<Tooltip id="tooltip-top">Filter cell clusters shown in table by region (any region specified in Allen Common Coordinate Framework can be chosen). If a region is selected below, only those cell clusters found to be present within that region are shown in the table.</Tooltip>}>
+                        <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                      </OverlayTrigger>
+                    </span>
+                  </Row>
+                  <Row>
+                    <Dendrogram
+                      showDendrobar={false}
+                      divWidth="100%" divHeight="100%"
+                      sbarWidth={100} sbarHeight={240}
+                      mode={'radioSelect'} // only one region at a time to be consistent with composition pct shown
+                    />
+                  </Row>
+                </>:null}
             </>:null}
           </Col>
         </Row>
