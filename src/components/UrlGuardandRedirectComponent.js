@@ -65,6 +65,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setMinCompoPct = useSCComponentPersistStore(state => state.setMinCompoPct);
   const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
   const setAdaptNormalizerStatus = useSCComponentPersistStore(state => state.setAdaptNormalizerStatus);
+  const setAggregateBy = useSCComponentPersistStore(state => state.setAggregateBy);
 
   // CS component related
   // const setScoreLowerThreshold = useCSCPersistStore(state => state.setScoreLowerThreshold);
@@ -167,6 +168,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         hiddenColsStr: searchParams.get('hiddenColsStr'),
         hiddenCols: searchParams.get('hiddenColsStr').split(','),
         initPageSize: parseInt(searchParams.get('initPageSize')),
+        aggregateBy: searchParams.get('aggregateBy'),
       }
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
       console.log('urlParams', urlParams);
@@ -187,6 +189,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setSelectedRegIds(urlParams.regids);
       setInitialHiddenCols(urlParams.hiddenCols);
       setInitPageSize(urlParams.initPageSize);
+      setAggregateBy(urlParams.aggregateBy);
 
 
       return {status: true, path: '/singlecell'}

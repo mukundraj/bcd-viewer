@@ -108,7 +108,8 @@ function SingleCell({dataConfig}){
   const initPageSize = useSCComponentPersistStore(state => state.initPageSize); // for Table component
   const setCurPageSize = useSCComponentPersistStore(state => state.setCurPageSize); // for Table component
 
-  const [aggregateBy, setAggregateBy] = useState("none"); // for aggegateBy radio buttons
+  const aggregateBy = useSCComponentPersistStore(state => state.aggregateBy); // for aggegateBy radio buttons
+  const setAggregateBy = useSCComponentPersistStore(state => state.setAggregateBy); // for aggegateBy radio buttons
 
   // set page title
   useEffect(() => {
@@ -229,21 +230,21 @@ function SingleCell({dataConfig}){
     const fetchAggrData = async () => {
 
       let zloader = new ZarrLoader({zarrPathInBucket: aggrScPathInBucket});
-
       const aggMetadataPath = aggregateBy==='metacluster'?'clades':'cellclasses';
 
       const cladeOnlyAnnoPromise = aggregateBy==='metacluster'?zloader.getFlatArrDecompressed(`/metadata/cladesAnnotations`):Promise.resolve(); // fetches data in case of clades only
 
 
-      let [aggMetadata, aggCladeAnno] = await Promise.all(
+      let [aggMetadata, aggCladeAnno, dataGenes] = await Promise.all(
         [
           zloader.getFlatArrDecompressed(`/metadata/${aggMetadataPath}`),
           cladeOnlyAnnoPromise, // fetches cladeAnnotations in case of clades only
+          zloader.getFlatArrDecompressed("/var/genes"),
         ]
       )
+      setGeneOptions(dataGenes);
 
       let initTableData = new Array(aggMetadata.length).fill({})
-
 
       if (aggregateBy==='metacluster'){
         initTableData = initTableData.map((x,i)=>{return {"id":i, "cld":`${aggMetadata[i]}: ${aggCladeAnno[i]}`}}) // cid:celltype idx
@@ -256,7 +257,6 @@ function SingleCell({dataConfig}){
         setRawTableData(initTableData);
 
       }
-        
 
     }
 
@@ -685,7 +685,13 @@ function SingleCell({dataConfig}){
   // reset initialHiddenCols on page reload - for page reload from an aggregateBy state
   useEffect(()=>{
 
-    setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
+    if (aggregateBy==='none'){
+      setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
+    }else if (aggregateBy==='cellclass'){
+      setInitialHiddenCols(['cld', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+    }else if (aggregateBy==='metacluster'){
+      setInitialHiddenCols(['cc', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+    }
 
   },[]);
 

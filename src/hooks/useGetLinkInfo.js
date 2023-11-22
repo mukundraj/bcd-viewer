@@ -39,6 +39,7 @@ const useGetLinkInfo = () => {
     const hiddenCols = useSCComponentPersistStore(state => state.hiddenCols);
     const hiddenColsStr = hiddenCols.join(',');
     const curPageSize = useSCComponentPersistStore(state => state.curPageSize);
+    const aggregateBy = useSCComponentPersistStore(state => state.aggregateBy);
     // const downsampledTableData = useSCComponentPersistStore(state => state.downsampledTableData);
 
 
@@ -80,7 +81,7 @@ const useGetLinkInfo = () => {
 
         const genes = multiSelections.map((gene) => gene).join(',');
 
-        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}&hiddenColsStr=${hiddenColsStr}&initPageSize=${curPageSize}`
+        const link = `${window.location.origin}/redir?path=singlecell&genes=${genes}&order=${order}&regids=${regIdsStr}&sortField=${sortField}&cellClassSelection=${cellClassSelection}&sortByToggleVal=${sortByToggleVal}&minCompoPct=${minCompoPct}&adaptNormalizerStatus=${adaptNormalizerStatus}&hiddenColsStr=${hiddenColsStr}&initPageSize=${curPageSize}&aggregateBy=${aggregateBy}`
         // console.log('link', link);
         return link;
     }

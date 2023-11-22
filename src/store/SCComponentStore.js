@@ -37,6 +37,8 @@ export const useSCComponentPersistStore = create(persist(set => ({
                 setInitPageSize: (val) => set({initPageSize:val}),
                 curPageSize: 10,
                 setCurPageSize: (val) => set({curPageSize:val}),
+                aggregateBy: "none",
+                setAggregateBy: (val) => set({aggregateBy:val}),
                 // downsampledTableData:{},
                 // setDownsampledTableData: (val) => set({downsampledTableData:val}),
 
