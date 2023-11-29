@@ -19,6 +19,8 @@ import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
 import Dendrogram from './DendrogramComponent'
 import RegEnrich from "./RegEnrichComponent"
+import {useSCComponentPersistStore} from '../store/SCComponentStore'
+import {fetchJson} from '../shared/common'
 // import ReactGA from "react-ga4";
 
 function LoaderCellSpatial({dataConfig}){
@@ -74,13 +76,22 @@ function LoaderCellSpatial({dataConfig}){
   const nisslStatus = useStore(state => state.nisslStatus);
   const setNisslStatus = useStore(state => state.setNisslStatus);
 
-  const chosenCell = useCSCPersistStore(state => state.chosenCell);
-  const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
-  const chosenCell2 = useCSComponentStore(state => state.chosenCell2);
-  const setChosenCell2 = useCSComponentStore(state => state.setChosenCell2);
+  const chosenCluster = useCSCPersistStore(state => state.chosenCluster);
+  const setChosenCluster = useCSCPersistStore(state => state.setChosenCluster);
+  const chosenCluster2 = useCSComponentStore(state => state.chosenCluster2);
+  const setChosenCluster2 = useCSComponentStore(state => state.setChosenCluster2);
+  const [chosenCell, setChosenCell] = useState(['Inh_Frmd7_Lamp5']);
+  const [chosenClade, setChosenClade] = useState(['MC_1']);
+  const [chosenClass, setChosenClass] = useState(['DC']);
   
   const cellOptions = useCSComponentStore(state => state.cellOptions);
   const setCellOptions = useCSComponentStore(state => state.setCellOptions);
+
+  const cladeOptions = useCSComponentStore(state => state.cladeOptions);
+  const setCladeOptions = useCSComponentStore(state => state.setCladeOptions);
+  const cellclassOptions = useCSComponentStore(state => state.cellclassOptions);
+  const setCellclassOptions = useCSComponentStore(state => state.setCellclassOptions);
+
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
   const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
   const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
@@ -90,6 +101,10 @@ function LoaderCellSpatial({dataConfig}){
 
   const curPuckMaxScores = useCSComponentStore(state => state.curPuckMaxScores);
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
+
+  const aggregateBy = useSCComponentPersistStore(state => state.aggregateBy);
+  const setAggregateBy = useSCComponentPersistStore(state => state.setAggregateBy);
+
   const location = useLocation();
 
   // useEffect(() => {
@@ -138,34 +153,62 @@ function LoaderCellSpatial({dataConfig}){
     const fetchCellOptions = async () => {
       let cellOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellOptions.json`
       // const cellOptions = await load(cellOptionsUrl, [CSVLoader], {csv:{delimiter:":"}});
-      fetch(cellOptionsUrl
-      // ,{
-      //   headers : { 
-      //     'Content-Type': 'application/json',
-      //     'Accept': 'application/json'
-      //    }
-      // }
-      )
-        .then(function(response){
-          // console.log(response)
-          return response.json();
-        })
-        .then(function(myJson) {
-          // console.log(myJson.cellOptions, dataLoadStatus);
-          // setData(myJson)
-          setCellOptions(myJson.cellOptions);
 
-          // console.log("cellOptions", myJson.cellOptions);
+      const [cellOptionsJson, cladeOptionsJson, cellclassOptionsJson] = await Promise.all([
+        fetchJson(cellOptionsUrl),
+        fetchJson(`${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cladeOptions.json`),
+        fetchJson(`${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellclassOptions.json`)
+      ]);
 
-          // create cellNameToIdx
-          let cellNameToIdx = {};
-          myJson.cellOptions.forEach((cell, idx)=>{
-            cellNameToIdx[cell] = idx;
-          }
-          );
-          // setCellNameToIdx(()=>cellNameToIdx);
-          setCellNameToIdx(cellNameToIdx);
-        });
+      setCellOptions(cellOptionsJson.cellOptions);
+      setCladeOptions(cladeOptionsJson.cladeOptions);
+      setCellclassOptions(cellclassOptionsJson.cellclassOptions);
+
+      let cellNameToIdx = {};
+      cellOptionsJson.cellOptions.forEach((cell, idx)=>{
+        cellNameToIdx[cell] = idx;
+      });
+      const numCells = cellOptionsJson.cellOptions.length;
+      cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
+        cellNameToIdx[clade] = idx+numCells;
+      });
+      const numClades = cladeOptionsJson.cladeOptions.length; 
+      cellclassOptionsJson.cellclassOptions.forEach((cellclass, idx)=>{
+        cellNameToIdx[cellclass] = idx+numCells+numClades;
+      }
+      );  
+
+
+      setCellNameToIdx(cellNameToIdx);
+      
+      // fetch(cellOptionsUrl
+      // // ,{
+      // //   headers : { 
+      // //     'Content-Type': 'application/json',
+      // //     'Accept': 'application/json'
+      // //    }
+      // // }
+      // )
+      //   .then(function(response){
+      //     // console.log(response)
+      //     return response.json();
+      //   })
+      //   .then(function(myJson) {
+      //     // console.log(myJson.cellOptions, dataLoadStatus);
+      //     // setData(myJson)
+      //     setCellOptions(myJson.cellOptions);
+
+      //     // console.log("cellOptions", myJson.cellOptions);
+
+      //     // create cellNameToIdx
+      //     let cellNameToIdx = {};
+      //     myJson.cellOptions.forEach((cell, idx)=>{
+      //       cellNameToIdx[cell] = idx;
+      //     }
+      //     );
+      //     // setCellNameToIdx(()=>cellNameToIdx);
+      //     setCellNameToIdx(cellNameToIdx);
+      //   });
     }
     // console.log("chosenPuckid changed to: ", chosenPuckid, "initialRender", initialRender, location);
     if (initialRender===false || cellOptions.length===1){
@@ -230,7 +273,7 @@ function LoaderCellSpatial({dataConfig}){
     const fetchData = async () => {
       let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
       let zloader = new ZarrLoader({zarrPathInBucket});
-      let rowIdx = cellNameToIdx[chosenCell[0]];
+      let rowIdx = cellNameToIdx[chosenCluster[0]];
       let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
       setCurPuckMaxScores(locMaxScores);
 
@@ -252,13 +295,13 @@ function LoaderCellSpatial({dataConfig}){
 
       let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
       let zloader = new ZarrLoader({zarrPathInBucket});
-      // let rowIdx = cellNameToIdx[chosenCell[0]];
+      // let rowIdx = cellNameToIdx[chosenCluster[0]];
       // console.log("zarrPathInBucket ", zarrPathInBucket, 'chosenPuckid', chosenPuckid, 'rowIdx', rowIdx, cellNameToIdx);
 
-      let rowIdx = cellNameToIdx[chosenCell[0]];
+      let rowIdx = cellNameToIdx[chosenCluster[0]];
       let readData = null;
       if (rowIdx !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
-        if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
+        if (chosenCluster2.length > 0){ // fetch and update both cellData1 and cellData2
 
           // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
           // setCurPuckMaxScores(locMaxScores);
@@ -277,7 +320,7 @@ function LoaderCellSpatial({dataConfig}){
             setUrlScoreLowerThreshold(null);
           }
           // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
-          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
+          let rowIdx2 = cellNameToIdx[chosenCluster2[0]];
           if (rowIdx2 !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
             let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
             locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
@@ -346,13 +389,13 @@ function LoaderCellSpatial({dataConfig}){
         setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1})); 
     }
 
-    if (chosenPuckid.cell === chosenCell[0]){
+    if (chosenPuckid.cell === chosenCluster[0]){
       if (coordsData.length>1){
         fetchData();
         }
     }else{
-      console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCell", chosenCell);
-      setChosenCell([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
+      console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCluster", chosenCluster);
+      setChosenCluster([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
     }    
 
   // }, [coordsData]);
@@ -362,14 +405,15 @@ function LoaderCellSpatial({dataConfig}){
   // loading new counts on new cell selection
   useEffect(()=>{
 
-    if (cellOptions.includes(chosenCell[0])){
+    if (cellOptions.includes(chosenCluster[0]) || cladeOptions.includes(chosenCluster[0]) || cellclassOptions.includes(chosenCluster[0])){
 
       // read cell data
       const fetchData = async () => {
 
         let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
-        let rowIdx = cellNameToIdx[chosenCell[0]];
+        let rowIdx = cellNameToIdx[chosenCluster[0]];
+        console.log('rowIdx', rowIdx, 'cellNameToIdx', cellNameToIdx, 'chosenCluster', chosenCluster);
         const cellData = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
         let locMaxScoreThreshold = parseFloat(curPuckMaxScores[rowIdx]);
@@ -381,10 +425,10 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if (chosenCell2.length>0 && unifiedData.length!==coordsData.length){ // cell2 data is present but stale, need to be reloaded
+        if (chosenCluster2.length>0 && unifiedData.length!==coordsData.length){ // cell2 data is present but stale, need to be reloaded
 
           // read cell2 data
-          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
+          let rowIdx2 = cellNameToIdx[chosenCluster2[0]];
           const cellData2 = await zloader.getDataRow("cellxbead.zarr/X", rowIdx2);
 
           // read metadata for cell2
@@ -402,7 +446,7 @@ function LoaderCellSpatial({dataConfig}){
 
 
         }
-        else if(chosenCell2.length>0){ // if a comparison cell is also selected
+        else if(chosenCluster2.length>0){ // if a comparison cell is also selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
             count:  cellData[index], 
@@ -431,24 +475,24 @@ function LoaderCellSpatial({dataConfig}){
       }
       fetchData();
     }else{
-      console.log("chosen cell not included", chosenCell);
+      console.log("chosen cell not included", chosenCluster);
     }
       
-  }, [chosenCell]);
+  }, [chosenCluster]);
 
 
-  // loading new scores on chosenCell2 selection
+  // loading new scores on chosenCluster2 selection
   useEffect(()=>{
 
     if (unifiedData.length>1)
-    if (cellOptions.includes(chosenCell2[0])){
+    if (cellOptions.includes(chosenCluster2[0])){
 
       // read cell data
       const fetchData = async () => {
 
         let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
-        let rowIdx = cellNameToIdx[chosenCell2[0]];
+        let rowIdx = cellNameToIdx[chosenCluster2[0]];
         const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
         let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx]);
@@ -459,7 +503,7 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if(chosenCell2.length>0){ // if a comparison cell is also selected
+        if(chosenCluster2.length>0){ // if a comparison cell is also selected
           readData = unifiedData.map((obj, index) => ({
             ...obj,
             count2: cell2Data[index], 
@@ -486,7 +530,7 @@ function LoaderCellSpatial({dataConfig}){
 
         // update state of unifiedData
         setUnifiedData(readData);
-      console.log("chosenCell2 not included", chosenCell2, dataLoadStatus);
+      console.log("chosenCluster2 not included", chosenCluster2, dataLoadStatus);
       if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
         setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
       }
@@ -494,12 +538,12 @@ function LoaderCellSpatial({dataConfig}){
     }
 
 
-  }, [chosenCell2]);
+  }, [chosenCluster2]);
 
   // // recreate unifiedData on change of upperThreshold or lowerThreshold for matching the colormap to active range
   // useEffect(()=>{
 
-  //   if (chosenCell2.length>0){
+  //   if (chosenCluster2.length>0){
   //     let readData = unifiedData.map((obj, index) => ({
   //       ...obj,
   //       logcnt1: Math.log(unifiedData[index].count + 1 - scoreLowerThreshold)/Math.log(scoreUpperThreshold+1)
@@ -511,7 +555,7 @@ function LoaderCellSpatial({dataConfig}){
 
   // // recreate unifiedData on change of upperThreshold2 or lowerThreshold2 for matching the colormap to active range
   // useEffect(()=>{
-  //   if (chosenCell2.length>0){
+  //   if (chosenCluster2.length>0){
   //     let readData = unifiedData.map((obj, index) => ({
   //       ...obj,
   //       logcnt2: Math.log(unifiedData[index].count2 +1 - scoreLowerThreshold2)/Math.log(scoreUpperThreshold2+1)
@@ -522,11 +566,12 @@ function LoaderCellSpatial({dataConfig}){
 
   // }, [scoreLowerThreshold2, scoreUpperThreshold2]);
 
-  // loading frequency bar plot data on change of chosenCell
+  // loading frequency bar plot data on change of chosenCluster
   useEffect(()=>{
     
     const fetchData = async () => {
       let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${chosenPuckid.cell}.json`
+      // let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/Inh_Frmd7_Lamp5.json`
       const readData = await fetch(fbarsDataUrl)
        .then(response => response.json());
         // .then(data_str => JSON.parse(data_str));
@@ -566,14 +611,89 @@ function LoaderCellSpatial({dataConfig}){
     setChosenCell(cell);
   }
 
+  const handleCladeChange = (clade) => {
+    setChosenClade(clade);
+  }
+  useEffect(()=>{
+
+    if (aggregateBy==='metacluster'){
+      if (chosenClade.length>0){
+        setChosenPuckid({...chosenPuckid, cell:chosenClade[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      }
+      setChosenCluster(chosenClade);
+    }
+
+  }, [chosenClade]);
+
+  const handleCellclassChange = (cellclass) => {
+    setChosenClass(cellclass);
+  }
+
+  useEffect(()=>{
+    if (aggregateBy==='cellclass'){
+      if (chosenClass.length>0){
+        setChosenPuckid({...chosenPuckid, cell:chosenClass[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      }
+      setChosenCluster(chosenClass);
+
+    }
+
+  }, [chosenClass]);
+
+
+
   // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
 
   const updateChosenItem = (newItem, newPid) => {
-    console.log('chosenCelltype ', newItem, ' pid ', newPid);
+    console.log('chosenClustertype ', newItem, ' pid ', newPid);
     setDataLoadStatus({cell:0, puck:0, metadata:0});
     setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene}); 
     carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
   }
+
+  const handleAggregateByChange = async (e) => {
+    const newAggregateBy = e.target.value;
+    setAggregateBy(newAggregateBy);
+    if (newAggregateBy==='metacluster' && cladeOptions.length===1){
+      let cladeOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cladeOptions.json`
+      const cladeOptionsJson = await fetchJson(cladeOptionsUrl);
+      // console.log('cladeOptions', cladeOptionsJson);
+      setCladeOptions(cladeOptionsJson.cladeOptions);
+
+    }else if (newAggregateBy==='cellclass' && cellclassOptions.length===1){
+      let cellclassOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellclassOptions.json`
+      const cellclassOptionsJson = await fetchJson(cellclassOptionsUrl);
+      // console.log('cellclassOptions', cellclassOptionsJson);
+      setCellclassOptions(cellclassOptionsJson.cellclassOptions);
+
+    }else if (newAggregateBy==='none' && cellOptions.length===1){
+      // already loaded earlier so no need to fetch cellOptions again
+    }
+
+  }
+
+  // on aggregateBy change, ensure that chosenCluster also changes
+  useEffect(()=>{
+
+    if (aggregateBy==='metacluster'){
+      const curClade = [chosenClade[0]];
+      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+      setChosenPuckid({...chosenPuckid, cell:chosenClade[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      setChosenCluster(curClade);
+    }else if (aggregateBy==='cellclass'){
+      const curClass = [chosenClass[0]];
+      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+      setChosenPuckid({...chosenPuckid, cell:chosenClass[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      setChosenCluster(curClass);
+    }else if (aggregateBy==='none'){
+      const curCell = [chosenCell[0]];
+      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+      // setChosenPuckid({...chosenPuckid, cell:chosenPuckid.cell}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      setChosenCluster(curCell);
+
+    }
+
+  }, [aggregateBy]);
 
   return(
     <div>
@@ -588,8 +708,16 @@ function LoaderCellSpatial({dataConfig}){
       </Row>
       <Form>
         <FormGroup as={Row} className="mt-4">
-          <Form.Label column sm="3">Select Cell(s)</Form.Label>
+          <Col xs="3" className="d-flex">
+            <Form.Label>Select&nbsp;:&nbsp;</Form.Label>
+            <Form.Select defaultValue="none" onChange={handleAggregateByChange}>
+              <option value="none">Cell</option>
+              <option value="metacluster" >Metacluster</option>
+              <option value="cellclass" >Cell Class</option>
+            </Form.Select>
+          </Col>
           <Col xs="2">
+            {aggregateBy==='none'?
             <Typeahead
               id="basic-typeahead-single"
               labelKey="name"
@@ -597,29 +725,57 @@ function LoaderCellSpatial({dataConfig}){
               options={cellOptions}
               placeholder="Choose a cell..."
               // defaultInputValue={cell[0]}
-              selected={chosenCell}
+              selected={chosenCluster}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
-              }}
-            />
+              }} 
+            />:aggregateBy==='metacluster'?
+            <Typeahead
+              id="typeahead-clades"
+              labelKey="name"
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));handleCladeChange(x);}}
+              options={cladeOptions}
+              placeholder="Choose a metacluster..."
+              // defaultInputValue={cell[0]}
+              selected={chosenClade}
+              filterBy={(option, props) => {
+                /* Own filtering code goes here. */
+                return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
+              }} 
+            />:aggregateBy==='cellclass'?
+            <Typeahead
+              id="typeahead-cellclass"
+              labelKey="name"
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));handleCellclassChange(x);}}
+              options={cellclassOptions}
+              placeholder="Choose a cell class..."
+              // defaultInputValue={cell[0]}
+              selected={chosenClass}
+              filterBy={(option, props) => {
+                /* Own filtering code goes here. */
+                return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
+              }} 
+            />:null
+            }
           </Col>
           <Col xs="2">
+            {aggregateBy==='none'?
             <Typeahead
               id="basic-typeahead-single2"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCell2(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCluster2(x)}}
               options={cellOptions}
               placeholder="Choose another cell..."
               // defaultInputValue={cell[0]}
-              selected={chosenCell2}
+              selected={chosenCluster2}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
               }}
-              disabled={chosenCell.length>0?false:true}
+              disabled={chosenCluster.length>0?false:true}
               clearButton
-            />
+            />:null}
           </Col>
           <Col xs="2">
             for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
@@ -646,7 +802,7 @@ function LoaderCellSpatial({dataConfig}){
           <Col xs="1">
             Max: {Math.round(maxScoreThreshold* 1000) / 1000}
           </Col>
-          {chosenCell2.length>0?<>
+          {chosenCluster2.length>0?<>
           <Col xs="1">
             <DualSlider maxThreshold={maxScoreThreshold2}
                         upperThreshold={scoreUpperThreshold2}
@@ -702,7 +858,7 @@ function LoaderCellSpatial({dataConfig}){
           />
           </Col>
           <Col xs="4" className="align-items-center">
-            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+            {chosenCluster2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
           </Col>
         </FormGroup>
       </Form>
@@ -716,7 +872,7 @@ function LoaderCellSpatial({dataConfig}){
           onViewStateChange={onViewStateChange}
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
-          chosenItem2={chosenCell2}
+          chosenItem2={chosenCluster2}
         />
       </div>
       <div className="floater">
