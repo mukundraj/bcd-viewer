@@ -52,9 +52,6 @@ function SingleCell({dataConfig}){
   const multiSelections = useSCComponentPersistStore(state => state.multiSelections);
   const setMultiSelections = useSCComponentPersistStore(state => state.setMultiSelections);
 
-  const cellClassSelection = useSCComponentPersistStore(state => state.cellClassSelection);
-  const setCellClassSelection = useSCComponentPersistStore(state => state.setCellClassSelection);
-
   const [tableData, setTableData] = useState([]);
   const [rawTableData, setRawTableData] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -798,7 +795,7 @@ function SingleCell({dataConfig}){
           {columns.length>0?
             <>
               <Col xs="2">
-                Aggregate cell clusters by:
+                Aggregate by:
               </Col>
               <Col xs="7">
                 <Form>
@@ -807,28 +804,28 @@ function SingleCell({dataConfig}){
                     inline
                     checked={aggregateBy==="none"}
                     name="aggradio"
-                    label="None (show all clusters)"
+                    label="None (show all Cells)"
                     type="radio"
                     id="aggradio=1"
                     onChange={()=>{handleAggrByChange("none");}}
                   />
                   <Form.Check
                     inline
-                    checked={aggregateBy==="cellclass"}
-                    name="aggradio"
-                    label="CellClass"
-                    type="radio"
-                    id="aggradio-2"
-                    onChange={()=>{handleAggrByChange("cellclass"); }}
-                  />
-                  <Form.Check
-                    inline
                     checked={aggregateBy==="metacluster"}
                     name="aggradio"
-                    label="MetaCluster"
+                    label="Metacluster"
                     type="radio"
                     id="aggradio-3"
                     onChange={()=>{handleAggrByChange("metacluster"); }}
+                  />
+                  <Form.Check
+                    inline
+                    checked={aggregateBy==="cellclass"}
+                    name="aggradio"
+                    label="Cell Class"
+                    type="radio"
+                    id="aggradio-2"
+                    onChange={()=>{handleAggrByChange("cellclass"); }}
                   />
                   </div>
                 </Form>

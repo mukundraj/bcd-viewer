@@ -19,7 +19,6 @@ import FrequencyBars from "./FrequencyBarsComponent"
 import {useLocation} from 'react-router-dom';
 import Dendrogram from './DendrogramComponent'
 import RegEnrich from "./RegEnrichComponent"
-import {useSCComponentPersistStore} from '../store/SCComponentStore'
 import {fetchJson} from '../shared/common'
 // import ReactGA from "react-ga4";
 
@@ -80,9 +79,13 @@ function LoaderCellSpatial({dataConfig}){
   const setChosenCluster = useCSCPersistStore(state => state.setChosenCluster);
   const chosenCluster2 = useCSComponentStore(state => state.chosenCluster2);
   const setChosenCluster2 = useCSComponentStore(state => state.setChosenCluster2);
-  const [chosenCell, setChosenCell] = useState(['Inh_Frmd7_Lamp5']);
-  const [chosenClade, setChosenClade] = useState(['MC_1']);
-  const [chosenClass, setChosenClass] = useState(['DC']);
+
+  const chosenCell = useCSCPersistStore(state => state.chosenCell);
+  const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
+  const chosenClade = useCSCPersistStore(state => state.chosenClade);
+  const setChosenClade = useCSCPersistStore(state => state.setChosenClade);
+  const chosenClass = useCSCPersistStore(state => state.chosenClass);
+  const setChosenClass = useCSCPersistStore(state => state.setChosenClass);
   
   const cellOptions = useCSComponentStore(state => state.cellOptions);
   const setCellOptions = useCSComponentStore(state => state.setCellOptions);
@@ -102,8 +105,8 @@ function LoaderCellSpatial({dataConfig}){
   const curPuckMaxScores = useCSComponentStore(state => state.curPuckMaxScores);
   const setCurPuckMaxScores = useCSComponentStore(state => state.setCurPuckMaxScores);
 
-  const aggregateBy = useSCComponentPersistStore(state => state.aggregateBy);
-  const setAggregateBy = useSCComponentPersistStore(state => state.setAggregateBy);
+  const aggregateBy = useCSCPersistStore(state => state.aggregateBy);
+  const setAggregateBy = useCSCPersistStore(state => state.setAggregateBy);
 
   const location = useLocation();
 
@@ -605,11 +608,18 @@ function LoaderCellSpatial({dataConfig}){
   }
   
   const handleCellChange = (cell) => {
-    if (cell.length>0){
-      setChosenPuckid({...chosenPuckid, cell:cell[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
-    }
     setChosenCell(cell);
   }
+  useEffect(() => {
+
+    if (aggregateBy==='none'){
+      if (chosenCell.length>0){
+        setChosenPuckid({...chosenPuckid, cell:chosenCell[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      }
+      setChosenCluster(chosenCell);
+    }
+
+  }, [chosenCell])
 
   const handleCladeChange = (clade) => {
     setChosenClade(clade);
@@ -710,7 +720,7 @@ function LoaderCellSpatial({dataConfig}){
         <FormGroup as={Row} className="mt-4">
           <Col xs="3" className="d-flex">
             <Form.Label>Select&nbsp;:&nbsp;</Form.Label>
-            <Form.Select defaultValue="none" onChange={handleAggregateByChange}>
+            <Form.Select defaultValue={aggregateBy} onChange={handleAggregateByChange}>
               <option value="none">Cell</option>
               <option value="metacluster" >Metacluster</option>
               <option value="cellclass" >Cell Class</option>
