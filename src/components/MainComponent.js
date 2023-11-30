@@ -86,7 +86,7 @@ const setRegionTreeNodePaths = usePersistStore(state => state.setRegionTreeNodeP
               <Route index path="/" element={<Home/>}/>
               <Route path="redir" element={<UrlGuardAndRedirect dataConfig={DATACONFIGS[1]}/>}/>
               <Route path="genex" element={ <Loader dataConfig={DATACONFIGS[0]}/> } />
-              <Route path="singlecell" element={ <SingleCell dataConfig={DATACONFIGS[1]}/>} />
+              <Route path="singlecell" element={ <SingleCell dataConfig={DATACONFIGS[1]} dataConfigCS={DATACONFIGS[2]}/>} />
               <Route path="cellspatial" element={ <LoaderCellSpatial dataConfig={DATACONFIGS[2]}/>} />
               {/* <Route path="anaindex"> */}
               {/*   <Route index element={<RequireAuth><AnalysisIdx /></RequireAuth>}/> */}

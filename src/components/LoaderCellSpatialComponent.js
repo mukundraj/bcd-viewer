@@ -397,7 +397,6 @@ function LoaderCellSpatial({dataConfig}){
         fetchData();
         }
     }else{
-      console.log("chosenPuckid.cell", chosenPuckid.cell, "chosenCluster", chosenCluster);
       setChosenCluster([chosenPuckid.cell]); // update cell to match the cell set by SincleCell tab
     }    
 
@@ -608,15 +607,16 @@ function LoaderCellSpatial({dataConfig}){
   }
   
   const handleCellChange = (cell) => {
+    
     setChosenCell(cell);
   }
   useEffect(() => {
 
-    if (aggregateBy==='none'){
+    if (aggregateBy==='none' && chosenPuckid.jumpFromSC===false){
       if (chosenCell.length>0){
         setChosenPuckid({...chosenPuckid, cell:chosenCell[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+        setChosenCluster(chosenCell);
       }
-      setChosenCluster(chosenCell);
     }
 
   }, [chosenCell])
@@ -626,12 +626,13 @@ function LoaderCellSpatial({dataConfig}){
   }
   useEffect(()=>{
 
-    if (aggregateBy==='metacluster'){
-      if (chosenClade.length>0){
-        setChosenPuckid({...chosenPuckid, cell:chosenClade[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+      if (aggregateBy==='metacluster' && chosenPuckid.jumpFromSC===false){
+        if (chosenClade.length>0){
+          setChosenPuckid({...chosenPuckid, cell:chosenClade[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
+        }
+        setChosenCluster(chosenClade);
       }
-      setChosenCluster(chosenClade);
-    }
+    
 
   }, [chosenClade]);
 
@@ -641,7 +642,7 @@ function LoaderCellSpatial({dataConfig}){
 
   useEffect(()=>{
     if (aggregateBy==='cellclass'){
-      if (chosenClass.length>0){
+      if (chosenClass.length>0 && chosenPuckid.jumpFromSC===false){
         setChosenPuckid({...chosenPuckid, cell:chosenClass[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
       }
       setChosenCluster(chosenClass);
@@ -651,6 +652,15 @@ function LoaderCellSpatial({dataConfig}){
   }, [chosenClass]);
 
 
+  // handling jump from single cell tab
+  useEffect(()=>{
+
+    if (chosenPuckid.jumpFromSC===true){
+      setChosenCell([chosenPuckid.cell]);
+      setChosenPuckid({...chosenPuckid, jumpFromSC:false});
+    }
+
+  } , [chosenPuckid]);
 
   // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
 
@@ -735,7 +745,7 @@ function LoaderCellSpatial({dataConfig}){
               options={cellOptions}
               placeholder="Choose a cell..."
               // defaultInputValue={cell[0]}
-              selected={chosenCluster}
+              selected={chosenCell}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)

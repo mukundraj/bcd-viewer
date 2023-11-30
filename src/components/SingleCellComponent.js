@@ -29,7 +29,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
 
 
-function SingleCell({dataConfig}){
+function SingleCell({dataConfig, dataConfigCS}){
 
   const {basePath, dpathScZarr, dpathMappedCellTypesToIdx, dpathRegionToCelltype, dpathIdAcroNameMap, dpathAggrScZarr} = dataConfig;
   const auth = getAuth();
@@ -847,6 +847,7 @@ function SingleCell({dataConfig}){
                     setHiddenCols={setHiddenCols}
                     initPageSize={initPageSize}
                     setCurPageSize={setCurPageSize}
+                    dataConfigCS={dataConfigCS}
                 />
               </div>:null}
           </Col>

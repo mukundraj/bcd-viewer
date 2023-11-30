@@ -48,8 +48,10 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols, initPageSize, setCurPageSize}) 
+setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols, initPageSize, setCurPageSize, dataConfigCS}) 
 {
+
+  const {basePath, dpathFreqBarsJsons} = dataConfigCS;
 
   const chosenPuckid = usePersistStore(state => state.chosenPuckid);
   const setChosenPuckid = usePersistStore(state => state.setChosenPuckid);
@@ -68,7 +70,8 @@ setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHidde
 
       // get freqBar data for this celltype to derminne maxima puckid
     const fetchData = async (celltype) => {
-      let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
+      // let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
+      let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${celltype}.json`
       const readData = await fetch(fbarsDataUrl)
         .then(response => response.json())
         .then(readData => {
@@ -77,7 +80,7 @@ setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHidde
           const maxIdx = counts.indexOf(Math.max(...counts));
           const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
 
-          setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype});
+          setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype, jumpFromSC:true});
           // navigate('/cellspatial');
           window.open('/cellspatial', '_blank'); // https://stackoverflow.com/questions/71793116/open-new-tab-with-usenavigate-hook-in-react
           return readData;
