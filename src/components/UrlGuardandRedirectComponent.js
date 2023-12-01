@@ -81,6 +81,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setUrlScoreUpperThreshold = useCSComponentStore(state => state.setUrlScoreUpperThreshold);
   const setUrlScoreLowerThreshold2 = useCSComponentStore(state => state.setUrlScoreLowerThreshold2);
   const setUrlScoreUpperThreshold2 = useCSComponentStore(state => state.setUrlScoreUpperThreshold2);
+  const setAggregateByCS = useCSCPersistStore(state => state.setAggregateBy);
 
   const [regidToNameMap, setRegidToNameMap] = useState(null);
 
@@ -214,6 +215,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         regids: regidsTmp,
         minfrac: parseFloat(searchParams.get('minfrac')),
         maxfrac: parseFloat(searchParams.get('maxfrac')),
+        aggregateBy: searchParams.get('aggregateBy'),
       }
       console.log('urlParams', urlParams, urlParams.cell2!=="undefined");
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
@@ -239,6 +241,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
+      setAggregateByCS(urlParams.aggregateBy);
 
       return {status: true, path: '/cellspatial'}
     } // end of if else chain of path checks
