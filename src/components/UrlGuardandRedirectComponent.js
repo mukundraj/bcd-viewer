@@ -82,6 +82,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
   const setUrlScoreLowerThreshold2 = useCSComponentStore(state => state.setUrlScoreLowerThreshold2);
   const setUrlScoreUpperThreshold2 = useCSComponentStore(state => state.setUrlScoreUpperThreshold2);
   const setAggregateByCS = useCSCPersistStore(state => state.setAggregateBy);
+  const setChosenCluster = useCSCPersistStore(state => state.setChosenCluster);
+  const setChosenClade = useCSCPersistStore(state => state.setChosenClade);
+  const setChosenClass = useCSCPersistStore(state => state.setChosenClass);
 
   const [regidToNameMap, setRegidToNameMap] = useState(null);
 
@@ -220,7 +223,16 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       console.log('urlParams', urlParams, urlParams.cell2!=="undefined");
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
       
-      setChosenCell([urlParams.cell]);
+      setChosenCluster([urlParams.cell]);
+      if (urlParams.aggregateBy==="none"){
+        setChosenCell([urlParams.cell]);
+      }else if(urlParams.aggregateBy==="metacluster"){
+        setChosenClade([urlParams.cell]);
+      }else if(urlParams.aggregateBy==="cellclass"){
+        setChosenClass([urlParams.cell]);
+      }
+
+
       if (urlParams.cell2!=="undefined"){
         setChosenCell2([urlParams.cell2]);
       }

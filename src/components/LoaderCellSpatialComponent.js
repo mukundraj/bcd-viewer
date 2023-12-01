@@ -77,8 +77,8 @@ function LoaderCellSpatial({dataConfig}){
 
   const chosenCluster = useCSCPersistStore(state => state.chosenCluster);
   const setChosenCluster = useCSCPersistStore(state => state.setChosenCluster);
-  const chosenCluster2 = useCSComponentStore(state => state.chosenCluster2);
-  const setChosenCluster2 = useCSComponentStore(state => state.setChosenCluster2);
+  const chosenCell2 = useCSComponentStore(state => state.chosenCell2);
+  const setChosenCell2 = useCSComponentStore(state => state.setChosenCell2);
 
   const chosenCell = useCSCPersistStore(state => state.chosenCell);
   const setChosenCell = useCSCPersistStore(state => state.setChosenCell);
@@ -304,7 +304,7 @@ function LoaderCellSpatial({dataConfig}){
       let rowIdx = cellNameToIdx[chosenCluster[0]];
       let readData = null;
       if (rowIdx !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
-        if (chosenCluster2.length > 0){ // fetch and update both cellData1 and cellData2
+        if (chosenCell2.length > 0){ // fetch and update both cellData1 and cellData2
 
           // let locMaxScores = await zloader.getDataRow("cellxbead.zarr/maxScores/X", 0);
           // setCurPuckMaxScores(locMaxScores);
@@ -323,7 +323,7 @@ function LoaderCellSpatial({dataConfig}){
             setUrlScoreLowerThreshold(null);
           }
           // console.log("locMaxScoreThreshold", locMaxScoreThreshold, rowIdx, locMaxScores.indexOf(Math.max(...locMaxScores)));
-          let rowIdx2 = cellNameToIdx[chosenCluster2[0]];
+          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
           if (rowIdx2 !== undefined){ // guard for case of URL based load having delayed cellNameToIdx loading, default non URL based loading doesn't have to wait
             let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx2]);
             locMaxScoreThreshold2 = locMaxScoreThreshold2>0 ? locMaxScoreThreshold2 : 0.0011;
@@ -427,10 +427,10 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if (chosenCluster2.length>0 && unifiedData.length!==coordsData.length){ // cell2 data is present but stale, need to be reloaded
+        if (chosenCell2.length>0 && unifiedData.length!==coordsData.length){ // cell2 data is present but stale, need to be reloaded
 
           // read cell2 data
-          let rowIdx2 = cellNameToIdx[chosenCluster2[0]];
+          let rowIdx2 = cellNameToIdx[chosenCell2[0]];
           const cellData2 = await zloader.getDataRow("cellxbead.zarr/X", rowIdx2);
 
           // read metadata for cell2
@@ -448,7 +448,7 @@ function LoaderCellSpatial({dataConfig}){
 
 
         }
-        else if(chosenCluster2.length>0){ // if a comparison cell is also selected
+        else if(chosenCell2.length>0){ // if a comparison cell is also selected
           readData = coordsData.map((obj, index) => ({
             ...obj,
             count:  cellData[index], 
@@ -483,18 +483,19 @@ function LoaderCellSpatial({dataConfig}){
   }, [chosenCluster]);
 
 
-  // loading new scores on chosenCluster2 selection
+  // loading new scores on chosenCell2 selection
   useEffect(()=>{
 
+    console.log('here');
     if (unifiedData.length>1)
-    if (cellOptions.includes(chosenCluster2[0])){
+    if (cellOptions.includes(chosenCell2[0])){
 
       // read cell data
       const fetchData = async () => {
 
         let zarrPathInBucket = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/`;
         let zloader = new ZarrLoader({zarrPathInBucket});
-        let rowIdx = cellNameToIdx[chosenCluster2[0]];
+        let rowIdx = cellNameToIdx[chosenCell2[0]];
         const cell2Data = await zloader.getDataRow("cellxbead.zarr/X", rowIdx);
 
         let locMaxScoreThreshold2 = parseFloat(curPuckMaxScores[rowIdx]);
@@ -505,7 +506,7 @@ function LoaderCellSpatial({dataConfig}){
 
         // create unifiedData
         let readData = null;
-        if(chosenCluster2.length>0){ // if a comparison cell is also selected
+        if(chosenCell2.length>0){ // if a comparison cell is also selected
           readData = unifiedData.map((obj, index) => ({
             ...obj,
             count2: cell2Data[index], 
@@ -532,7 +533,7 @@ function LoaderCellSpatial({dataConfig}){
 
         // update state of unifiedData
         setUnifiedData(readData);
-      console.log("chosenCluster2 not included", chosenCluster2, dataLoadStatus);
+      console.log("chosenCell2 not included", chosenCell2, dataLoadStatus);
       if (coordsData.length>1){ // to deal with extra inital pass causing progress bar value to overshoot 100%
         setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
       }
@@ -540,12 +541,12 @@ function LoaderCellSpatial({dataConfig}){
     }
 
 
-  }, [chosenCluster2]);
+  }, [chosenCell2]);
 
   // // recreate unifiedData on change of upperThreshold or lowerThreshold for matching the colormap to active range
   // useEffect(()=>{
 
-  //   if (chosenCluster2.length>0){
+  //   if (chosenCell2.length>0){
   //     let readData = unifiedData.map((obj, index) => ({
   //       ...obj,
   //       logcnt1: Math.log(unifiedData[index].count + 1 - scoreLowerThreshold)/Math.log(scoreUpperThreshold+1)
@@ -557,7 +558,7 @@ function LoaderCellSpatial({dataConfig}){
 
   // // recreate unifiedData on change of upperThreshold2 or lowerThreshold2 for matching the colormap to active range
   // useEffect(()=>{
-  //   if (chosenCluster2.length>0){
+  //   if (chosenCell2.length>0){
   //     let readData = unifiedData.map((obj, index) => ({
   //       ...obj,
   //       logcnt2: Math.log(unifiedData[index].count2 +1 - scoreLowerThreshold2)/Math.log(scoreUpperThreshold2+1)
@@ -743,7 +744,7 @@ function LoaderCellSpatial({dataConfig}){
           <Col xs="2">
             {aggregateBy==='none'?
             <Typeahead
-              id="basic-typeahead-single"
+              id="typeahead-cell"
               labelKey="name"
               onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));handleCellChange(x);}}
               options={cellOptions}
@@ -786,18 +787,18 @@ function LoaderCellSpatial({dataConfig}){
           <Col xs="2">
             {aggregateBy==='none'?
             <Typeahead
-              id="basic-typeahead-single2"
+              id="typeahead-cell2"
               labelKey="name"
-              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCluster2(x)}}
+              onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));setChosenCell2(x)}}
               options={cellOptions}
               placeholder="Choose another cell..."
               // defaultInputValue={cell[0]}
-              selected={chosenCluster2}
+              selected={chosenCell2}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
               }}
-              disabled={chosenCluster.length>0?false:true}
+              disabled={chosenCell.length>0?false:true}
               clearButton
             />:null}
           </Col>
@@ -826,7 +827,7 @@ function LoaderCellSpatial({dataConfig}){
           <Col xs="1">
             Max: {Math.round(maxScoreThreshold* 1000) / 1000}
           </Col>
-          {chosenCluster2.length>0?<>
+          {chosenCell2.length>0?<>
           <Col xs="1">
             <DualSlider maxThreshold={maxScoreThreshold2}
                         upperThreshold={scoreUpperThreshold2}
@@ -882,7 +883,7 @@ function LoaderCellSpatial({dataConfig}){
           />
           </Col>
           <Col xs="4" className="align-items-center">
-            {chosenCluster2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
           </Col>
         </FormGroup>
       </Form>
@@ -896,7 +897,7 @@ function LoaderCellSpatial({dataConfig}){
           onViewStateChange={onViewStateChange}
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
-          chosenItem2={chosenCluster2}
+          chosenItem2={chosenCell2}
         />
       </div>
       <div className="floater">

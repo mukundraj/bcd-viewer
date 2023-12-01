@@ -48,7 +48,7 @@ const useGetLinkInfo = () => {
     const maxScoreThreshold2 = useCSComponentStore(state => state.maxScoreThreshold2);
     const scoreLowerThreshold = useCSCPersistStore(state => state.scoreLowerThreshold);
     const scoreUpperThreshold = useCSCPersistStore(state => state.scoreUpperThreshold);
-    const chosenCluster2 = useCSComponentStore(state => state.chosenCluster2);
+    const chosenCell2 = useCSComponentStore(state => state.chosenCell2);
     const scoreUpperThreshold2 = useCSCPersistStore(state => state.scoreUpperThreshold2);
     const scoreLowerThreshold2 = useCSCPersistStore(state => state.scoreLowerThreshold2);
     const opacityValCS = useCSComponentStore(state => state.opacityVal);
@@ -73,7 +73,7 @@ const useGetLinkInfo = () => {
 
     const generateCellSpatialLink = () =>
     {
-        const link = `${window.location.origin}/redir?path=cellspatial&srno=${pidToSrno[pid]}&cell=${cell}&thl=${scoreLowerThreshold}&thh=${scoreUpperThreshold}&cell2=${chosenCluster2[0]}&thl2=${scoreLowerThreshold2}&thh2=${scoreUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityValCS}&mth1=${maxScoreThreshold}&mth2=${maxScoreThreshold2}&regids=${regIdsStr}&minfrac=${minFrac}&maxfrac=${maxFrac}&aggregateBy=${aggregateByCS}`
+        const link = `${window.location.origin}/redir?path=cellspatial&srno=${pidToSrno[pid]}&cell=${cell}&thl=${scoreLowerThreshold}&thh=${scoreUpperThreshold}&cell2=${chosenCell2[0]}&thl2=${scoreLowerThreshold2}&thh2=${scoreUpperThreshold2}&fbd=${fbarActiveDataName}&nisslStatus=${nisslStatus}&wireframeStatus=${wireframeStatus}&opacityVal=${opacityValCS}&mth1=${maxScoreThreshold}&mth2=${maxScoreThreshold2}&regids=${regIdsStr}&minfrac=${minFrac}&maxfrac=${maxFrac}&aggregateBy=${aggregateByCS}`
         return link;
     }
 

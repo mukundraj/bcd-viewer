@@ -3,8 +3,8 @@ import create from 'zustand'
 import { persist } from "zustand/middleware"
 
 export const useCSComponentStore = create(set => ({
-        chosenCluster2:[],
-        setChosenCell2: (val)=>set({chosenCluster2:val}),
+        chosenCell2:[],
+        setChosenCell2: (val)=>set({chosenCell2:val}),
         cellOptions: ['Inh_Frmd7_Lamp5'],
         setCellOptions: (val) => set({cellOptions:val}),
         cladeOptions: ['MC_1'],
