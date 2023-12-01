@@ -3,6 +3,7 @@ import { useTable, useSortBy, usePagination } from 'react-table'
 import BTable from 'react-bootstrap/Table';
 import {usePersistStore} from '../store/store'
 import {useSCComponentStore} from '../store/SCComponentStore'
+import {useCSCPersistStore} from '../store/CSComponentStore' // needed to set CSaggregateBy on jump
 import {useSCComponentPersistStore} from '../store/SCComponentStore'
 import {useFilters, useBlockLayout} from 'react-table/dist/react-table.development';
 import {matchSorter} from 'match-sorter'
@@ -48,8 +49,10 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 
 export default function Table({ columns, data, sortField, setSortField, sortOrder, setSortOrder, adaptNormalizerStatus, 
-setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols, initPageSize, setCurPageSize, dataConfigCS}) 
+setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHiddenCols, initPageSize, setCurPageSize, dataConfigCS, SCaggregateBy}) 
 {
+
+  const setCSAggregateBy = useCSCPersistStore(state => state.setAggregateBy);
 
   const {basePath, dpathFreqBarsJsons} = dataConfigCS;
 
@@ -81,6 +84,7 @@ setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHidde
           const maximaPid = readData.sorted_puckwise_cnts[maxIdx].key[0];
 
           setChosenPuckid({...chosenPuckid, pid:maximaPid, cell:celltype, jumpFromSC:true});
+          setCSAggregateBy(SCaggregateBy);
           // navigate('/cellspatial');
           window.open('/cellspatial', '_blank'); // https://stackoverflow.com/questions/71793116/open-new-tab-with-usenavigate-hook-in-react
           return readData;
@@ -120,11 +124,17 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
     }
   }
   // populate metadata columns
-  else if (cell.column.id==='cc' || cell.column.id==='tr' || cell.column.id==='gs' || cell.column.id==='nt' || cell.column.id==='np' || cell.column.id==='npr'){
+  else if (cell.column.id==='tr' || cell.column.id==='gs' || cell.column.id==='nt' || cell.column.id==='np' || cell.column.id==='npr'){
     return <span style={{borderWidth:"0", fontSize:12}}>{cell.value}</span>
 
-  }else if (cell.column.id==='cld'){
-          return <span style={{borderWidth:"0", fontSize:12}}>&nbsp;{cell.value}</span>
+  }else if (cell.column.id==='cld' || cell.column.id==='cc'){
+    if (SCaggregateBy!=='none'){
+      console.log('cell.value', cell.value);
+      const cld_name = cell.value.split(':')[0];
+      return <button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cld_name, chosenPuckid, setChosenPuckid)}}>{cell.value}</button>
+    }else{
+      return <span style={{borderWidth:"0", fontSize:12}}>&nbsp;{cell.value}</span>
+    }
   }
   // populate dotplot columns
   else{

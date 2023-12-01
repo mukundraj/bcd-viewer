@@ -656,7 +656,14 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(()=>{
 
     if (chosenPuckid.jumpFromSC===true){
-      setChosenCell([chosenPuckid.cell]);
+      if (aggregateBy==='none'){
+        setChosenCell([chosenPuckid.cell]);
+      }else if (aggregateBy==='metacluster'){
+        setChosenClade([chosenPuckid.cell]);
+      }else if (aggregateBy==='cellclass'){
+        setChosenClass([chosenPuckid.cell]);
+      }
+      console.log('jumpFromSC ', chosenPuckid.jumpFromSC, 'chosenPuckid.cell ', chosenPuckid.cell);
       setChosenPuckid({...chosenPuckid, jumpFromSC:false});
     }
 
@@ -698,17 +705,14 @@ function LoaderCellSpatial({dataConfig}){
     if (aggregateBy==='metacluster'){
       const curClade = [chosenClade[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      setChosenPuckid({...chosenPuckid, cell:chosenClade[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
       setChosenCluster(curClade);
     }else if (aggregateBy==='cellclass'){
       const curClass = [chosenClass[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      setChosenPuckid({...chosenPuckid, cell:chosenClass[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
       setChosenCluster(curClass);
     }else if (aggregateBy==='none'){
       const curCell = [chosenCell[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      // setChosenPuckid({...chosenPuckid, cell:chosenPuckid.cell}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
       setChosenCluster(curCell);
 
     }

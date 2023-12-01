@@ -848,6 +848,7 @@ function SingleCell({dataConfig, dataConfigCS}){
                     initPageSize={initPageSize}
                     setCurPageSize={setCurPageSize}
                     dataConfigCS={dataConfigCS}
+                    SCaggregateBy={aggregateBy}
                 />
               </div>:null}
           </Col>
