@@ -475,7 +475,14 @@ function LoaderCellSpatial({dataConfig}){
           setDataLoadStatus((p)=>({...p, cell:p.cell+1, metadata:p.metadata+1}));
         }
       }
-      fetchData();
+
+      // check if cellNameToIdx has more than 1 entry, if not, then halt
+      // (data will be populated via initial load path after cellNameToIdx is populated)
+      // useful check when jumping from single cell tab
+      if (Object.keys(cellNameToIdx).length>1){
+        fetchData();
+      }
+
     }else{
       console.log("chosen cell not included", chosenCluster);
     }
