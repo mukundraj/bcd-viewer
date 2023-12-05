@@ -13,6 +13,7 @@ import { faCircleQuestion, faCircleInfo } from '@fortawesome/free-solid-svg-icon
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
+import {debounce} from 'lodash';
 
 
 function fuzzySearchMultipleWords(
@@ -240,6 +241,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   useBlockLayout,
   )
 
+const debouncedSetSortBy = debounce(setSortBy, 100); // debounce setSortBy to prevent infinite loop
+
     useEffect(()=>{
       // set sortField
       console.log('sortBy', sortBy[0], 'sortField', sortField, 'sortOrder', sortOrder);
@@ -251,7 +254,8 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
 
       }else{ // if undefined
         console.log('entering undefined');
-        setSortBy([{id: sortField, desc: sortOrder==='desc'?true:false}]);
+        // setSortBy([{id: sortField, desc: sortOrder==='desc'?true:false}]);
+        debouncedSetSortBy([{id: sortField, desc: sortOrder==='desc'?true:false}]);
       }
 
     },[sortBy]); // sortBy changes
