@@ -33,9 +33,9 @@ export const useSCComponentPersistStore = create(persist(set => ({
                 setInitialHiddenCols: (val) => set({initialHiddenCols:val}),
                 hiddenCols: [], // hidden columns after user interaction
                 setHiddenCols: (val) => set({hiddenCols:val}),
-                initPageSize: 10,
+                initPageSize: 20,
                 setInitPageSize: (val) => set({initPageSize:val}),
-                curPageSize: 10,
+                curPageSize: 20,
                 setCurPageSize: (val) => set({curPageSize:val}),
                 aggregateBy: "none",
                 setAggregateBy: (val) => set({aggregateBy:val}),
