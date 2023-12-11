@@ -707,6 +707,9 @@ function LoaderCellSpatial({dataConfig}){
       }
       console.log('jumpFromSC ', chosenPuckid.jumpFromSC, 'chosenPuckid.cell ', chosenPuckid.cell);
       setChosenPuckid({...chosenPuckid, jumpFromSC:false});
+    }else if (chosenPuckid.jumpFromRE===true){
+      console.log('jumpFromSC ', chosenPuckid.jumpFromRE, 'chosenPuckid.cell ', chosenPuckid.cell);
+      setChosenPuckid({...chosenPuckid, jumpFromRE:false});
     }
 
   } , [chosenPuckid]);
@@ -716,7 +719,7 @@ function LoaderCellSpatial({dataConfig}){
   const updateChosenItem = (newItem, newPid) => {
     console.log('chosenClustertype ', newItem, ' pid ', newPid);
     setDataLoadStatus({cell:0, puck:0, metadata:0});
-    setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene}); 
+    setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene, jumpFromRE:true});
     carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
   }
 
@@ -981,12 +984,13 @@ function LoaderCellSpatial({dataConfig}){
           sbarWidth={100} sbarHeight={100}
           mode="multiSelect"
         />
+        {aggregateBy==='none'?
         <RegEnrich setDataLoadStatus={setDataLoadStatus}
                    regEnrichZarrPath={`${basePath}${regEnrichZarrPath}`}
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Celltype"
                   nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
-        />
+        />:null}
       </div>
     </div>
   );
