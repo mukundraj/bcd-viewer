@@ -34,9 +34,10 @@ export const DATACONFIGS =
 
       // CellSpatial data
       // dpathCellScores: "/batch_230131/cellspatial_data/cellscores",
-      dpathCellScores: "/batch_231112/cellspatial_data/cellscores_cshl_231128",
+      // dpathCellScores: "/batch_231112/cellspatial_data/cellscores_cshl_231128",
       // dpathFreqBarsJsons: "/cellspatial_data/freqbars/cell_jsons_s2c",
-      dpathFreqBarsJsons: "/batch_231112/cellspatial_data/freqbars/cell_jsons_s2c_231128",
+      dpathCellScores: "/batch_231112/cell_spatial/s1/cellscores_cshl_231207",
+      dpathFreqBarsJsons: "/batch_231112/cell_spatial/s2/s2c_cell_jsons_231207",
       regEnrichZarrPath: "/batch_230131/cellspatial_data/s2d_region_enrich/nz_zarr_230222.zarr",
       nameInfoFilePath: "/batch_230131/cellspatial_data/s2d_region_enrich/name_info_230222.json",
 

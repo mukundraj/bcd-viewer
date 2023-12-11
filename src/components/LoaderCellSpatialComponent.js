@@ -108,6 +108,10 @@ function LoaderCellSpatial({dataConfig}){
   const aggregateBy = useCSCPersistStore(state => state.aggregateBy);
   const setAggregateBy = useCSCPersistStore(state => state.setAggregateBy);
 
+  const [cladeNameToAnno, setCladeNameToAnno] = useState({});
+  const [cladeDisplayName, setCladeDisplayName] = useState([]);
+  const [cladeDisplayOptions, setCladeDisplayOptions] = useState([]);  // stores in format ['cladeAnno:clade']
+
   const location = useLocation();
 
   // useEffect(() => {
@@ -163,6 +167,20 @@ function LoaderCellSpatial({dataConfig}){
         fetchJson(`${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellclassOptions.json`)
       ]);
 
+      // create cladeDisplayOptions containing cladeOptionsJson.cladeOption:cladeOptionsJson.cladeAnnos
+      let cladeDisplayOptionsTmp = [];
+      cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
+        cladeDisplayOptionsTmp.push(`${cladeOptionsJson.cladeAnnos[idx]}:${clade}`);
+      });
+      setCladeDisplayOptions(cladeDisplayOptionsTmp);
+
+      // create cladeNameToAnno
+      let cladeNameToAnnoTmp = {};
+      cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
+        cladeNameToAnnoTmp[clade] = cladeOptionsJson.cladeAnnos[idx];
+      });
+      setCladeNameToAnno(cladeNameToAnnoTmp);
+
       setCellOptions(cellOptionsJson.cellOptions);
       setCladeOptions(cladeOptionsJson.cladeOptions);
       setCellclassOptions(cellclassOptionsJson.cellclassOptions);
@@ -171,7 +189,7 @@ function LoaderCellSpatial({dataConfig}){
       cellOptionsJson.cellOptions.forEach((cell, idx)=>{
         cellNameToIdx[cell] = idx;
       });
-      const numCells = cellOptionsJson.cellOptions.length;
+      const numCells = cellOptionsJson.cellOptions.length + 1; // add one to account for '-' removed in cladeOptions in analysis_cs/s1c_beadxcell_zarr.py
       cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
         cellNameToIdx[clade] = idx+numCells;
       });
@@ -629,8 +647,21 @@ function LoaderCellSpatial({dataConfig}){
 
   }, [chosenCell])
 
-  const handleCladeChange = (clade) => {
-    setChosenClade(clade);
+  const handleCladeChange = (displayName) => {
+
+    console.log('clade', displayName);
+    if (displayName.length>0){
+
+    // retrive cladeName from cladeDisplayName
+      let cladeName = displayName[0].split(':')[1];
+      // console.log('clade displayName', displayName, 'cladeName', cladeName);
+      setChosenClade([cladeName]);
+      // setCladeDisplayName(displayName);
+      }
+    else{
+      setCladeDisplayName(displayName);
+    }
+
   }
   useEffect(()=>{
 
@@ -695,6 +726,19 @@ function LoaderCellSpatial({dataConfig}){
       // console.log('cladeOptions', cladeOptionsJson);
       setCladeOptions(cladeOptionsJson.cladeOptions);
 
+      // create cladeDisplayOptions containing cladeOptionsJson.cladeOption:cladeOptionsJson.cladeAnnos
+      let cladeDisplayOptionsTmp = [];
+      cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
+        cladeDisplayOptionsTmp.push(`${cladeOptionsJson.cladeAnnos[idx]}:${clade}`);
+      });
+      setCladeDisplayOptions(cladeDisplayOptionsTmp);
+
+      // create cladeNameToAnno
+      let cladeNameToAnnoTmp = {};
+      cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
+        cladeNameToAnnoTmp[clade] = cladeOptionsJson.cladeAnnos[idx];
+      });
+
     }else if (newAggregateBy==='cellclass' && cellclassOptions.length===1){
       let cellclassOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellclassOptions.json`
       const cellclassOptionsJson = await fetchJson(cellclassOptionsUrl);
@@ -727,6 +771,18 @@ function LoaderCellSpatial({dataConfig}){
 
   }, [aggregateBy]);
 
+
+  useEffect(() => {
+    
+    // get display name using cladeNameToAnno
+
+    const cladeDispName = [`${cladeNameToAnno[chosenClade[0]]}:${chosenClade[0]}`]
+    // console.log('cladeDispName', cladeDispName);
+
+     setCladeDisplayName(cladeDispName);
+
+  }, [chosenClade, cladeNameToAnno]);
+
   return(
     <div>
       <Breadcrumbs/>
@@ -748,8 +804,8 @@ function LoaderCellSpatial({dataConfig}){
               <option value="cellclass" >Cell Class</option>
             </Form.Select>
           </Col>
-          <Col xs="2">
             {aggregateBy==='none'?
+            <Col xs="2">
             <Typeahead
               id="typeahead-cell"
               labelKey="name"
@@ -762,20 +818,26 @@ function LoaderCellSpatial({dataConfig}){
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
               }} 
-            />:aggregateBy==='metacluster'?
+            />
+            </Col>
+            :aggregateBy==='metacluster'?
+            <Col xs="4">
             <Typeahead
               id="typeahead-clades"
               labelKey="name"
               onChange={(x)=>{setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));handleCladeChange(x);}}
-              options={cladeOptions}
+              options={cladeDisplayOptions}
               placeholder="Choose a metacluster..."
               // defaultInputValue={cell[0]}
-              selected={chosenClade}
+              selected={cladeDisplayName}
               filterBy={(option, props) => {
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
               }} 
-            />:aggregateBy==='cellclass'?
+            />
+            </Col>
+              :aggregateBy==='cellclass'?
+            <Col xs="4">
             <Typeahead
               id="typeahead-cellclass"
               labelKey="name"
@@ -788,11 +850,11 @@ function LoaderCellSpatial({dataConfig}){
                 /* Own filtering code goes here. */
                 return (option.toLowerCase().indexOf(props.text.toLowerCase()) === 0)
               }} 
-            />:null
+            />
+            </Col>:null
             }
-          </Col>
-          <Col xs="2">
             {aggregateBy==='none'?
+          <Col xs="2">
             <Typeahead
               id="typeahead-cell2"
               labelKey="name"
@@ -807,8 +869,9 @@ function LoaderCellSpatial({dataConfig}){
               }}
               disabled={chosenCell.length>0?false:true}
               clearButton
-            />:null}
-          </Col>
+            />
+            </Col>
+            :null}
           <Col xs="2">
             for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
           </Col>
