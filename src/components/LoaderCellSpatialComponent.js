@@ -610,8 +610,6 @@ function LoaderCellSpatial({dataConfig}){
       setFbarsData(readData);
     }
     fetchData();
-    
-    console.log(fbarsData);
 
   },[chosenPuckid.cell]);
 
@@ -765,14 +763,17 @@ function LoaderCellSpatial({dataConfig}){
       const curClade = [chosenClade[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
       setChosenCluster(curClade);
+      setChosenPuckid({...chosenPuckid, cell:curClade[0]}); 
     }else if (aggregateBy==='cellclass'){
       const curClass = [chosenClass[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
       setChosenCluster(curClass);
+      setChosenPuckid({...chosenPuckid, cell:curClass[0]});
     }else if (aggregateBy==='none'){
       const curCell = [chosenCell[0]];
       setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
       setChosenCluster(curCell);
+      setChosenPuckid({...chosenPuckid, cell:curCell[0]});
 
     }
 
