@@ -241,7 +241,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   useBlockLayout,
   )
 
-const debouncedSetSortBy = debounce(setSortBy, 250); // debounce setSortBy to prevent infinite loop
+const debouncedSetSortBy = debounce(setSortBy, 500); // debounce setSortBy to prevent infinite loop
 
     useEffect(()=>{
       // set sortField
