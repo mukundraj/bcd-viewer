@@ -27,6 +27,10 @@ export const useCSComponentStore = create(set => ({
         setUrlScoreLowerThreshold2: (val) => set({urlScoreLowerThreshold2:val}),
         urlScoreUpperThreshold2: null,
         setUrlScoreUpperThreshold2: (val) => set({urlScoreUpperThreshold2:val}),
+        cladeNameToAnno: [], // stores in format ['cladeAnno:clade']
+        setCladeNameToAnno: (val) => set({cladeNameToAnno:val}),
+        cladeDisplayOptions: [],
+        setCladeDisplayOptions: (val) => set({cladeDisplayOptions:val}),
     }));
 
 export const useCSCPersistStore = create(persist(set => ({

@@ -108,9 +108,12 @@ function LoaderCellSpatial({dataConfig}){
   const aggregateBy = useCSCPersistStore(state => state.aggregateBy);
   const setAggregateBy = useCSCPersistStore(state => state.setAggregateBy);
 
-  const [cladeNameToAnno, setCladeNameToAnno] = useState({});
+  const cladeNameToAnno = useCSComponentStore(state => state.cladeNameToAnno);
+  const setCladeNameToAnno = useCSComponentStore(state => state.setCladeNameToAnno);
+  const cladeDisplayOptions = useCSComponentStore(state => state.cladeDisplayOptions);
+  const setCladeDisplayOptions = useCSComponentStore(state => state.setCladeDisplayOptions);
+
   const [cladeDisplayName, setCladeDisplayName] = useState([]);
-  const [cladeDisplayOptions, setCladeDisplayOptions] = useState([]);  // stores in format ['cladeAnno:clade']
 
   const location = useLocation();
 
@@ -738,6 +741,7 @@ function LoaderCellSpatial({dataConfig}){
       cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
         cladeNameToAnnoTmp[clade] = cladeOptionsJson.cladeAnnos[idx];
       });
+      setCladeNameToAnno(cladeNameToAnnoTmp);
 
     }else if (newAggregateBy==='cellclass' && cellclassOptions.length===1){
       let cellclassOptionsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/cellclassOptions.json`
@@ -777,7 +781,7 @@ function LoaderCellSpatial({dataConfig}){
     // get display name using cladeNameToAnno
 
     const cladeDispName = [`${cladeNameToAnno[chosenClade[0]]}:${chosenClade[0]}`]
-    // console.log('cladeDispName', cladeDispName);
+    // console.log('cladeDispName', cladeDispName, cladeNameToAnno, cladeDisplayOptions);
 
      setCladeDisplayName(cladeDispName);
 
