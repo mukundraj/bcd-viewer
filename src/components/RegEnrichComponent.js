@@ -254,12 +254,13 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
 
   return(
     <>
+      {selectedRegIds.length===0?<h6>No region currently selected. Select region(s) above to identify {firstColHeader}s that are enriched in selected region.</h6>:<>
       <h6>Region Enrichment{tableDataFiltered.length>0?<><span> : </span><span style={{backgroundColor:"#ccccff"}}>showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length}</span></>:""} </h6>
         <Row>
           <Col xs="5">
             <Row>
               <Col xs="7">
-                {firstColHeader==='Gene'?'Min nz bead % in region >':'pct in selected region >'}
+                {firstColHeader==='Gene'?'Min nz bead % in region more than:':'pct in selected region more than:'}
               </Col>
               <Col xs="5"> 
                 <RangeSlider
@@ -273,7 +274,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
             <Row>
           <Col xs="7">
-            {firstColHeader==='Gene'?'Max nz bead % out of region >':'celltype bead count in region >'}
+            {firstColHeader==='Gene'?'Max nz bead % out of region less than:':'cell bead count in region more than:'}
           </Col>
           <Col xs="5"> 
             <RangeSlider
@@ -290,6 +291,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
           <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem}/>
           </Col>
         </Row>
+      </>
+        }
     </>
   );
 }

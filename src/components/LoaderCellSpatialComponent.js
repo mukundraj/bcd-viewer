@@ -807,7 +807,7 @@ function LoaderCellSpatial({dataConfig}){
           <Col xs="3" className="d-flex">
             <Form.Label>Select&nbsp;:&nbsp;</Form.Label>
             <Form.Select defaultValue={aggregateBy} onChange={handleAggregateByChange}>
-              <option value="none">Cell</option>
+              <option value="none">Celltype</option>
               <option value="metacluster" >Metacluster</option>
               <option value="cellclass" >Cell Class</option>
             </Form.Select>
