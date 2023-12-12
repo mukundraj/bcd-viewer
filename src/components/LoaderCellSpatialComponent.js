@@ -759,22 +759,24 @@ function LoaderCellSpatial({dataConfig}){
   // on aggregateBy change, ensure that chosenCluster also changes
   useEffect(()=>{
 
-    if (aggregateBy==='metacluster'){
-      const curClade = [chosenClade[0]];
-      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      setChosenCluster(curClade);
-      setChosenPuckid({...chosenPuckid, cell:curClade[0]}); 
-    }else if (aggregateBy==='cellclass'){
-      const curClass = [chosenClass[0]];
-      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      setChosenCluster(curClass);
-      setChosenPuckid({...chosenPuckid, cell:curClass[0]});
-    }else if (aggregateBy==='none'){
-      const curCell = [chosenCell[0]];
-      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
-      setChosenCluster(curCell);
-      setChosenPuckid({...chosenPuckid, cell:curCell[0]});
+    if (chosenPuckid.jumpFromSC===false){
+      if (aggregateBy==='metacluster'){
+        const curClade = [chosenClade[0]];
+        setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+        setChosenCluster(curClade);
+        setChosenPuckid({...chosenPuckid, cell:curClade[0]}); 
+      }else if (aggregateBy==='cellclass'){
+        const curClass = [chosenClass[0]];
+        setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+        setChosenCluster(curClass);
+        setChosenPuckid({...chosenPuckid, cell:curClass[0]});
+      }else if (aggregateBy==='none'){
+        const curCell = [chosenCell[0]];
+        setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+        setChosenCluster(curCell);
+        setChosenPuckid({...chosenPuckid, cell:curCell[0]});
 
+      }
     }
 
   }, [aggregateBy]);
