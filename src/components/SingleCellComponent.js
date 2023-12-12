@@ -765,7 +765,7 @@ function SingleCell({dataConfig, dataConfigCS}){
           {/*     selected={cellClassSelection} */}
           {/*   /> */}
           {/* </Col> */}
-          {selectedRegIds.length>0?<>
+          {selectedRegIds.length>0 && aggregateBy==='none'?<>
           <Col xs="2">Min composition %: &nbsp;
                 <OverlayTrigger overlay={<Tooltip id="tooltip-top">Specify percent threshold to filter out those cell clusters from the table that do not have at the least specified percent of cells located within selected CCF region </Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
