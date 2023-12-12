@@ -640,7 +640,7 @@ function LoaderCellSpatial({dataConfig}){
   useEffect(() => {
 
     if (aggregateBy==='none' && chosenPuckid.jumpFromSC!==true){
-      if (chosenCell.length>0){
+      if (chosenCell.length>0 && chosenCell[0]!==chosenPuckid.cell){ // check chosenCell condition to preven dataLoadStatus overshoot on jump from RegEnrich
         setChosenPuckid({...chosenPuckid, cell:chosenCell[0]}); // update celltype in chosenPuckid as well to prevent reset of celltype in useEffect hook
         setChosenCluster(chosenCell);
       }
@@ -708,6 +708,7 @@ function LoaderCellSpatial({dataConfig}){
     }else if (chosenPuckid.jumpFromRE===true){
       console.log('jumpFromSC ', chosenPuckid.jumpFromRE, 'chosenPuckid.cell ', chosenPuckid.cell);
       setChosenPuckid({...chosenPuckid, jumpFromRE:false});
+      setChosenCell([chosenPuckid.cell]);
     }
 
   } , [chosenPuckid]);
@@ -759,7 +760,7 @@ function LoaderCellSpatial({dataConfig}){
   // on aggregateBy change, ensure that chosenCluster also changes
   useEffect(()=>{
 
-    if (chosenPuckid.jumpFromSC===false){
+    if (chosenPuckid.jumpFromSC!==true){
       if (aggregateBy==='metacluster'){
         const curClade = [chosenClade[0]];
         setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
