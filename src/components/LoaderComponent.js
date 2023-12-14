@@ -91,8 +91,8 @@ function Loader({dataConfig, validatedURLParams}){
   const geneOptions = useStore(state => state.geneOptions);
   const setGeneOptions = useStore(state => state.setGeneOptions);
 
-  const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
-  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
+  const [curNisslUrl, setCurNisslUrl] = useState('');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('');
   const isLoggedIn = useAuthStore(state => state.isLoggedIn);
 
   const viaURL = useStore(state => state.viaURL); // conveys whether the user has entered the page via a URL
@@ -838,6 +838,7 @@ function Loader({dataConfig, validatedURLParams}){
         </FormGroup>
       </Form>
       <div className="add-border floater" >
+        {curNisslUrl !=='' && curAtlasUrl !==''?
         <Scatterplot id={'left_splot'} 
           unidata={unifiedData} 
           lowerThreshold={umiLowerThreshold} upperThreshold={umiUpperThreshold} maxThreshold={maxUmiThreshold}
@@ -848,7 +849,7 @@ function Loader({dataConfig, validatedURLParams}){
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
           chosenItem2={chosenGene2}
-        />
+        />:null}
       </div>
       <div className="floater">
         <Dendrogram

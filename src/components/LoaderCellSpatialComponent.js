@@ -96,8 +96,8 @@ function LoaderCellSpatial({dataConfig}){
   const setCellclassOptions = useCSComponentStore(state => state.setCellclassOptions);
 
   const [coordsData, setCoordsData] = useState([{"x":0, "y":0, "z":0, "count":0}]);
-  const [curNisslUrl, setCurNisslUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/nis_001.png');
-  const [curAtlasUrl, setCurAtlasUrl] = useState('https://storage.googleapis.com/ml_portal/test_data/gene_csvs/puck1/chuck_sp_labelmap_001.png');
+  const [curNisslUrl, setCurNisslUrl] = useState('');
+  const [curAtlasUrl, setCurAtlasUrl] = useState('');
 
   const cellNameToIdx = useCSCPersistStore(state => state.cellNameToIdx);
   const setCellNameToIdx = useCSCPersistStore(state => state.setCellNameToIdx);
@@ -969,6 +969,7 @@ function LoaderCellSpatial({dataConfig}){
         </FormGroup>
       </Form>
       <div className="add-border floater" >
+        {curNisslUrl!=='' && curAtlasUrl!==''?
         <Scatterplot id={'left_splot'} 
           unidata={unifiedData} 
           lowerThreshold={scoreLowerThreshold} upperThreshold={scoreUpperThreshold} maxThreshold={maxScoreThreshold}
@@ -979,7 +980,7 @@ function LoaderCellSpatial({dataConfig}){
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
           chosenItem2={chosenCell2}
-        />
+        />:null}
       </div>
       <div className="floater">
         <Dendrogram

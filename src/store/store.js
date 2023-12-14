@@ -52,7 +52,7 @@ export const useStore = create(set => ({
     }));
 
 export const usePersistStore = create(persist( set => ({
-    chosenPuckid:{'pid':1, 'gene':'Frmd7', 'cell':'Inh_Frmd7_Lamp5'},
+    chosenPuckid:{'pid':1, 'gene':'Frmd7', 'cell':'Inh_Frmd7_Lamp5', init:true},
     setChosenPuckid: (val)=>set({chosenPuckid:val}),
     dendroData: [{"label": "Root", "value":"root", "children":[]}],
     setDendroData: (val)=>set({dendroData:val}),

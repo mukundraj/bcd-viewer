@@ -130,7 +130,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
 
   }else if (cell.column.id==='cld' || cell.column.id==='cc'){
     if (SCaggregateBy!=='none'){
-      console.log('cell.value', cell.value);
+      // console.log('cell.value', cell.value);
       const cld_name = cell.value.split(':')[0];
       return <button className="btn btn-light btn-sm py-0" style={{borderWidth:"0", fontSize:12}} onClick={()=>{toCellSpatial(cld_name, chosenPuckid, setChosenPuckid)}}>{cell.value}</button>
     }else{

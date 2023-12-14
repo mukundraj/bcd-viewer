@@ -58,6 +58,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
 
   // SC component related
+  const multiSelections = useSCComponentPersistStore(state => state.multiSelections);
   const setMultiSelections = useSCComponentPersistStore(state => state.setMultiSelections);
   const setOrder = useSCComponentPersistStore(state => state.setOrder);
   const setSortField = useSCComponentPersistStore(state => state.setSortField);
@@ -100,7 +101,7 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
 
 
-  const checkParams = (searchParams) => {
+  const extractAndSetParams = (searchParams) => {
 
     let regidsTmp = searchParams.get('regids')?searchParams.get('regids').split(','):[];
     if (regidsTmp.length>0){
@@ -139,7 +140,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       if (urlParams.gene2!=="undefined"){
         setChosenGene2([urlParams.gene2]);
       }
-      setChosenPuckid({...chosenPuckid, pid: urlParams.pid, gene: urlParams.gene});
       setFbarActiveDataName(urlParams.fbd);
       setNisslStatus(urlParams.nisslStatus);
       setWireframeStatus(urlParams.wireframeStatus);
@@ -155,8 +155,9 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
 
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
+      setChosenPuckid({...chosenPuckid, pid: urlParams.pid, gene: urlParams.gene, init: false});
 
-      return {status: true, path: '/genex'}
+      // return {status: true, path: '/genex'}
     }
     else if (searchParams.get('path')==='singlecell'){
       let urlParams = {
@@ -177,7 +178,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       urlParams.regnames = urlParams.regids.map((x)=>regidToNameMap[x]);
       console.log('urlParams', urlParams);
 
-      setMultiSelections(urlParams.genes);
       if (urlParams.cellClassSelection===""){
         setCellClassSelection([]);
       }else{
@@ -194,9 +194,10 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setInitialHiddenCols(urlParams.hiddenCols);
       setInitPageSize(urlParams.initPageSize);
       setAggregateBy(urlParams.aggregateBy);
+      setMultiSelections(urlParams.genes);
 
 
-      return {status: true, path: '/singlecell'}
+      // return {status: true, path: '/singlecell'}
 
     }else if (searchParams.get('path')==='cellspatial'){
 
@@ -237,7 +238,6 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
         setChosenCell2([urlParams.cell2]);
       }
 
-      setChosenPuckid({...chosenPuckid, pid: urlParams.pid, cell: urlParams.cell});
       setFbarActiveDataName(urlParams.fbd);
       setNisslStatus(urlParams.nisslStatus);
       setWireframeStatus(urlParams.wireframeStatus);
@@ -254,31 +254,52 @@ const UrlGuardAndRedirect = ({dataConfig}) => {
       setSelectedRegions(urlParams.regnames);
       setSelectedRegIds(urlParams.regids);
       setAggregateByCS(urlParams.aggregateBy);
+      setChosenPuckid({...chosenPuckid, pid: urlParams.pid, cell: urlParams.cell, init: false});
 
-      return {status: true, path: '/cellspatial'}
+      // return {status: true, path: '/cellspatial'}
     } // end of if else chain of path checks
 
 
 
-    return {status: false, path: null};
-  } // checkParams function ends
+    // return {status: false, path: null};
+  } // extractAndSetParams function ends
 
 
   useEffect(() => {
     if (searchParams) {
       fetchData(); // sets regidToNameMap
-   }
+    }
   }, [searchParams]);
 
+  // setparams
   useEffect(() => {
     if (regidToNameMap){
       console.log('regidToNameMap', regidToNameMap);
-      const urlParamStatusTmp = checkParams(searchParams);
-      console.log('urlParamStatusTmp', urlParamStatusTmp)
-      setUrlParamStatus(urlParamStatusTmp);
+      extractAndSetParams(searchParams); // handles params for all tabs: genex, singlecell, cellspatial
     }
 
   }, [regidToNameMap]);
+  
+
+  // check if key param for genex/cellspatial is set and if so, set urlParamStatus
+  useEffect(() => {
+
+    if (chosenPuckid.init===false && searchParams.get('path')==='cellspatial'){
+      setUrlParamStatus({status: true, path: '/cellspatial'});
+    }else if (chosenPuckid.init===false && searchParams.get('path')==='genex'){
+      setUrlParamStatus({status: true, path: '/genex'});
+    }
+
+  }, [chosenPuckid]);
+
+  // check if (sortof) key param for singlecell is set and if so, set
+  // urlParamStatus. In this case, multiSelections does not strictly have to
+  // have been set but used since we need a trigger for singlecell path.
+  useEffect(() => {
+    if (searchParams.get('path')==='singlecell'){
+      setUrlParamStatus({status: true, path: '/singlecell'});
+    }
+  }, [multiSelections]);
 
   useEffect(  () => {
 
