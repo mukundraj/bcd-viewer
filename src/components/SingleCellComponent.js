@@ -682,14 +682,15 @@ function SingleCell({dataConfig, dataConfigCS}){
   // reset initialHiddenCols on page reload - for page reload from an aggregateBy state
   useEffect(()=>{
 
-    if (aggregateBy==='none'){
-      setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
-    }else if (aggregateBy==='cellclass'){
-      setInitialHiddenCols(['cld', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
-    }else if (aggregateBy==='metacluster'){
-      setInitialHiddenCols(['cc', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+    if (initialHiddenCols.length===0){ // to skip (re)setting hiddenCols when loading via GetLink
+      if (aggregateBy==='none'){
+        setInitialHiddenCols(['nt', 'np', 'npr', 'amd']);
+      }else if (aggregateBy==='cellclass'){
+        setInitialHiddenCols(['cld', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+      }else if (aggregateBy==='metacluster'){
+        setInitialHiddenCols(['cc', 'ct', 'tr', 'gs', 'nt', 'np', 'npr', 'amd', 'nt', 'np', 'npr']);
+      }
     }
-
   },[]);
 
   // handler function for aggregateBy radio buttons
