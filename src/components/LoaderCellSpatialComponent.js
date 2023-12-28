@@ -192,7 +192,7 @@ function LoaderCellSpatial({dataConfig}){
       cellOptionsJson.cellOptions.forEach((cell, idx)=>{
         cellNameToIdx[cell] = idx;
       });
-      const numCells = cellOptionsJson.cellOptions.length + 1; // add one to account for '-' removed in cladeOptions in analysis_cs/s1c_beadxcell_zarr.py
+      const numCells = cellOptionsJson.cellOptions.length; // add one to account for '-' removed in cladeOptions in analysis_cs/s1c_beadxcell_zarr.py
       cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
         cellNameToIdx[clade] = idx+numCells;
       });
