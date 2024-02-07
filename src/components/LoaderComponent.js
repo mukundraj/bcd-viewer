@@ -21,6 +21,12 @@ import Dendrogram from './DendrogramComponent'
 import DualSlider from './DualSliderComponent'
 import Breadcrumbs from './BreadcrumbsComponent'
 import RegEnrich from "./RegEnrichComponent"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import '../css/Tooltip.css'
+import {TOOLTEXTS as ttText} from '../shared/tooltipTexts'
 // import ReactGA from "react-ga4";
 
 function Loader({dataConfig, validatedURLParams}){
@@ -715,7 +721,11 @@ function Loader({dataConfig, validatedURLParams}){
         </Row>
       <Form>
         <FormGroup as={Row} className="mt-4">
-          <Form.Label column sm="3">Select Gene(s)</Form.Label>
+          <Form.Label column sm="3">Select Gene(s)
+                &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.selectgene}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+          </Form.Label>
           <Col xs="2">
             <Typeahead
               id="basic-typeahead-single"
