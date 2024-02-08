@@ -770,7 +770,11 @@ function Loader({dataConfig, validatedURLParams}){
         </FormGroup>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
-            UMI Count Threshold
+            UMI Count Threshold(s)
+                &nbsp;
+                <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.umithresh}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Form.Label>
           <Col xs="1">
             <DualSlider maxThreshold={maxUmiThreshold}
@@ -799,21 +803,36 @@ function Loader({dataConfig, validatedURLParams}){
           <Col xs="1">
             <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" 
             onlabel="R" offlabel="P"
-              onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
+              onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>&nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.toggle}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
-          <Col xs="4">
+          <Col xs="4" className="d-flex flex-row">
             <FrequencyBars
             setPuckidAndLoadStatus={setPuckidAndLoadStatus}
             data={fbarsData}
             fbarActiveDataName={fbarActiveDataName}
             />
+            &nbsp;
+            <div className="justify-content-center">
+              <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{fbarActiveDataName==="sorted_puckwise_cnts"?ttText.ge.freqbar_p:ttText.ge.freqbar_r}</Tooltip>}>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+            </OverlayTrigger>
+              </div>
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
-          <Form.Label column sm="3">
-            Opacity proportion
+          <Col xs="4"className="d-flex flex-row">
+            {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.colormap}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+
+          </Col>
+          <Form.Label column sm="1">
+            Opacity
           </Form.Label>
-          <Col xs="2">
+          <Col xs="1">
             <RangeSlider
               value={opacityVal}
               onChange={e => setOpacityVal(e.target.value)}
@@ -841,9 +860,6 @@ function Loader({dataConfig, validatedURLParams}){
             label={`Wireframe`}
             onChange={e => setWireframeStatus(e.target.checked)}
           />
-          </Col>
-          <Col xs="4" className="align-items-center">
-            {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
           </Col>
         </FormGroup>
       </Form>

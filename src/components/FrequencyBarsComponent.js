@@ -4,6 +4,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import {useStore} from '../store/store'
 import {pidToSrno} from "../shared/common"
+import {useWindowSize} from '../hooks/useWindowSize';
 
 
 function FrequencyBars(props) {
@@ -14,6 +15,8 @@ function FrequencyBars(props) {
   // const chosenPuckid = useStore(state => state.chosenPuckid);
   const toggleGeneralToggleFlag = useStore(state => state.toggleGeneralToggleFlag);
   const setTogglePid = useStore(state => state.setTogglePid);
+
+  const {widthWin, heightWin} = useWindowSize();
 
   // const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -125,7 +128,7 @@ function FrequencyBars(props) {
         });
 
     },
-    [props.data, fbarActiveDataName]
+    [props.data, fbarActiveDataName, widthWin]
   );
 
   return (
