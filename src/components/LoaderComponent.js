@@ -824,7 +824,7 @@ function Loader({dataConfig, validatedURLParams}){
               <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{fbarActiveDataName==="sorted_puckwise_cnts"?ttText.ge.freqbar_p:ttText.ge.freqbar_r}</Tooltip>}>
               <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
             </OverlayTrigger>
-              </div>
+            </div>
           </Col>
         </FormGroup>
         <FormGroup as={Row}>

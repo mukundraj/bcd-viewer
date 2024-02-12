@@ -23,5 +23,13 @@ export const TOOLTEXTS =
       aggby: "Aggregate cells by cluster (aka celltype), metacluster, or cell class.",
     },
     cs: {
+      select: "Select to aggregate cells by celltype, metacluster, or cell class.  Then select a specific instance or cellclass, metacluster, or celltype to view its spatial distribution over the selected puck. If aggregation is set to celltype, either one or two celltypes may be selected to plot one or both cell types simultaneously.",
+      cellscore: "Set a score threshold for each bead for each cluster using the slider on the right. If a second celltype cluster is selected, a second slider appears on the right allowing to set the threshold for that celltype.",
+      toggle: "Toggle between average scores shown across sections(P) or across brain regions (R). Avg scores is shown in the bar graph on the right where each bar corresponds to a section or a region. Left to right on the bargraph corresponds anterior to posterior brain sections/regions.",
+      freqbar_p: "Bar graph currently shows avg scores across sections. Left to right on the bargraph corresponds anterior to posterior brain sections/regions. ",
+      freqbar_r: "Bar graph currently shows avg scores across regions. Left to right on the bargraph corresponds anterior to posterior brain sections/regions. ",
+      colormap: "Color map for scores of selected cluster. If two genes are selected, the colormap is a 2D colormap with each axis corresponding to score of each celltype cluster.", 
+      opacity: "Set the opacity of bead markers, which have been color coded by scores.",
+      regenrich: "Find celltype clusters that are enriched in above selected region(s). Set minimum percent of beads inside selected region that must contain selected celltype (upper slider) and minimum bead count needed in selected region (lower slider) to filter celltypes based on chosen parameters.",
     },
   };

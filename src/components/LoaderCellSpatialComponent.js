@@ -816,8 +816,14 @@ function LoaderCellSpatial({dataConfig}){
       </Row>
       <Form>
         <FormGroup as={Row} className="mt-4">
-          <Col xs="3" className="d-flex">
-            <Form.Label>Select&nbsp;:&nbsp;</Form.Label>
+          <Col xs="3" className="d-flex d-row">
+            <Form.Label>Select&nbsp;:
+            </Form.Label>
+            &nbsp;<div className="align-self-cener"> <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.select}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger> 
+            </div>
+            &nbsp;
             <Form.Select defaultValue={aggregateBy} onChange={handleAggregateByChange}>
               <option value="none">Celltype</option>
               <option value="metacluster" >Metacluster</option>
@@ -907,7 +913,11 @@ function LoaderCellSpatial({dataConfig}){
         </FormGroup>
         <FormGroup as={Row}>
           <Form.Label column sm="3">
-            Score Threshold
+            Score Threshold (s)
+                &nbsp;
+                <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.cellscore}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Form.Label>
           <Col xs="1">
             <DualSlider maxThreshold={maxScoreThreshold}
@@ -935,21 +945,36 @@ function LoaderCellSpatial({dataConfig}){
           </>:<Col xs="2"/>}
           <Col xs="1">
             <BootstrapSwitchButton checked={fbarActiveDataName==='regionwise_cnts'} onstyle="outline-primary" offstyle="outline-secondary" onlabel="R" offlabel="P" onChange={(checked)=>{if (checked){setFbarActiveDataName('regionwise_cnts')}else{setFbarActiveDataName('sorted_puckwise_cnts')}}}/>
+&nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.toggle}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
-          <Col xs="4">
+          <Col xs="4" className="d-flex flex-row">
             <FrequencyBars
              setPuckidAndLoadStatus={setPuckidAndLoadStatus}
              data={fbarsData}
             fbarActiveDataName={fbarActiveDataName}
             /> 
+            &nbsp;
+            <div className="justify-content-center">
+              <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{fbarActiveDataName==="sorted_puckwise_cnts"?ttText.cs.freqbar_p:ttText.cs.freqbar_r}</Tooltip>}>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+            </OverlayTrigger>
+            </div>
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
-          <Col xs="4" className="align-items-center">
+          <Col xs="4" className="d-flex flex-row">
             {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.colormap}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
           <Form.Label column sm="1">
-            Opacity proportion
+            Opacity
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.opacity}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Form.Label>
           <Col xs="1">
             <RangeSlider
@@ -1016,6 +1041,10 @@ function LoaderCellSpatial({dataConfig}){
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Celltype"
                   nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
+                  helptip={<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.regenrich}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+}
         />:null}
       </div>
     </div>
