@@ -21,6 +21,12 @@ import Dendrogram from './DendrogramComponent'
 import RegEnrich from "./RegEnrichComponent"
 import {fetchJson} from '../shared/common'
 // import ReactGA from "react-ga4";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import '../css/Tooltip.css'
+import {TOOLTEXTS as ttText} from '../shared/tooltipTexts'
 
 function LoaderCellSpatial({dataConfig}){
 
@@ -799,7 +805,10 @@ function LoaderCellSpatial({dataConfig}){
       <Breadcrumbs/>
       <Row>
         <Col xs="2">
-          Select Puck
+          Select Puck &nbsp;
+                <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.selpuck}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
         </Col>
         <Col xs="10">
           <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid.pid}></BcdCarousel>
@@ -885,6 +894,9 @@ function LoaderCellSpatial({dataConfig}){
             :null}
           <Col xs="2">
             for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.pid}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
           <Col xs="1">
             Loaded:
@@ -933,10 +945,13 @@ function LoaderCellSpatial({dataConfig}){
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
-          <Form.Label column sm="3">
+          <Col xs="4" className="align-items-center">
+            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+          </Col>
+          <Form.Label column sm="1">
             Opacity proportion
           </Form.Label>
-          <Col xs="2">
+          <Col xs="1">
             <RangeSlider
               value={opacityVal}
               onChange={e => setOpacityVal(e.target.value)}
@@ -945,7 +960,7 @@ function LoaderCellSpatial({dataConfig}){
               step={0.01}
             />
           </Col>
-          <Col xs="1">
+          <Col xs="1" className="d-flex flex-row">
             <Form.Check 
               defaultChecked={nisslStatus}
             type={'checkbox'}
@@ -953,8 +968,11 @@ function LoaderCellSpatial({dataConfig}){
             label={`Nissl`}
             onChange={e => setNisslStatus(e.target.checked)}
           />
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.nissl}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
-          <Col xs="2">
+          <Col xs="2" className="d-flex flex-row">
             <Form.Check 
               defaultChecked={wireframeStatus}
             type={'checkbox'}
@@ -962,9 +980,9 @@ function LoaderCellSpatial({dataConfig}){
             label={`Wireframe`}
             onChange={e => setWireframeStatus(e.target.checked)}
           />
-          </Col>
-          <Col xs="4" className="align-items-center">
-            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.wireframe}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
         </FormGroup>
       </Form>
@@ -983,6 +1001,9 @@ function LoaderCellSpatial({dataConfig}){
         />:null}
       </div>
       <div className="floater">
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.dendro}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
         <Dendrogram
           showDendrobar={false}
           divWidth="70%" divHeight="60%"
