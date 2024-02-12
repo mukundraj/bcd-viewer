@@ -27,7 +27,7 @@ import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
-
+import {TOOLTEXTS as ttText} from '../shared/tooltipTexts'
 
 function SingleCell({dataConfig, dataConfigCS}){
 
@@ -796,7 +796,9 @@ function SingleCell({dataConfig, dataConfigCS}){
           {columns.length>0?
             <>
               <Col xs="2">
-                Aggregate by:
+                Aggregate by:&nbsp;{<OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{ttText.sc.aggby}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                  </OverlayTrigger>}
               </Col>
               <Col xs="7">
                 <Form>
@@ -805,7 +807,7 @@ function SingleCell({dataConfig, dataConfigCS}){
                     inline
                     checked={aggregateBy==="none"}
                     name="aggradio"
-                    label="None (show all Cells)"
+                    label="None (show all Clusters)"
                     type="radio"
                     id="aggradio=1"
                     onChange={()=>{handleAggrByChange("none");}}
@@ -860,7 +862,9 @@ function SingleCell({dataConfig, dataConfigCS}){
                   value="sortbyavgexp"
                   type="radio"
                   aria-label="sort by avg exp"
-                  label="Sort by AvgExpression"
+                  label= {<><span>Sort by AvgExpression &nbsp;</span><OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{ttText.sc.avg}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                  </OverlayTrigger></>}
                   onChange={toggleSortByToggleVal}
                   checked={sortByToggleVal===1}
                 />
@@ -876,7 +880,9 @@ function SingleCell({dataConfig, dataConfigCS}){
                       value="sortbypercentexp"
                       type="radio"
                       aria-label="sort by percent exp"
-                      label="Sort by PercentExpression"
+                      label={<><span>Sort by PercentExpression &nbsp;</span><OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{ttText.sc.pct}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                  </OverlayTrigger></>}
                       onChange={toggleSortByToggleVal}
                       checked={sortByToggleVal===-1}
                     />

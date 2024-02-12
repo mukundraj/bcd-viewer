@@ -17,6 +17,11 @@ export const TOOLTEXTS =
       opacity: "Set the opacity of bead markers, which have been color coded by gene expression.",
       regenrich: "Find genes that are enriched in above selected region(s). Set minimum percent of gene's UMI counts inside region (upper slider) and maximum percent of gene UMI counts outside the selected region (lower slider) to filter genes based on chosen parameters.",
     },
+    sc: {
+      avg: "Sort by average expression of selected gene in each cluster, which is computed as follows:  (sum of counts of gene A in cluster i) / (total number of cells in cluster i)",
+      pct: "Sort by percent of cells in cluster that have nonzero counts of selected gene, which is computed as follows: (number of cells in cluster i with non-zero counts of gene A) / (total number of cells in cluster i)",
+      aggby: "Aggregate cells by cluster (aka celltype), metacluster, or cell class.",
+    },
     cs: {
     },
   };
