@@ -714,6 +714,9 @@ function Loader({dataConfig, validatedURLParams}){
       <Row>
         <Col xs="2">
           Select Puck
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.selpuck}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
         </Col>
           <Col xs="10">
             <BcdCarousel setPuckidAndLoadStatus={setPuckidAndLoadStatus} chosenPuckid={chosenPuckid.pid}></BcdCarousel>
@@ -760,6 +763,9 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
           <Col xs="2">
             for Puck ID:<span style={{fontWeight:"bold"}}>{pidToSrno[chosenPuckid.pid]}</span>
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.pid}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
           <Col xs="1">
             Loaded:
@@ -831,6 +837,9 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
           <Form.Label column sm="1">
             Opacity
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.opacity}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Form.Label>
           <Col xs="1">
             <RangeSlider
@@ -841,7 +850,7 @@ function Loader({dataConfig, validatedURLParams}){
               step={0.01}
             />
           </Col>
-          <Col xs="1">
+          <Col xs="1" className="d-flex flex-row">
             <Form.Check 
               // defaultChecked={wireframeStatus}
               checked={nisslStatus}
@@ -850,8 +859,11 @@ function Loader({dataConfig, validatedURLParams}){
             label={`Nissl`}
             onChange={e => setNisslStatus(e.target.checked)}
           />
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.nissl}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
-          <Col xs="2">
+          <Col xs="2" className="d-flex flex-row">
             <Form.Check 
               // defaultChecked={wireframeStatus}
               checked={wireframeStatus}
@@ -860,6 +872,9 @@ function Loader({dataConfig, validatedURLParams}){
             label={`Wireframe`}
             onChange={e => setWireframeStatus(e.target.checked)}
           />
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.wireframe}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
           </Col>
         </FormGroup>
       </Form>
@@ -877,9 +892,12 @@ function Loader({dataConfig, validatedURLParams}){
           chosenItem2={chosenGene2}
         />:null}
       </div>
-      <div className="floater">
+      <div className="floater mt-2">
+            &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.dendro}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
         <Dendrogram
-          showDendrobar={true}
+          showDendrobar={false}
           divWidth="70%" divHeight="60%"
           sbarWidth={100} sbarHeight={100}
           mode="multiSelect"
@@ -889,6 +907,11 @@ function Loader({dataConfig, validatedURLParams}){
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Gene"
                   nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
+                  helptip={<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.regenrich}</Tooltip>}>
+                  <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                </OverlayTrigger>
+}
+                  
         />
       </div>
       {/* <div className="add-border floater"> */}

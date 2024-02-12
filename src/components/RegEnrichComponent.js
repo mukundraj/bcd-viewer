@@ -7,7 +7,7 @@ import {useStore, usePersistStore} from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 
-function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath}){
+function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath, helptip}){
 
 
   let columns = null;
@@ -255,7 +255,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   return(
     <>
       {selectedRegIds.length===0?<h6>No region currently selected. Select region(s) above to identify {firstColHeader}s that are enriched in selected region.</h6>:<>
-      <h6>Region Enrichment{tableDataFiltered.length>0?<><span> : </span><span style={{backgroundColor:"#ccccff"}}>showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length}</span></>:""} </h6>
+      <h6>Region Enrichment &nbsp;{helptip}{tableDataFiltered.length>0?<><span> : </span><span style={{backgroundColor:"#ccccff"}}>showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length}</span></>:""} </h6>
         <Row>
           <Col xs="5">
             <Row>
