@@ -363,12 +363,12 @@ useEffect(()=>{
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
+          <tbody {...getTableBodyProps()} style={{borderTop:"none", borderColor:"#dee2f4"}}>
             {
               page.map((row, i) => {
                 prepareRow(row)
                 return (
-                  <tr {...row.getRowProps()}>
+                  <tr {...row.getRowProps()}   >
                     {row.cells.map(cell => {
                       return <td {...cell.getCellProps()}>{renderCell(cell, chosenPuckid, setChosenPuckid, maxProportionalVal)}</td>
                     })}
