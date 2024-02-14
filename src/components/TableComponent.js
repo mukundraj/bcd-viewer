@@ -326,19 +326,22 @@ const handleDownloadMetadata = () => {
 
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
+        // console.log('column', column.id, column.isVisible, column.Header, column.disableSelector, column.isDotplot);
       if (!column.isDotplot && !column.disableSelector && column.isVisible) 
       {
-        console.log('column', column.id, column.isVisible, column.Header, column);
         // select these columns from data
         return [column.id, column.Header]; // need to keep track of both id and corresponding header
 
 
+      }else if (SCaggregateBy==='metacluster' && column.id==='cld'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+      }else if (SCaggregateBy==='cellclass' && column.id==='cc'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
       }
 
     }).filter(function (el) {
       return el != null;
     });
-
 
     // get selected columns from data
 
@@ -363,26 +366,39 @@ const handleDownloadAvgExpression = () => {
 
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
-      if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
+        // console.log('column', column.id, column.isVisible, column.Header, column);
+      if ((column.isDotplot && !column.disableSelector && column.isVisible)) 
       {
-        console.log('column', column.id, column.isVisible, column.Header, column);
         // select these columns from data
         return [column.id, column.Header]; // need to keep track of both id and corresponding header
 
-
+      }else if (SCaggregateBy==='none' && column.id==='ct'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
       }
+      else if (SCaggregateBy==='metacluster' && column.id==='cld'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+      }else if (SCaggregateBy==='cellclass' && column.id==='cc'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+      }
+
 
     }).filter(function (el) {
       return el != null;
     });
 
+  let firstCol = 'ct';
+  if (SCaggregateBy==='metacluster')
+    firstCol = 'cld';
+  else if (SCaggregateBy==='cellclass')
+    firstCol = 'cc';
 
+  console.log('selectedCols', selectedCols, data);
     // get selected columns from data
 
     const selectedData = data.map(row => {
       const newRow = {};
       selectedCols.forEach(col => {
-        if (col[0]==='ct'){
+        if (col[0]===firstCol){
           newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
         }else{
           newRow[col[1]] = Math.round(row[col[0]][1]*10000)/10000; // col[1] is header, col[0] is id
@@ -420,13 +436,19 @@ const handleDownloadPctExpression = () => {
       return el != null;
     });
 
+  let firstCol = 'ct';
+  if (SCaggregateBy==='metacluster')
+    firstCol = 'cld';
+  else if (SCaggregateBy==='cellclass')
+    firstCol = 'cc';
+
 
     // get selected columns from data
 
     const selectedData = data.map(row => {
       const newRow = {};
       selectedCols.forEach(col => {
-        if (col[0]==='ct'){
+        if (col[0]===firstCol){
           newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
         }else{
           newRow[col[1]] = Math.round(row[col[0]][0]*10000)/100; // col[1] is header, col[0] is id
