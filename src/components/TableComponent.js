@@ -246,7 +246,7 @@ const renderCell = (cell, chosenPuckid, setChosenPuckid, maxProportionalVal) => 
   useBlockLayout,
   )
 
-const debouncedSetSortBy = debounce(setSortBy, 500); // debounce setSortBy to prevent infinite loop
+const debouncedSetSortBy = debounce(setSortBy, 600); // debounce setSortBy to prevent infinite loop
 
     useEffect(()=>{
       // set sortField
@@ -484,6 +484,9 @@ const handleDownloadPctExpression = () => {
       </div>
       <div className="pt-2">
         Export to CSV:&nbsp;
+                    <OverlayTrigger overlay={<Tooltip id="tooltip-top">Export currently selected data in CSV format. Metadata, AvgExpression, and PercentExpression matrices can be downloaded using the buttons on right.</Tooltip>}>
+                      <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+                    </OverlayTrigger>
         <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadMetadata}>Metadata</Button>
         <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadAvgExpression}>AvgExpression</Button>
         <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadPctExpression}>PercentExpression</Button>
