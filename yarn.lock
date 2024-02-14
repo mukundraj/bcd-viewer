@@ -7026,6 +7026,11 @@ expect@^26.6.0, expect@^26.6.2:
     jest-message-util "^26.6.2"
     jest-regex-util "^26.0.0"
 
+export-to-csv@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/export-to-csv/-/export-to-csv-1.2.2.tgz#24f09a2dba34aff65f8f97402a869e88232b8f58"
+  integrity sha512-d9BxkLlyxeyFU1yhQKGjnnEQj2fh6PjyDVGyiI/uj7PD/oe7Lo1551B1lTaQeXHGPRX2DHuk6i3JMZB6ncJApQ==
+
 express@^4.17.1:
   version "4.18.1"
   resolved "https://registry.npmjs.org/express/-/express-4.18.1.tgz"
@@ -14747,6 +14752,11 @@ yargs@^16.2.0:
     string-width "^4.2.0"
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
+
+yarn@^1.22.19:
+  version "1.22.21"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.21.tgz#1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  integrity sha512-ynXaJsADJ9JiZ84zU25XkPGOvVMmZ5b7tmTSpKURYwgELdjucAOydqIOrOfTxVYcNXe91xvLZwcRh68SR3liCg==
 
 yauzl@^2.10.0:
   version "2.10.0"

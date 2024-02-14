@@ -14,6 +14,11 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
 import {debounce} from 'lodash';
+import {Button} from 'react-bootstrap'
+// import {saveAs} from 'file-saver';
+// import { CSVDownload } from "react-csv";
+import { mkConfig, generateCsv, download } from "export-to-csv";
+
 
 
 function fuzzySearchMultipleWords(
@@ -315,6 +320,125 @@ useEffect(()=>{
 
 },[JSON.stringify(hiddenIds)]) // hiddenCols changes
   
+const handleDownloadMetadata = () => {
+
+    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "metadata" });
+
+    // use allColumns to determine which keys to keep from data
+    const selectedCols = allColumns.map(column => {
+      if (!column.isDotplot && !column.disableSelector && column.isVisible) 
+      {
+        console.log('column', column.id, column.isVisible, column.Header, column);
+        // select these columns from data
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+
+
+      }
+
+    }).filter(function (el) {
+      return el != null;
+    });
+
+
+    // get selected columns from data
+
+    const selectedData = data.map(row => {
+      const newRow = {};
+      selectedCols.forEach(col => {
+          newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id
+      });
+      return newRow;
+    });
+    
+
+    const dataCsv = generateCsv(csvConfig)(selectedData);
+    download(csvConfig)(dataCsv);
+
+    // console.log('selectedCols', selectedCols, selectedData);
+
+  }
+
+const handleDownloadAvgExpression = () => {
+    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "avgExpression" });
+
+    // use allColumns to determine which keys to keep from data
+    const selectedCols = allColumns.map(column => {
+      if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
+      {
+        console.log('column', column.id, column.isVisible, column.Header, column);
+        // select these columns from data
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+
+
+      }
+
+    }).filter(function (el) {
+      return el != null;
+    });
+
+
+    // get selected columns from data
+
+    const selectedData = data.map(row => {
+      const newRow = {};
+      selectedCols.forEach(col => {
+        if (col[0]==='ct'){
+          newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
+        }else{
+          newRow[col[1]] = Math.round(row[col[0]][1]*10000)/10000; // col[1] is header, col[0] is id
+        }
+      });
+      return newRow;
+    });
+    
+
+    const dataCsv = generateCsv(csvConfig)(selectedData);
+    download(csvConfig)(dataCsv);
+
+    // console.log('selectedCols', selectedCols, selectedData);
+
+
+}
+
+
+const handleDownloadPctExpression = () => {
+
+    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "percentExpression" });
+
+    // use allColumns to determine which keys to keep from data
+    const selectedCols = allColumns.map(column => {
+      if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
+      {
+        console.log('column', column.id, column.isVisible, column.Header, column);
+        // select these columns from data
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+
+
+      }
+
+    }).filter(function (el) {
+      return el != null;
+    });
+
+
+    // get selected columns from data
+
+    const selectedData = data.map(row => {
+      const newRow = {};
+      selectedCols.forEach(col => {
+        if (col[0]==='ct'){
+          newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
+        }else{
+          newRow[col[1]] = Math.round(row[col[0]][0]*10000)/100; // col[1] is header, col[0] is id
+        }
+      });
+      return newRow;
+    });
+    
+    const dataCsv = generateCsv(csvConfig)(selectedData);
+    download(csvConfig)(dataCsv);
+
+}
 
   // Render the UI for table
   return (
@@ -336,7 +460,13 @@ useEffect(()=>{
       })}
         <br />
       </div>
-      <div className="pt-4">
+      <div className="pt-2">
+        Export to CSV:&nbsp;
+        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadMetadata}>Metadata</Button>
+        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadAvgExpression}>AvgExpression</Button>
+        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadPctExpression}>PercentExpression</Button>
+      </div>
+      <div className="pt-2">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
