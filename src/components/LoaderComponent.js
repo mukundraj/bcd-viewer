@@ -818,6 +818,7 @@ function Loader({dataConfig, validatedURLParams}){
             setPuckidAndLoadStatus={setPuckidAndLoadStatus}
             data={fbarsData}
             fbarActiveDataName={fbarActiveDataName}
+            curSrno={parseInt(pidToSrno[chosenPuckid.pid])}
             />
             &nbsp;
             <div className="justify-content-center">

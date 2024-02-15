@@ -17,6 +17,7 @@ function FrequencyBars(props) {
   const setTogglePid = useStore(state => state.setTogglePid);
 
   const {widthWin, heightWin} = useWindowSize();
+  const curSrno = props.curSrno;
 
   // const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -80,6 +81,16 @@ function FrequencyBars(props) {
       //         .attr("text-anchor", "start")
       //         .text(data.y1)
       //     );
+      
+      // clear the fbar tooltip
+      d3.select(".fbar_tooltip").remove();
+      
+      // remove all bars before drawing new ones
+      svg
+        .select(".plot-area")
+        .selectAll(".bar")
+        .remove();
+
 
       svg.select(".x-axis").call(xAxis);
       // svg.select(".y-axis").call(y1Axis);
@@ -88,9 +99,11 @@ function FrequencyBars(props) {
         .attr("class", "fbar_tooltip")
         .style("opacity", 0);
 
+      // local variable to store index of bar
+      const index = d3.local();
+
       let bars = svg
         .select(".plot-area")
-        .attr("fill", "steelblue")
         .selectAll(".bar")
         .data(props.data[fbarActiveDataName]);
         
@@ -104,6 +117,8 @@ function FrequencyBars(props) {
         .attr("width", bandwidth)
         .attr("y", (d) => y1(d.cnt))
         .attr("height", (d) => y1(0) - y1(d.cnt))
+        .attr("fill", (d,i) => { return ((i+1) === curSrno) ? "red" : "steelblue"})
+        .each(function(d,i) { index.set(this, i); })
         .on("mouseover", function(event,d) {
           d3.select(this).style("fill","red");
           div.transition()
@@ -121,14 +136,14 @@ function FrequencyBars(props) {
           }
         })
         .on("mouseout", function() {
-          d3.select(this).style("fill","steelblue");
+          d3.select(this).style("fill",()=>{ return ((index.get(this)+1) === curSrno) ? "red" : "steelblue"});
           div.transition()
             .duration(500)
             .style("opacity", 0);
-        });
+        })
 
     },
-    [props.data, fbarActiveDataName, widthWin]
+    [props.data, fbarActiveDataName, widthWin, curSrno]
   );
 
   return (

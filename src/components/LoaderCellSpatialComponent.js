@@ -520,7 +520,6 @@ function LoaderCellSpatial({dataConfig}){
   // loading new scores on chosenCell2 selection
   useEffect(()=>{
 
-    console.log('here');
     if (unifiedData.length>1)
     if (cellOptions.includes(chosenCell2[0])){
 
@@ -953,7 +952,8 @@ function LoaderCellSpatial({dataConfig}){
             <FrequencyBars
              setPuckidAndLoadStatus={setPuckidAndLoadStatus}
              data={fbarsData}
-            fbarActiveDataName={fbarActiveDataName}
+             fbarActiveDataName={fbarActiveDataName}
+             curSrno={parseInt(pidToSrno[chosenPuckid.pid])}
             /> 
             &nbsp;
             <div className="justify-content-center">
