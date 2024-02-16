@@ -24,7 +24,7 @@ const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateC
             <tr key={data.key}>
               {columns.map(({ accessor }) => {
                 if (accessor==='g')
-                  return <td key={accessor}><button className="regexptooltip" onClick={()=>updateChosenItem(data[accessor], data['p'])}>{data[accessor]}<span className='regexptooltiptext'>pid:{pidToSrno[data['p']]},r:{idx}</span></button></td>;
+                  return <td key={accessor}><button className="regexptooltip" onClick={()=>updateChosenItem(data[accessor], data['p'])}>{data[accessor]}<div className='regexptooltiptext'>pid:{pidToSrno[data['p']]},r:{idx+1}</div></button></td>;
                 else
                   return <td key={accessor}>{data[accessor]}</td>;
               })}
