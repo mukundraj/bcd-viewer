@@ -9,8 +9,10 @@ export const DATACONFIGS =
       maxCountMetadataKey: "maxCount",
       dpathGeneExprs: "/batch_230131/genexp_data/gene_exprs_cshl",
       dpathFreqBarsJsons: "/genexp_data/freqbars/gene_jsons_s9e",
-      regEnrichZarrPath: "/batch_230131/genexp_data/s9h/nz_aggr_230222.zarr",
-      nameInfoFilePath: "/batch_230131/genexp_data/s9h/gene_info_230222.json",
+      // regEnrichZarrPath: "/batch_230131/genexp_data/s9h/nz_aggr_230222.zarr",
+      // nameInfoFilePath: "/batch_230131/genexp_data/s9h/gene_info_230222.json",
+      regEnrichZarrPath: "/batch_231112/geneexp/s9_analysis/s9h/nz_aggr_240220.zarr",
+      nameInfoFilePath: "/batch_231112/geneexp/s9_analysis/s9h/gene_info_240220.json",
     },
     {
       basePath: "https://storage.googleapis.com/bcdportaldata",

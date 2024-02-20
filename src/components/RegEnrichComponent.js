@@ -100,6 +100,71 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   },[]);
 
 
+  // compute default thresholds for min and max frac for current selected region
+  const getDefaultThresholds = (firstColHeader, inVals, othVals ) => {
+
+    let inThreshold = 0;
+    let othThreshold = 1;
+
+    // create an array jointArr of inVals and othVals with obj keys 'in' and 'oth'
+    // const jointArr = inVals.map((d,i)=>{return {"in":d, "oth":othVals[i], "i":i}});
+    // const jointArr = inVals.map((d,i)=>{return {"in":d, "oth":othVals[i], "i":i}});
+
+    // create a joint array that is not NAN 
+
+    const jointArr = [];
+    for (let i=0; i<inVals.length; i++){
+      jointArr.push({"in":inVals[i], "oth":othVals[i], "i":i});
+    }
+
+    // sort jointArr by 'in' values numerically in descending order
+    // jointArr.sort((a,b)=>(a.in>b.in)?-1:1);
+
+    if (firstColHeader==='Gene'){
+
+      // sort jointArr by 'in' values numerically in descending order
+      jointArr.sort((a,b)=>(a.in<b.in)?1:-1);
+      let top300Arr = jointArr.slice(0, 300);
+
+
+      // get the min of 'in' values of top5Arr
+      inThreshold = Math.min(...top300Arr.map(d=>d.in));
+
+      // sort top10Arr by 'oth' values numerically in descending order
+      top300Arr.sort((a,b)=>(a.oth<b.oth)?-1:1);
+
+      // only keep upto the top 5 values of the sorted top10Arr
+      let top4Arr = top300Arr.slice(0,4);
+
+      console.log('top5Arr', top4Arr);
+
+      // get the max of 'oth' values of top5Arr
+      othThreshold = Math.max(...top4Arr.map(d=>d.oth));
+
+    }else if (firstColHeader==='Celltype'){
+
+      // sort jointArr by 'in' values numerically in descending order
+      jointArr.sort((a,b)=>(a.in<b.in)?1:-1);
+      let top20 = jointArr.slice(0, 20);
+
+      // get the min of 'in' values of top5Arr
+      inThreshold = Math.min(...top20.map(d=>d.in));
+
+      // sort top10Arr by 'oth' values numerically in descending order
+      top20.sort((a,b)=>(a.oth<b.oth)?1:-1);
+
+      // only keep upto the top 4 values of the sorted top10Arr
+      let top4Arr = top20.slice(0,4);
+
+      // get the max of 'oth' values of top5Arr
+      othThreshold = Math.min(...top4Arr.map(d=>d.oth));
+
+    }
+
+    let defThresholds = {"inThreshold": inThreshold, "othThreshold": othThreshold};
+    return defThresholds;
+  }
+
   useEffect(()=>{
 
     const fetchData = async (row_idx) => {
@@ -134,11 +199,20 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             }
           }
         }
+        // console.log('inFracsTmp', inFracsTmp.sort(), 'outFracsTmp', outFracsTmp);
+        // inFracsTmp.sort();
         setInFracs(inFracsTmp);
         setOutFracs(outFracsTmp);
         // const initVal = 0;
         // const sum = inFracsTmp.reduce((p,c)=>p+c, initVal);
         // console.log('sum ', sum);
+        //
+
+        const defThresholds = getDefaultThresholds(firstColHeader, inFracsTmp, outFracsTmp);
+
+        setMinFrac(defThresholds.inThreshold);
+        setMaxFrac(defThresholds.othThreshold);
+
 
       }else if(selectedRegIds==0){
           let inFracsTmp = [];
@@ -150,11 +224,14 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
 
 
     }
+    // console.log('fetchData0', ridToIdx, selectedRegIds, regEnrichZarrPath);
     if(Object.keys(ridToIdx).length>0){
-      fetchData(0);
+      // console.log('fetchData1');
+      // fetchData(0);
+      fetchData(Object.keys(ridToIdx)[0]);
     }
       
-  },[chosenPuckid, selectedRegIds, ridToIdx]);
+  },[chosenPuckid, selectedRegIds, ridToIdx, regEnrichZarrPath, geneNames, maxExprPids, firstColHeader, nameInfoFilePath]);
 
   useEffect(()=>{
 
