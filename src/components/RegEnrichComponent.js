@@ -18,7 +18,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
     {
       label: firstColHeader, accessor: "g"
     },
-    { label: "pct", accessor: "1",
+    { label: "in_frac", accessor: "1",
     },
     { label: "cnt", accessor: "-1",
     },
@@ -30,9 +30,9 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
       {
         label: firstColHeader, accessor: "g"
       },
-      { label: "% in", accessor: "1",
+      { label: "in_frac", accessor: "1",
       },
-      { label: "% cnt", accessor: "-1",
+      { label: "out_frac", accessor: "-1",
       },
     ];
 
@@ -210,8 +210,8 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
 
         const defThresholds = getDefaultThresholds(firstColHeader, inFracsTmp, outFracsTmp);
 
-        setMinFrac(defThresholds.inThreshold);
-        setMaxFrac(defThresholds.othThreshold);
+        setMinFrac(Math.round(defThresholds.inThreshold*10000)/10000);
+        setMaxFrac(Math.round(defThresholds.othThreshold*10000)/10000);
 
 
       }else if(selectedRegIds==0){
@@ -272,14 +272,14 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
     if (inFracs.length===outFracs.length && outFracs.length===geneNames.length){
       let fullDataTmp = [];
       for (let i=0; i<geneNames.length; i++){
-        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*10000000)/10000000, "-1": Math.round(outFracs[i]*10000000)/10000000, "p": parseInt(maxExprPids[i])});
+        fullDataTmp.push({"key":i, "g": geneNames[i], "1":Math.round(inFracs[i]*10000)/10000, "-1": Math.round(outFracs[i]*10000)/10000, "p": parseInt(maxExprPids[i])});
       }
       let maxNzOutPctTmp = Math.max(...outFracs);
       setMaxNzOutPct(maxNzOutPctTmp);
       let maxNzInPctTmp = Math.max(...inFracs);
       setMaxNzInPct(maxNzInPctTmp);
 
-      // console.log('fullDataTmp', fullDataTmp);
+      console.log('fullDataTmp', fullDataTmp);
       setFullData(fullDataTmp);
 
     }else{
@@ -337,12 +337,12 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
           <Col xs="5">
             <Row>
               <Col xs="7">
-                {firstColHeader==='Gene'?'Min nz bead % in region more than:':'pct in selected region more than:'}
+                {firstColHeader==='Gene'?'Min nz bead fraction in region more than:':'Fraction in selected region more than:'}
               </Col>
               <Col xs="5"> 
                 <RangeSlider
                   value={minFrac}
-                  onChange={e=>setMinFrac(e.target.value)}
+                  onChange={e=>setMinFrac(Math.round(e.target.value*10000)/10000)}
                   min={0}
                   max={maxNzInPct}
                   step={maxNzInPct/1000}
@@ -351,15 +351,15 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
             <Row>
           <Col xs="7">
-            {firstColHeader==='Gene'?'Max nz bead % out of region less than:':'cell bead count in region more than:'}
+            {firstColHeader==='Gene'?'Max nz bead fraction out of region less than:':'Cell bead count in region more than:'}
           </Col>
           <Col xs="5"> 
             <RangeSlider
               value={maxFrac}
-              onChange={e=> setMaxFrac(e.target.value)}
+              onChange={e=> setMaxFrac(Math.round(e.target.value*10000)/10000)}
               min={0}
               max={maxNzOutPct}
-              step={maxNzOutPct/1000}
+              step={firstColHeader==='Gene'?maxNzOutPct/1000:1}
             />
           </Col>
             </Row>
