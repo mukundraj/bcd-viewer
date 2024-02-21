@@ -973,8 +973,8 @@ function LoaderCellSpatial({dataConfig}){
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
-          <Col xs="4" className="d-flex flex-row">
-            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+          <Col xs="3" className="d-flex flex-row">
+            {chosenCell2.length>0?<ColorSquare/>:<Colorbar max={maxScoreThreshold} cells={11} setCurrentColorMap={setCurrentColorMap}/>}
             &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.cs.colormap}</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>
