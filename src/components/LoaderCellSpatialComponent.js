@@ -721,10 +721,19 @@ function LoaderCellSpatial({dataConfig}){
   // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
 
   const updateChosenItem = (newItem, newPid) => {
-    console.log('chosenClustertype ', newItem, ' pid ', newPid);
-    setDataLoadStatus({cell:0, puck:0, metadata:0});
-    setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene, jumpFromRE:true});
-    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+
+    // console.log('chosenClustertype ', newItem, ' pid ', newPid, ' chosenPuckid ', chosenPuckid);
+    
+    if (chosenPuckid.pid!==newPid){
+      setDataLoadStatus({cell:0, puck:0, metadata:0});
+      setChosenPuckid({pid:newPid, cell:newItem, gene:chosenPuckid.gene, jumpFromRE:true});
+      carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+    }else if(newItem!==chosenPuckid.cell){
+      setDataLoadStatus((p)=>({...p, cell:0, metadata:0}));
+      handleCellChange([newItem]);
+    }else{
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid])+" and celltype "+newItem);
+    }
   }
 
   const handleAggregateByChange = async (e) => {

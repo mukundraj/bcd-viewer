@@ -702,10 +702,20 @@ function Loader({dataConfig, validatedURLParams}){
   // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`;
 
   const updateChosenItem = (newItem, newPid) => {
-    console.log('chosenGene ', newItem, ' pid ', newPid);
-    setDataLoadStatus({gene:0, puck:0, metadata:0});
-    setChosenPuckid({pid:newPid, gene:newItem, cell:chosenPuckid.cell}); 
-    carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+    // console.log('chosenGene ', newItem, ' pid ', newPid, ' chosenPuckid ', chosenPuckid);
+    if (chosenPuckid.pid!==newPid){
+      setDataLoadStatus({gene:0, puck:0, metadata:0});
+      setChosenPuckid({pid:newPid, gene:newItem, cell:chosenPuckid.cell}); 
+      carouselRef.current.goToSlide(parseInt(pidToSrno[newPid]-1));
+    }else if(chosenPuckid.gene!==newItem){
+      // setDataLoadStatus((p)=>({...p, gene:0, metadata:0}));
+      setChosenGene([newItem]);
+      setChosenPuckid({...chosenPuckid, gene:newItem});
+    }else{
+      // print alert already showing required puck and gene
+      alert("Already showing requested puck: srno "+parseInt(pidToSrno[chosenPuckid.pid])+" and gene: "+newItem);
+
+   }   
   }
 
   return(
