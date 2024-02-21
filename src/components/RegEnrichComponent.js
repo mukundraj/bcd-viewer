@@ -1,11 +1,12 @@
 import RangeSlider from 'react-bootstrap-range-slider';
-import {Col, Row} from 'react-bootstrap'
 import TableGeneric from './table/TableGenericComponent'
+import {Col, Row} from 'react-bootstrap'
 import { useSortableTableGeneric } from "./table/hooks";
 import { useState, useEffect } from 'react';
 import {useStore, usePersistStore} from '../store/store'
 import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
+import useTooltip from "../hooks/useTooltip"
 
 function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath, helptip}){
 
@@ -39,6 +40,12 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
 
   }
 
+  const geneUpperTooltip = useTooltip({text: "Fraction of beads within selected region that must have nonzero expression of selected gene must be greater than this value."});  
+
+  const geneLowerTooltip = useTooltip({text: "Fraction of beads with nonzero expression of selected gene in regions excluding the selected region should be less than this value."});
+
+  const cellUpperTooltip = useTooltip({text: "Fraction of beads with selected celltype within selected region should be greater than this value."});
+  const cellLowerTooltip = useTooltip({text: "Bead count in selected region must be greater than this value."});
   // const data = [
  // {
   // "id": 1,
@@ -337,7 +344,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
           <Col xs="5">
             <Row>
               <Col xs="7">
-                {firstColHeader==='Gene'?'Min nz bead fraction in region more than:':'Fraction in selected region more than:'}
+                {firstColHeader==='Gene'?<>Min inner frac {geneUpperTooltip}</>:<>Min inner fraction {cellUpperTooltip}</>}
               </Col>
               <Col xs="5"> 
                 <RangeSlider
@@ -351,7 +358,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
             <Row>
           <Col xs="7">
-            {firstColHeader==='Gene'?'Max nz bead fraction out of region less than:':'Cell bead count in region more than:'}
+            {firstColHeader==='Gene'?<> Max outer frac {geneLowerTooltip}</>:<>Min bead count {cellLowerTooltip}</>}
           </Col>
           <Col xs="5"> 
             <RangeSlider
