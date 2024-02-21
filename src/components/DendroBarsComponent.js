@@ -6,6 +6,7 @@ import {useStore, usePersistStore} from '../store/store'
 import {srnoToPid} from "../shared/common"
 import { useEffect, useState } from 'react';
 import {getUrl} from "../shared/common"
+import {useWindowSize} from '../hooks/useWindowSize';
 
 function DendroBars(props){
 
@@ -17,7 +18,8 @@ function DendroBars(props){
   // const [regionwiseData, setRegionwiseData] = useState(null);
   const regionwiseData = usePersistStore(state => state.regionwiseData);
   const setRegionwiseData = usePersistStore(state => state.setRegionwiseData);
-  
+  const curSrno = props.curSrno;
+  const {widthWin, heightWin} = useWindowSize();
 
   const carouselRef = useStore(state => state.carouselRef);
   function bar_click_handler(event, d){
@@ -115,17 +117,28 @@ function DendroBars(props){
             .tickSizeInner(0)
         );
 
+      // clear the fbar tooltip
+      d3.select("#fbt2").remove();
+      
+      // remove all bars before drawing new ones
+      svg
+        .select(".plot-area2")
+        .selectAll(".bar")
+        .remove();
 
       svg.select(".x-axis").call(xAxis);
       // svg.select(".y-axis").call(y1Axis);
 
       var div = d3.select("body").append("div")
         .attr("class", "fbar_tooltip")
+        .attr("id", "fbt2")
         .style("opacity", 0);
 
+      const index = d3.local();
+
       let bars = svg
-        .select(".plot-area")
-        .attr("fill", "steelblue")
+        .select(".plot-area2")
+        // .attr("fill", "steelblue")
         .selectAll(".bar")
         .data(data);
         
@@ -139,6 +152,8 @@ function DendroBars(props){
         .attr("width", bandwidth)
         .attr("y", (d) => y1(d.cnt))
         .attr("height", (d) => y1(0) - y1(d.cnt))
+        .attr("fill", (d,i) => { return ((i+1) === curSrno) ? "red" : "steelblue"})
+        .each(function(d,i) { index.set(this, i); })
         .on("mouseover", function(event,d) {
           d3.select(this).style("fill","red");
           div.transition()
@@ -149,14 +164,14 @@ function DendroBars(props){
               .style("top", (event.pageY - 40) + "px");
         })
         .on("mouseout", function() {
-          d3.select(this).style("fill","steelblue");
+          d3.select(this).style("fill",()=>{ return ((index.get(this)+1) === curSrno) ? "red" : "steelblue"});
           div.transition()
             .duration(500)
             .style("opacity", 0);
         });
 
     },
-    [data]
+    [data, widthWin, curSrno]
   );
 
 
@@ -171,7 +186,7 @@ function DendroBars(props){
           marginLeft: "0px",
         }}
       >
-        <g className="plot-area" />
+        <g className="plot-area2" />
         <g className="x-axis" />
         <g className="y-axis" />
       </svg>

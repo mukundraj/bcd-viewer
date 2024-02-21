@@ -27,6 +27,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import '../css/Tooltip.css'
 import {TOOLTEXTS as ttText} from '../shared/tooltipTexts'
+import DendroBars from "./DendroBarsComponent"
 // import ReactGA from "react-ga4";
 
 function Loader({dataConfig, validatedURLParams}){
@@ -829,8 +830,8 @@ function Loader({dataConfig, validatedURLParams}){
           </Col>
         </FormGroup>
         <FormGroup as={Row}>
-          <Col xs="4"className="d-flex flex-row">
-            {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={15} setCurrentColorMap={setCurrentColorMap}/>}
+          <Col xs="3"className="d-flex flex-row">
+            {chosenGene2.length>0?<ColorSquare/>:<Colorbar max={maxUmiThreshold} cells={11} setCurrentColorMap={setCurrentColorMap}/>}
             &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.colormap}</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>
@@ -876,6 +877,18 @@ function Loader({dataConfig, validatedURLParams}){
             &nbsp;<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.common.wireframe}</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>
+          </Col>
+          <Col xs="4" className="d-flex flex-row">
+          <DendroBars 
+            fbarActiveDataName={fbarActiveDataName}
+            curSrno={parseInt(pidToSrno[chosenPuckid.pid])}
+          />
+            &nbsp;
+            <div className="justify-content-center">
+              <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">{ttText.ge.dendrobar}</Tooltip>}>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
+            </OverlayTrigger>
+            </div>
           </Col>
         </FormGroup>
       </Form>

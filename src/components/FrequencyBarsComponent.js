@@ -83,7 +83,7 @@ function FrequencyBars(props) {
       //     );
       
       // clear the fbar tooltip
-      d3.select(".fbar_tooltip").remove();
+      d3.select("#fbt1").remove();
       
       // remove all bars before drawing new ones
       svg
@@ -97,6 +97,7 @@ function FrequencyBars(props) {
 
       var div = d3.select("body").append("div")
         .attr("class", "fbar_tooltip")
+        .attr("id", "fbt1")
         .style("opacity", 0);
 
       // local variable to store index of bar
