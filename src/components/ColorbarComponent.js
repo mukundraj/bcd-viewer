@@ -89,7 +89,7 @@ function Colorbar(props){
 
 // Set default props
 Colorbar.defaultProps = {
-  barWidth: 16,
+  barWidth: 18,
 };
 
 export default Colorbar;

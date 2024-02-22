@@ -339,10 +339,12 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   return(
     <>
       {selectedRegIds.length===0?<h6>No region currently selected. Select region(s) above to identify {firstColHeader}s that are enriched in selected region.</h6>:<>
-        <h6>Region Enrichment &nbsp;{helptip}</h6>
-        <h6>{tableDataFiltered.length>0?<><span></span><span style={{backgroundColor:"#ccccff"}}>(showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length} that qualify)</span></>:""} </h6>
         <Row>
           <Col xs="5">
+            <Row>
+        <h6>Region Enrichment &nbsp;{helptip}</h6>
+        <h6>{tableDataFiltered.length>0?<><span></span><span style={{backgroundColor:"#ccccff"}}>(showing {tableDataFiltered.length>maxRows?maxRows:tableDataFiltered.length} out of {tableDataFiltered.length} that qualify)</span></>:""} </h6>
+            </Row>
             <Row>
               <Col xs="7">
                 {firstColHeader==='Gene'?<>Min inner frac {geneUpperTooltip}</>:<>Min inner frac {cellUpperTooltip}</>}
@@ -358,22 +360,22 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
               </Col>
             </Row>
             <Row>
-          <Col xs="7">
-            {firstColHeader==='Gene'?<> Max outer frac {geneLowerTooltip}</>:<>Min bead count {cellLowerTooltip}</>}
-          </Col>
-          <Col xs="5"> 
-            <RangeSlider
-              value={maxFrac}
-              onChange={e=> setMaxFrac(Math.round(e.target.value*10000)/10000)}
-              min={0}
-              max={maxNzOutPct}
-              step={firstColHeader==='Gene'?maxNzOutPct/1000:1}
-            />
-          </Col>
+              <Col xs="7">
+                {firstColHeader==='Gene'?<> Max outer frac {geneLowerTooltip}</>:<>Min bead count {cellLowerTooltip}</>}
+              </Col>
+              <Col xs="5"> 
+                <RangeSlider
+                  value={maxFrac}
+                  onChange={e=> setMaxFrac(Math.round(e.target.value*10000)/10000)}
+                  min={0}
+                  max={maxNzOutPct}
+                  step={firstColHeader==='Gene'?maxNzOutPct/1000:1}
+                />
+              </Col>
             </Row>
           </Col>
           <Col xs="7">
-          <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem}/>
+            <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem}/>
           </Col>
         </Row>
       </>

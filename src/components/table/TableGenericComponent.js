@@ -14,7 +14,7 @@ const TableGeneric = ({columns, tableDataSorted, maxRows, width, handleSorting, 
   const target = React.useRef(null)
   const size = useSize(target)
 
-  let tableStyle = (width)=>{return {width:`${width}%`, height:"19vh"}}
+  let tableStyle = (width)=>{return {width:`${width}%`, height:"21vh"}}
 
  return (
   <>
