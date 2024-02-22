@@ -99,13 +99,13 @@ void main() {
 
   return(
     <>
-      <span className="colorsquare">
-      <canvas className="colorsquarecanvas"  style={{width:"50%", height:"35px"}}/>
-        <div className="colorsquarelabels" style={{ top:"0%", left:"100%"}}>g1:min, g2:max</div>
-        <div className="colorsquarelabels" style={{ top:"-35px", left:"100%"}}>g1:max, g2:max</div>
-        <div className="colorsquarelabels" style={{ top:"0%", right:"45%"}}>g1:min, g2:min</div>
-        <div className="colorsquarelabels" style={{ top:"-35px", right:"45%"}}>g1:max, g2:min</div>
-      </span>
+      <div className="colorsquare d-flex">
+      <canvas className="colorsquarecanvas"  style={{width:"100%", height:"35px"}}/>
+        <div className="colorsquarelabels" style={{ top:"25px", left:"100%"}}>g1:min,g2:max</div>
+        <div className="colorsquarelabels" style={{ top:"-15px", left:"100%"}}>g1:max,g2:max</div>
+        <div className="colorsquarelabels" style={{ top:"25px", right:"60%"}}>g1:min,g2:min</div>
+        <div className="colorsquarelabels" style={{ top:"-15px", right:"60%"}}>g1:max,g2:min</div>
+      </div>
     </>
   );
 }
