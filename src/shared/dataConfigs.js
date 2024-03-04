@@ -8,7 +8,8 @@ export const DATACONFIGS =
       // GeneExp data
       maxCountMetadataKey: "maxCount",
       dpathGeneExprs: "/batch_230131/genexp_data/gene_exprs_cshl",
-      dpathFreqBarsJsons: "/genexp_data/freqbars/gene_jsons_s9e",
+      // dpathFreqBarsJsons: "/genexp_data/freqbars/gene_jsons_s9e",
+      dpathFreqBarsJsons: "/batch_231112/geneexp/s9_analysis/s9e/gene_jsons_s9e_240227",
       // regEnrichZarrPath: "/batch_230131/genexp_data/s9h/nz_aggr_230222.zarr",
       // nameInfoFilePath: "/batch_230131/genexp_data/s9h/gene_info_230222.json",
       regEnrichZarrPath: "/batch_231112/geneexp/s9_analysis/s9h/nz_aggr_240220.zarr",
