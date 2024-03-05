@@ -7,6 +7,7 @@ import {srnoToPid} from "../shared/common"
 import { useEffect, useState } from 'react';
 import {getUrl} from "../shared/common"
 import {useWindowSize} from '../hooks/useWindowSize';
+import useGetDendroBars from '../hooks/useGetDendroBars';
 
 function DendroBars(props){
 
@@ -35,48 +36,15 @@ function DendroBars(props){
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
   const setDendroBarData = usePersistStore(state => state.setDendroBarData);
 
-  function updateDendroBars(regIds, data){
-      let curDendroBarData = [...Array(101).keys()].map(x=>0);
-
-      regIds.map(regId =>{
-        
-        let readDataArray = data[parseInt(regId)].puck_dist;
-        for (let i=0; i<curDendroBarData.length;i++){
-          curDendroBarData[i] += readDataArray[i];
-        }
-      });
-      // console.log(curDendroBarData);
-      setDendroBarData(curDendroBarData);
-
-  }
+  const dendroBarDataDict = useGetDendroBars({dendroBarsFullPath: props.dendroBarsFullPath, geneName: chosenGene[0], selectedRegIds: selectedRegIds});
 
   useEffect(()=>{
-
-    if (regionwiseData){
-
-      updateDendroBars(selectedRegIds, regionwiseData);
+    if (dendroBarDataDict.curRegionwiseData && dendroBarDataDict.curDendroBarData){
+      setRegionwiseData(dendroBarDataDict.curRegionwiseData); // regionwise counts
+      setDendroBarData(dendroBarDataDict.curDendroBarData); // counts aggregated over selected regions
     }
 
-  }, [selectedRegIds, regionwiseData]);
-
-  useEffect(()=>{
-
-    const fetchAndSetBarData = async (selectedRegIds) => {
-      let regionTreeDataPath = `test_data2/s9f/gene_jsons_s9f/${chosenGene}.json`
-      let regionTreeDataUrl = await getUrl(regionTreeDataPath);
-      const readData = await fetch(regionTreeDataUrl)
-       .then(response => response.json());
-      console.log(selectedRegIds);
-
-      setRegionwiseData(readData);
-      updateDendroBars(selectedRegIds, readData);
-
-    }
-
-    fetchAndSetBarData(selectedRegIds);
-
-
-  }, [chosenGene]);
+  }, [setDendroBarData.curRegionwiseData, dendroBarDataDict.curDendroBarData]);
 
 
   const ref = useD3(
