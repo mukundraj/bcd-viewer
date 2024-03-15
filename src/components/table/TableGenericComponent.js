@@ -9,7 +9,7 @@ import {useStore} from '../../store/store'
 import { useSortableTable } from "./hooks";
 import useSize from '../../hooks/useSize'
 
-const TableGeneric = ({columns, tableDataSorted, maxRows, width, handleSorting, setDataLoadStatus, updateChosenItem}) => {
+const TableGeneric = ({columns, tableDataSorted, maxRows, width, handleSorting, setDataLoadStatus, updateChosenItem, dendroBarsFullPath}) => {
 
   const target = React.useRef(null)
   const size = useSize(target)
@@ -26,7 +26,7 @@ const TableGeneric = ({columns, tableDataSorted, maxRows, width, handleSorting, 
           {/* <caption> */}
           {/* </caption> */}
           <TableHeadGeneric columns={columns} handleSorting={handleSorting}/>
-          <TableBodyGeneric columns={columns} tableDataSorted={tableDataSorted.slice(0, maxRows)} setDataLoadStatus={setDataLoadStatus}  updateChosenItem={updateChosenItem}/>
+          <TableBodyGeneric columns={columns} tableDataSorted={tableDataSorted.slice(0, maxRows)} setDataLoadStatus={setDataLoadStatus}  updateChosenItem={updateChosenItem} dendroBarsFullPath={dendroBarsFullPath}/>
         </table>
       </Scrollbars>
     </div>

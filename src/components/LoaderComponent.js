@@ -32,7 +32,7 @@ import DendroBars from "./DendroBarsComponent"
 
 function Loader({dataConfig, validatedURLParams}){
 
-  const {maxCountMetadataKey, basePath, dpathGeneExprs, dpathFreqBarsJsons, regEnrichZarrPath, nameInfoFilePath} = dataConfig;
+  const {maxCountMetadataKey, basePath, dpathGeneExprs, dpathFreqBarsJsons, regEnrichZarrPath, nameInfoFilePath, dpathDendroBarsJsons} = dataConfig;
 
   const carouselRef = useStore(state => state.carouselRef);
 
@@ -892,6 +892,7 @@ function Loader({dataConfig, validatedURLParams}){
           <DendroBars 
             fbarActiveDataName={fbarActiveDataName}
             curSrno={parseInt(pidToSrno[chosenPuckid.pid])}
+            dendroBarsFullPath={`${basePath}${dpathDendroBarsJsons}`}
           />
             &nbsp;
             <div className="justify-content-center">
@@ -931,6 +932,7 @@ function Loader({dataConfig, validatedURLParams}){
                   updateChosenItem={updateChosenItem}
                   firstColHeader="Gene"
                   nameInfoFilePath={`${basePath}${nameInfoFilePath}`}
+                  dendroBarsFullPath={`${basePath}${dpathDendroBarsJsons}`}
                   helptip={<OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-top">{ttText.ge.regenrich}</Tooltip>}>
                   <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                 </OverlayTrigger>

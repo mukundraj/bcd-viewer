@@ -8,7 +8,7 @@ import ZarrLoader from "../loaders/ZarrLoader"
 import {getUrl} from "../shared/common"
 import useTooltip from "../hooks/useTooltip"
 
-function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath, helptip}){
+function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firstColHeader, nameInfoFilePath, dendroBarsFullPath, helptip}){
 
 
   let columns = null;
@@ -375,7 +375,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
           </Col>
           <Col xs="7">
-            <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem}/>
+            <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem} dendroBarsFullPath={dendroBarsFullPath}/>
           </Col>
         </Row>
       </>

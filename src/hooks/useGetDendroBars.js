@@ -50,7 +50,10 @@ const useGetDendroBars = ({dendroBarsFullPath, geneName, selectedRegIds}) => {
                 setLoading(false);
             }
         };
-        fetchData();
+
+        if (dendroBarsFullPath && geneName && selectedRegIds)
+            fetchData();
+
     }, [dendroBarsFullPath, geneName, selectedRegIds]);
 
 
