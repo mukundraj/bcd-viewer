@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {useSCComponentStore} from '../../store/SCComponentStore'
 import useGetDendroBars from '../../hooks/useGetDendroBars';
 
-const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateChosenItem, dendroBarsFullPath}) => {
+const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateChosenItem, dendroBarsFullPath, firstColHeader}) => {
 
   
   const selectedRegIds = usePersistStore(state => state.selectedRegIds);
@@ -24,9 +24,13 @@ const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateC
   // }
 
 
-  const handleClickedGene = (gene, pid) => {
-    console.log('clickedGene', gene, pid, chosenPuckid);
-    setClickedGene(gene);
+  const handleClickedItem = (item, pid) => {
+    console.log('clickedItem', item, pid, chosenPuckid, firstColHeader);
+    if(firstColHeader === 'Gene'){
+      setClickedGene(item); // item must be gene
+    }else{
+      updateChosenItem(item, pid); // item must be celltype
+    }
     // updateChosenItem(gene, pid);
   }
 
@@ -76,7 +80,7 @@ const TableBodyGeneric = ({ columns, tableDataSorted, setDataLoadStatus, updateC
             <tr key={data.key}>
               {columns.map(({ accessor }) => {
                 if (accessor==='g')
-                  return <td key={accessor}><button className="regexptooltip" onClick={()=>handleClickedGene(data[accessor], data['p'])}>{data[accessor]}<div className='regexptooltiptext'>row:{idx+1}</div></button></td>;
+                  return <td key={accessor}><button className="regexptooltip" onClick={()=>handleClickedItem(data[accessor], data['p'])}>{data[accessor]}<div className='regexptooltiptext'>row:{idx+1}</div></button></td>;
                 else
                   return <td key={accessor}>{data[accessor]}</td>;
               })}

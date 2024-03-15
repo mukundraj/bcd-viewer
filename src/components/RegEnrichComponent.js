@@ -375,7 +375,7 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
             </Row>
           </Col>
           <Col xs="7">
-            <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem} dendroBarsFullPath={dendroBarsFullPath}/>
+            <TableGeneric columns={columns} tableDataSorted={tableDataSorted} maxRows={maxRows} width={100} handleSorting={handleSorting} setDataLoadStatus={setDataLoadStatus} updateChosenItem={updateChosenItem} dendroBarsFullPath={dendroBarsFullPath} firstColHeader={firstColHeader}/>
           </Col>
         </Row>
       </>
