@@ -367,7 +367,8 @@ const handleDownloadAvgExpression = () => {
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
         // console.log('column', column.id, column.isVisible, column.Header, column);
-      if ((column.isDotplot && !column.disableSelector && column.isVisible)) 
+      // if ((column.isDotplot && !column.disableSelector && column.isVisible)) 
+      if (( !column.disableSelector && column.isVisible)) 
       {
         // select these columns from data
         return [column.id, column.Header]; // need to keep track of both id and corresponding header
@@ -398,7 +399,7 @@ const handleDownloadAvgExpression = () => {
     const selectedData = data.map(row => {
       const newRow = {};
       selectedCols.forEach(col => {
-        if (col[0]===firstCol){
+        if (col[0]===firstCol || col[0]==='cc' || col[0]==='tr' || col[0]==='ts' || col[0]==='gs' || col[0]==='nt' || col[0]==='np' || col[0]==='npr' || col[0]==='cld'){
           newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
         }else{
           newRow[col[1]] = Math.round(row[col[0]][1]*10000)/10000; // col[1] is header, col[0] is id
@@ -423,7 +424,8 @@ const handleDownloadPctExpression = () => {
 
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
-      if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
+      // if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
+      if ((!column.disableSelector && column.isVisible) || column.id==='ct') 
       {
         console.log('column', column.id, column.isVisible, column.Header, column);
         // select these columns from data
@@ -448,7 +450,7 @@ const handleDownloadPctExpression = () => {
     const selectedData = data.map(row => {
       const newRow = {};
       selectedCols.forEach(col => {
-        if (col[0]===firstCol){
+        if (col[0]===firstCol || col[0]==='cc' || col[0]==='tr' || col[0]==='gs' || col[0]==='nt' || col[0]==='np' || col[0]==='npr' || col[0]==='cld'){
           newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
         }else{
           newRow[col[1]] = Math.round(row[col[0]][0]*10000)/100; // col[1] is header, col[0] is id
@@ -487,9 +489,9 @@ const handleDownloadPctExpression = () => {
                     <OverlayTrigger overlay={<Tooltip id="tooltip-top">Export currently selected data in CSV format. Metadata, AvgExpression, and PercentExpression matrices can be downloaded using the buttons on right.</Tooltip>}>
                       <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                     </OverlayTrigger>
-        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadMetadata}>Metadata</Button>
         <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadAvgExpression}>AvgExpression</Button>
         <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadPctExpression}>PercentExpression</Button>
+        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadMetadata}>MetadataOnly</Button>
       </div>
       <div className="pt-2">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
