@@ -9,7 +9,7 @@ export const useCSComponentStore = create(set => ({
         setCellOptions: (val) => set({cellOptions:val}),
         cladeOptions: ['MC_55'],
         setCladeOptions: (val) => set({cladeOptions:val}),
-        cellclassOptions: ['OlfactoryEnsheathing'],
+        cellclassOptions: ['neuron'],
         setCellclassOptions: (val) => set({cellclassOptions:val}),
         curPuckMaxScores: [0.5],
         setCurPuckMaxScores: (val) => set({curPuckMaxScores:val}),
@@ -52,7 +52,7 @@ export const useCSCPersistStore = create(persist(set => ({
         setChosenCell: (val)=>set({chosenCell:val}),
         chosenClade: ['MC_55'],
         setChosenClade: (val)=>set({chosenClade:val}),
-        chosenClass: ['OlfactoryEnsheathing'],
+        chosenClass: ['neuron'],
         setChosenClass: (val)=>set({chosenClass:val}),
     }),
     {
