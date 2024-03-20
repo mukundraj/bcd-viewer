@@ -327,14 +327,18 @@ const handleDownloadAll = () => {
 
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
-      // if ((column.isDotplot && !column.disableSelector && column.isVisible) || column.id==='ct') 
-      if ((!column.disableSelector && column.isVisible) || column.id==='ct') 
+      if (( !column.disableSelector && column.isVisible)) 
       {
-        console.log('column', column.id, column.isVisible, column.Header, column);
         // select these columns from data
         return [column.id, column.Header]; // need to keep track of both id and corresponding header
 
-
+      }else if (SCaggregateBy==='none' && column.id==='ct'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+      }
+      else if (SCaggregateBy==='metacluster' && column.id==='cld'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
+      }else if (SCaggregateBy==='cellclass' && column.id==='cc'){
+        return [column.id, column.Header]; // need to keep track of both id and corresponding header
       }
 
     }).filter(function (el) {
@@ -346,7 +350,6 @@ const handleDownloadAll = () => {
     firstCol = 'cld';
   else if (SCaggregateBy==='cellclass')
     firstCol = 'cc';
-
 
     // get selected columns from data
     const selectedData = data.map(row => {
