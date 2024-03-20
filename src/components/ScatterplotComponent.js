@@ -256,6 +256,16 @@ function Scatterplot({id, unidata,
   //     opacity: opacityVal
   //   });
   // }
+  
+  // prepares tooltip based on whether chosenItem2 is present
+  const prepareTooltip = (info) => {
+    // check if chosenItem2 is present
+    if (chosenItem2.length>0){
+      return `${hoverKey}:${Math.round(info.object.count*1000)/1000}, ${hoverKey}2:${Math.round(info.object.count2*1000)/1000}, region:${info.object.rname}`;
+    }else{
+      return `${hoverKey}:${Math.round(info.object.count*1000)/1000}, region:${info.object.rname}`;
+    } 
+  }
 
   return (
     <div className="splot" id={id}>
@@ -268,7 +278,8 @@ function Scatterplot({id, unidata,
       >
         {hoverInfo.object && (
           <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
-            {hoverKey}:{Math.round(hoverInfo.object.count*1000)/1000}, {hoverKey}2:{Math.round(hoverInfo.object.count2*1000)/1000}, region:{hoverInfo.object.rname}
+            {prepareTooltip(hoverInfo)}
+            {/* {hoverKey}:{Math.round(hoverInfo.object.count*1000)/1000}, {hoverKey}2:{Math.round(hoverInfo.object.count2*1000)/1000}, region:{hoverInfo.object.rname} */}
             {/* , {hoverInfo.object.x}, {hoverInfo.object.y} */}
           </div>
         )}
