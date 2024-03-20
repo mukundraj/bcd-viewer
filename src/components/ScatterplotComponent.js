@@ -14,7 +14,7 @@ import * as d3 from 'd3';
 function Scatterplot({id, unidata, 
   lowerThreshold, upperThreshold, maxThreshold,
   lowerThreshold2, upperThreshold2, maxThreshold2,
-  opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl, chosenItem2}) {
+  opacityVal, viewState, onViewStateChange, curNisslUrl, curAtlasUrl, chosenItem2, hoverKey}) {
   /**
    * Data format:
    * [
@@ -268,7 +268,7 @@ function Scatterplot({id, unidata,
       >
         {hoverInfo.object && (
           <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
-            count:{hoverInfo.object.count}, count2:{hoverInfo.object.count2}, region:{hoverInfo.object.rname}
+            {hoverKey}:{Math.round(hoverInfo.object.count*1000)/1000}, {hoverKey}2:{Math.round(hoverInfo.object.count2*1000)/1000}, region:{hoverInfo.object.rname}
             {/* , {hoverInfo.object.x}, {hoverInfo.object.y} */}
           </div>
         )}

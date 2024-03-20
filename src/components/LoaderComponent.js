@@ -915,6 +915,7 @@ function Loader({dataConfig, validatedURLParams}){
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
           chosenItem2={chosenGene2}
+          hoverKey="nUMI"
         />:null}
       </div>
       <div className="floater mt-2">

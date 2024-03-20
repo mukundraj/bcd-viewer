@@ -1032,6 +1032,7 @@ function LoaderCellSpatial({dataConfig}){
           curNisslUrl={curNisslUrl}
           curAtlasUrl={curAtlasUrl}
           chosenItem2={chosenCell2}
+          hoverKey="score"
         />:null}
       </div>
       <div className="floater">
