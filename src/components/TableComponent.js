@@ -320,107 +320,10 @@ useEffect(()=>{
 
 },[JSON.stringify(hiddenIds)]) // hiddenCols changes
   
-const handleDownloadMetadata = () => {
+// to handle export to CSV option for selected data
+const handleDownloadAll = () => {
 
-    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "metadata" });
-
-    // use allColumns to determine which keys to keep from data
-    const selectedCols = allColumns.map(column => {
-        // console.log('column', column.id, column.isVisible, column.Header, column.disableSelector, column.isDotplot);
-      if (!column.isDotplot && !column.disableSelector && column.isVisible) 
-      {
-        // select these columns from data
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-
-
-      }else if (SCaggregateBy==='metacluster' && column.id==='cld'){
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-      }else if (SCaggregateBy==='cellclass' && column.id==='cc'){
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-      }
-
-    }).filter(function (el) {
-      return el != null;
-    });
-
-    // get selected columns from data
-
-    const selectedData = data.map(row => {
-      const newRow = {};
-      selectedCols.forEach(col => {
-          newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id
-      });
-      return newRow;
-    });
-    
-
-    const dataCsv = generateCsv(csvConfig)(selectedData);
-    download(csvConfig)(dataCsv);
-
-    // console.log('selectedCols', selectedCols, selectedData);
-
-  }
-
-const handleDownloadAvgExpression = () => {
-    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "avgExpression" });
-
-    // use allColumns to determine which keys to keep from data
-    const selectedCols = allColumns.map(column => {
-        // console.log('column', column.id, column.isVisible, column.Header, column);
-      // if ((column.isDotplot && !column.disableSelector && column.isVisible)) 
-      if (( !column.disableSelector && column.isVisible)) 
-      {
-        // select these columns from data
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-
-      }else if (SCaggregateBy==='none' && column.id==='ct'){
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-      }
-      else if (SCaggregateBy==='metacluster' && column.id==='cld'){
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-      }else if (SCaggregateBy==='cellclass' && column.id==='cc'){
-        return [column.id, column.Header]; // need to keep track of both id and corresponding header
-      }
-
-
-    }).filter(function (el) {
-      return el != null;
-    });
-
-  let firstCol = 'ct';
-  if (SCaggregateBy==='metacluster')
-    firstCol = 'cld';
-  else if (SCaggregateBy==='cellclass')
-    firstCol = 'cc';
-
-  console.log('selectedCols', selectedCols, data);
-    // get selected columns from data
-
-    const selectedData = data.map(row => {
-      const newRow = {};
-      selectedCols.forEach(col => {
-        if (col[0]===firstCol || col[0]==='cc' || col[0]==='tr' || col[0]==='ts' || col[0]==='gs' || col[0]==='nt' || col[0]==='np' || col[0]==='npr' || col[0]==='cld'){
-          newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
-        }else{
-          newRow[col[1]] = Math.round(row[col[0]][1]*10000)/10000; // col[1] is header, col[0] is id
-        }
-      });
-      return newRow;
-    });
-    
-
-    const dataCsv = generateCsv(csvConfig)(selectedData);
-    download(csvConfig)(dataCsv);
-
-    // console.log('selectedCols', selectedCols, selectedData);
-
-
-}
-
-
-const handleDownloadPctExpression = () => {
-
-    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "percentExpression" });
+    const csvConfig = mkConfig({ useKeysAsHeaders: true, filename: "selectedData" });
 
     // use allColumns to determine which keys to keep from data
     const selectedCols = allColumns.map(column => {
@@ -446,14 +349,16 @@ const handleDownloadPctExpression = () => {
 
 
     // get selected columns from data
-
     const selectedData = data.map(row => {
       const newRow = {};
       selectedCols.forEach(col => {
         if (col[0]===firstCol || col[0]==='cc' || col[0]==='tr' || col[0]==='gs' || col[0]==='nt' || col[0]==='np' || col[0]==='npr' || col[0]==='cld'){
           newRow[col[1]] = row[col[0]]; // col[1] is header, col[0] is id, case of celltype
         }else{
-          newRow[col[1]] = Math.round(row[col[0]][0]*10000)/100; // col[1] is header, col[0] is id
+          const pctKey = col[1]+'_pct';
+          newRow[pctKey] = Math.round(row[col[0]][0]*10000)/100; // col[1] is header, col[0] is id
+          const avgKey = col[1]+'_avg';
+          newRow[avgKey] = Math.round(row[col[0]][1]*10000)/10000; // col[1] is header, col[0] is id
         }
       });
       return newRow;
@@ -461,7 +366,6 @@ const handleDownloadPctExpression = () => {
     
     const dataCsv = generateCsv(csvConfig)(selectedData);
     download(csvConfig)(dataCsv);
-
 }
 
   // Render the UI for table
@@ -486,12 +390,10 @@ const handleDownloadPctExpression = () => {
       </div>
       <div className="pt-2">
         Export to CSV:&nbsp;
-                    <OverlayTrigger overlay={<Tooltip id="tooltip-top">Export currently selected data in CSV format. Metadata, AvgExpression, and PercentExpression matrices can be downloaded using the buttons on right.</Tooltip>}>
+                    <OverlayTrigger overlay={<Tooltip id="tooltip-top">Export currently selected data in this SingleCell tab in CSV format. The download file includes currently selected Metadata (that are checked in checkbox above) along with AvgExpression, and PercentExpression for currently selected genes across all cell clusters.</Tooltip>}>
                       <FontAwesomeIcon icon={faCircleQuestion} size="sm" color="#aaaaaa"/>
                     </OverlayTrigger>
-        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadAvgExpression}>AvgExpression</Button>
-        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadPctExpression}>PercentExpression</Button>
-        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadMetadata}>MetadataOnly</Button>
+        <Button className="mx-2" variant="outline-secondary" size="sm" onClick={handleDownloadAll}>Download</Button>
       </div>
       <div className="pt-2">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
