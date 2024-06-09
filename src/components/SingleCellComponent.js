@@ -209,13 +209,16 @@ function SingleCell({dataConfig, dataConfigCS}){
       setCellClassOptions(dataUniqCellClasses);
       console.log('dataCellTypesRaw', dataCellTypesRaw.length);
 
+      // replace 'Clade0: ', MC_222: and MC_223: with -, and append : if no replacement happened
+      const myReFn = (x) => x.replace(/Clade0/g, '-').replace(/MC_222/g, '-').replace(/MC_223/g, '-').concat(':').replace('-:', '-');
+
       let myRe = /=([\s\S]*)$/
       let dataCellTypes = dataCellTypesRaw.map(x=>myRe.exec(x)[0].slice(1));
       const coolGenesOnTopArray = moveCoolGenesToTop(dataGenes);
       setGeneOptions(dataGenes);
       setGeneOptionsForDisplay(coolGenesOnTopArray);
       let initTableData = new Array(dataCellTypes.length).fill({})
-      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' '), "cld":`${dataClades[i]}: ${dataCladeAnno[i]}`, "amd": dataAddnlMetadata[i]}}) // cid:celltype idx
+      initTableData = initTableData.map((x,i)=>{return {"id":i, "ct":dataCellTypes[i].replace(/_/g,'-'), "cc":dataCellClasses[i], "pct":parseFloat(dataMaxPct[i]), "st":dataMapStatus[i], "tr":dataTopStructs[i], "cid":dataMappedCellTypesToIdx[dataCellTypes[i]], "gs":dataGeneSetCover[i].replace(/_/g, ' '), "nt":dataNeuroTrans[i], "np":dataNeuroPep[i].replace(/_/g, ' '), "npr":dataNeuroPepRecep[i].replace(/_/g, ' '), "cld":`${myReFn(dataClades[i])} ${dataCladeAnno[i]}`, "amd": dataAddnlMetadata[i]}}) // cid:celltype idx
       setRawTableData(initTableData);
       // setTableDataSorted(initTableData);
       // setMappedCelltypeToIdx(dataMappedCellTypesToIdx);
@@ -245,6 +248,11 @@ function SingleCell({dataConfig, dataConfigCS}){
 
       if (aggregateBy==='metacluster'){
         initTableData = initTableData.map((x,i)=>{return {"id":i, "cld":`${aggMetadata[i]}: ${aggCladeAnno[i]}`}}) // cid:celltype idx
+
+        // filter out Clade0, MC_222 and MC_223
+        initTableData = initTableData.filter(x=>x.cld!=='Clade0: ' && x.cld!=='MC_222: ' && x.cld!=='MC_223: ');
+
+
       console.log('loaded ', aggMetadataPath, aggMetadata, initTableData, initTableData.length);
       setRawTableData(initTableData);
 

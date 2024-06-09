@@ -179,7 +179,12 @@ function LoaderCellSpatial({dataConfig}){
       // create cladeDisplayOptions containing cladeOptionsJson.cladeOption:cladeOptionsJson.cladeAnnos
       let cladeDisplayOptionsTmp = [];
       cladeOptionsJson.cladeOptions.forEach((clade, idx)=>{
-        cladeDisplayOptionsTmp.push(`${cladeOptionsJson.cladeAnnos[idx]}:${clade}`);
+
+        // remove :Clade0, MC_222 and MC_223 from cladeDisplayOptions
+
+        if (clade!=="Clade0" && clade!=="MC_222" && clade!=="MC_223")
+          cladeDisplayOptionsTmp.push(`${cladeOptionsJson.cladeAnnos[idx]}:${clade}`);
+
       });
       setCladeDisplayOptions(cladeDisplayOptionsTmp);
 
