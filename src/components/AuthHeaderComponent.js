@@ -106,6 +106,7 @@ function AuthHeader(props){
             {/* <NavLink className={(navData)=>(navData.isActive?"nav-link active": "nav-link")} to="/qcindex">QC</NavLink> */}
             <a className="nav-link" href="https://docs.braincelldata.org/downloads">Downloads</a>
             <a className="nav-link" href="https://docs.braincelldata.org">Docs</a>
+            <a className="nav-link" href="https://forum.braincelldata.org">Forum</a>
           </Nav>
         <Nav>
           {location.pathname==='/genex' || location.pathname==='/singlecell' || location.pathname==='/cellspatial'?

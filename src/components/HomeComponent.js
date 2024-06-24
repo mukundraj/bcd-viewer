@@ -48,7 +48,7 @@ function Home(props){
           
           <p> For more information, and to download the data, please see the <a href="https://docs.braincelldata.org">documentation</a> pages.</p>
           <p>
-            Please email braincelldata at gmail dot com with any questions, comments, or queries.
+            Please post on the <a href="https://forum.braincelldata.org">BrainCellData forum</a> in case of any queries, comments, or feature requests.
           </p>
           <p>
             <strong>2 minute video overview:</strong> (for high resolution playback, set quality to 720p60 via the gear icon in the lower right corner of the video player)
