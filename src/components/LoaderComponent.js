@@ -699,7 +699,6 @@ function Loader({dataConfig, validatedURLParams}){
       setDataLoadStatus((p)=>({gene:0, puck:0, metadata:0}));setChosenPuckid({...chosenPuckid, pid:x});};
   }
   
-  // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`;
 
   const updateChosenItem = (newItem, newPid) => {
     // console.log('chosenGene ', newItem, ' pid ', newPid, ' chosenPuckid ', chosenPuckid);

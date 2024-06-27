@@ -264,7 +264,6 @@ function LoaderCellSpatial({dataConfig}){
 
     // read coords data
     const fetchData = async () => {
-      // let testUrl = 'https://storage.googleapis.com/bcdportaldata/cellspatial_data/puck1/coords.csv'
       let coordsUrl = `${basePath}${dpathCellScores}/puck${chosenPuckid.pid}/coords.csv`
       // const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
       const readData = await load(coordsUrl, [CSVLoader], {csv:{delimiter:":"}});
@@ -723,7 +722,6 @@ function LoaderCellSpatial({dataConfig}){
 
   } , [chosenPuckid]);
 
-  // let regEnrichZarrPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/s2d_region_enrich/`;
 
   const updateChosenItem = (newItem, newPid) => {
 

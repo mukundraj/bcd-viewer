@@ -175,9 +175,6 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   useEffect(()=>{
 
     const fetchData = async (row_idx) => {
-      // console.log("LLL");
-      // let zarrPathInBucket = `https://storage.googleapis.com/ml_portal/test_data/`
-      // let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
       let zloader = new ZarrLoader({zarrPathInBucket:regEnrichZarrPath});
       // let dataRow = await zloader.getDataRow("nz_aggr.zarr/rids/X", row_idx);
 
@@ -243,7 +240,6 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
   useEffect(()=>{
 
     const fetchData = async (row_idx) => {
-      // let zarrPathInBucket = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/`
       let zloader = new ZarrLoader({zarrPathInBucket:regEnrichZarrPath});
       let dataRow = await zloader.getDataRow("/rids/X", row_idx);
 
@@ -253,8 +249,6 @@ function RegEnrich({setDataLoadStatus, regEnrichZarrPath, updateChosenItem, firs
       }
       setRidToIdx(ridToIdxTmp);
 
-      // let geneInfoPath = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/gene_info.json`
-      // let geneInfoPath = `${regEnrichZarrPath}names_info.json`
       let geneInfoPath = `${nameInfoFilePath}`
       // let geneOptionsUrl = await getUrl(geneNamesPath);
       console.log("geneOptionsUrl ", geneInfoPath);

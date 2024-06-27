@@ -79,7 +79,6 @@ setMaxAvgVal, globalMaxAvgVal, downsampledTableData, initialHiddenCols, setHidde
 
       // get freqBar data for this celltype to derminne maxima puckid
     const fetchData = async (celltype) => {
-      // let fbarsDataUrl = `https://storage.googleapis.com/bcdportaldata/cellspatial_data/freqbars/cell_jsons_s2c/${celltype}.json`
       let fbarsDataUrl = `${basePath}${dpathFreqBarsJsons}/${celltype}.json`
       const readData = await fetch(fbarsDataUrl)
         .then(response => response.json())

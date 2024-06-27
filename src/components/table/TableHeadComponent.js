@@ -1,56 +1,56 @@
-import { useState } from 'react';
-import {useStore} from '../../store/store'
-import {useSCComponentStore} from '../../store/SCComponentStore'
-import {useSCComponentPersistStore} from '../../store/SCComponentStore'
+// import { useState } from 'react';
+// import {useStore} from '../../store/store'
+// import {useSCComponentStore} from '../../store/SCComponentStore'
+// import {useSCComponentPersistStore} from '../../store/SCComponentStore'
 
-const TableHead = ({columns, handleSorting}) => {
+// const TableHead = ({columns, handleSorting}) => {
 
-  // const [sortField, setSortField] = useState("");
-  // const [order, setOrder] = useState("asc");
-  const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
+//   // const [sortField, setSortField] = useState("");
+//   // const [order, setOrder] = useState("asc");
+//   const sortByToggleVal = useSCComponentStore(state => state.sortByToggleVal);
 
-  const sortField = useSCComponentPersistStore(state => state.sortField);
-  const setSortField = useSCComponentPersistStore(state => state.setSortField);
-  const order = useSCComponentPersistStore(state => state.order);
-  const setOrder = useSCComponentPersistStore(state => state.setOrder);
+//   const sortField = useSCComponentPersistStore(state => state.sortField);
+//   const setSortField = useSCComponentPersistStore(state => state.setSortField);
+//   const order = useSCComponentPersistStore(state => state.order);
+//   const setOrder = useSCComponentPersistStore(state => state.setOrder);
 
-  const handleSortingChange = (accessor) => {
-    const sortOrder =
-      accessor === sortField? (order==="desc"?"asc":"desc") : order;
-    setSortField(accessor);
-    setOrder(sortOrder);
-    handleSorting(accessor, sortOrder, sortByToggleVal);
-  };
+//   const handleSortingChange = (accessor) => {
+//     const sortOrder =
+//       accessor === sortField? (order==="desc"?"asc":"desc") : order;
+//     setSortField(accessor);
+//     setOrder(sortOrder);
+//     handleSorting(accessor, sortOrder, sortByToggleVal);
+//   };
 
-  let tableDataInner = null;
-    tableDataInner = 
-          columns.map(({ label, accessor, sortable }) => {
-            const cl = sortable
-     ? sortField === accessor && order === "asc"
-      ? "up"
-      : sortField === accessor && order === "desc"
-      ? "down"
-      : "default"
-     : "";
-            return <th key={accessor} 
-              onClick={() => handleSortingChange(accessor)}
-              className={cl} 
-              style={{position:"sticky", top:0}}
-            >
-              <pre>{label}</pre>
-            </th>;
-          })
-  return(
-    <>
-      <thead>
-        <tr>
-          {tableDataInner}
-        </tr>
-      </thead>
-    </>
-  )
-};
+//   let tableDataInner = null;
+//     tableDataInner = 
+//           columns.map(({ label, accessor, sortable }) => {
+//             const cl = sortable
+//      ? sortField === accessor && order === "asc"
+//       ? "up"
+//       : sortField === accessor && order === "desc"
+//       ? "down"
+//       : "default"
+//      : "";
+//             return <th key={accessor} 
+//               onClick={() => handleSortingChange(accessor)}
+//               className={cl} 
+//               style={{position:"sticky", top:0}}
+//             >
+//               <pre>{label}</pre>
+//             </th>;
+//           })
+//   return(
+//     <>
+//       <thead>
+//         <tr>
+//           {tableDataInner}
+//         </tr>
+//       </thead>
+//     </>
+//   )
+// };
 
-export default TableHead;
+// export default TableHead;
 
-// https://css-tricks.com/position-sticky-and-table-headers/
+// // https://css-tricks.com/position-sticky-and-table-headers/
