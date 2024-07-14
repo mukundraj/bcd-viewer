@@ -48,3 +48,12 @@ To run cypress tests interactively. Remember to start server in different tab fi
 ### `yarn run percy exec -- cypress run --spec \'cypress/e2e/path/to/spec.cy.js\'`
 
 Run visual tests using percy. Will run all tests (including non visual) in the specified specs file/folder(s). Requires Percy token to be set using `export PERCY_TOKEN=token`.
+
+
+## pnpm commands
+
+```
+pnpm env use -g 16.20.2
+pnpm add export-to-csv@1.2.2 # for bcd_viewer
+
+```
